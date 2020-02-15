@@ -1,0 +1,1168 @@
+LEGEND:
+
+Client:	- client.dll or client part of xash.dll
+Server:	- hl.dll or server part of xash.dll
+Engine:	- xash.dll
+Network:	- a network part of xash.dll
+Render:	- a render part of xash.dll
+FS:	- a filesystem part of xash.dll
+GameUI	- menu.dll
+Sound:	- a sound part of xash.dll
+Input:	- a input code of xash.dll
+ImageLib:	- image loader in xash.dll
+SoundLib:	- sound loader in xash.dll
+Console:	- console code in xash.dll
+VGUI:	- a VGUI implementation code in xash.dll
+Memory:	- a memory manager in xash.dll
+Physic:	- a server physics code in xash.dll
+
+build 4483
+
+Engine: implementation of improved line trace that can be collided with solid-pixels on grates or fences. (see features.h for details)
+Render: new param to request total video memory that allocated by textures (for debug purpoces)
+Engine: contents detection for PM-code was rewritten to close match with GoldSrc
+Client: fix bug with hot-precaching on the client-side
+Client: tune some constants in R_DrawDisk function
+Render: get support for DDS Luminaince textures
+Render: cleanup some bugs with dedicated server
+Client: fixup bug with AVI-sound (was placed into previous version)
+Engine: fix function that checks allowed file extensions for downloading
+Engine: fix potentially stack overflow in CRC32_MapFile.
+Engine: restore variable host_serverstate (XashXT uses this)
+Engine: in multiplayer-mode when fps_max is 0 force to default fps (100) to avoid confuse users
+Input:  auto-bind "cancelselect" command while called "unbindall"
+Engine: fixup range-errors in Mod_BoxLeafnums
+Engine: revision of bsp lump serialization code
+Server: recalc attachment angles on a server (use new relationship)
+Network: check and clamp ranges on a network messages
+Network: initialized delta can be updated on a each new connection client (this prevents stuck client on an obsolete protocol when server is changed)
+Network: revision of fragment header length
+ImageLib: fix detection alpha in DXT3 format
+Server: "nextmap" command is now used "con_mapfilter" value
+Server: fix bug in SET_MODEL function
+Server: fix some bugs with KeyValues memory deallocation
+Server: fix a typos in unlag code
+
+build 4344
+
+Render: added scroll-side effect on world surfaces like Doom (and for Doom Remake)
+Client: quake demos with invalid proto no more invoked Host_Error, just stopped.
+Render: implenet custom external palette for Quake Wrapper
+Render: disable luma-pixels for non-Quake palette
+Render: allow HD-textures on alias models
+Console: disable colored strings on non-luminance conchars to avoid color degradation
+ImageLib: more reliable alpha detection for .lmp images
+ImageLib: check 'conchars' image by matched size
+
+
+build 4312
+
+Client: demos moved from folder that called "demos" into the root of gamefolder
+Client: demoshots are removed
+Client: automatically detection of demo type (Quake or Xash3D)
+Render: a new debug visualization of world bsp-tree (cvar r_showtree 0\1)
+Render: do a some corrections for Quake fog settings
+Client: fix bug playing AVI with compressed soundtracks
+Input: ignore to suspend display while game window is foreground 
+Server: development command that called "nextmap". change the maps with alphabethical order
+GameUI: fully support for steam background splashes (with BackgroundLayout.txt script)
+
+build 4281
+
+GameUI: new gameinfo setting "noskills" 0/1 that disables sub-menu for skill selection
+Client: fix some minor bugs with playing Quake demos
+Render: reorganize emboss-mapping with single cvar "gl_emboss_scale" instead of separate description from scripts\texfilter.txt
+Engine: added new gameinfo setting "mpfilter" for Cry Of Fear filtering single-player maps by name prefix
+Engine: added some missed settings while liblist.gam is converted into gameinfo.txt
+Engine: always allow console for QWrap.
+Server: fix bug with playing cd-track after changing level
+Server: command "god" is now work under Cry Of Fear.
+Server: commands "changelevel" and "changelevel2" reverted into engine for backward compatibility.
+GameUI: allow to delete saved games in menu before game was running
+Sound: fixed very old bug with sounds that playing from studiomodel events at server-side
+Server: prevent crash while some mods replaced key-value strings with constant values
+Physic: filtering MOVETYPE_PUSH method by edict->movetype for accurate moving player's and NPC's and compatible moving items or corpses
+GameUI: now keytable color can be replaced with gfx\shell\color.lst->INPUT_TEXT_COLOR
+GameUI: empty save image replaced from decals.wad\{GRAF001 with gfx.wad\lambda32
+GameUI: fix game switching if game folder have spaces in folder name
+GameUI: color of selection in scroll lists can be replaced with gfx\shell\color.lst->SELECT_TEXT_COLOR
+
+build 4260
+
+Sound: implement system for playing in-game videos with positioned sound (e.g. XashXT, Paranoia2)
+Engine: RenderAPI added new function AVI_StreamSound for in-game videos with sound (compatibility will not suffer)
+Client: net_speeds now show total traffic size while demos is playing back
+Client: quake demos now use linear interpolation for all entities and player
+Render: fix particle trails during playback quake demos
+Client: fix some errors in parsing temp ents in Quake proto (Nehahra)
+Client: allow seamless change demos in case where current playing demo issued a next demo during parse network message
+Client: fix bugs with remap colors on alias playermodels
+Engine: fixed critical bug in modelloader
+
+build 4253
+
+Render: remove flags TF_TEXTURE_1D, TF_TEXTURE_2D_ARRAY it's just not needs
+Engine: RenderAPI added new functions GL_UpdateTexSize for statistics
+FS: wad imagetypes is no more longer supported (prefixes _mask, _norm etc)
+Server: PhysicAPI was reimplemented PrepWorldFrame instead of obsolete function pfnCreateEntitiesInTransitionList
+Engine: most debug messages was replaced from MsgDev with Con_Printf, Con_Dprintf and Con_Reportf
+Sound: s_combine_channels is now set 0 as default
+Console: buffer scrolling reset while new command or autocomplete issued
+Client: fixup server beams pause bug
+Client: remove interpolation experiments
+Client: fixed bug with default renderamt value while rendermode is normal (beam brightness)
+Client: internal studio lerp is now not switch the movetype to MOVETYPE_STEP to avoid collisions in custom renderers
+Client: user messages now is case-insensative (GoldSrc rules)
+Client: create deferred startup commands for Cry Of Fear background map system
+Client: change query format to the master-server
+Client: fixed bug with large sentence indexes (up to 2048)
+Client: eliminate Cry Of Fear anti-save protecion (because it's stupid)
+Client: fixed Quake demo players rendering in multiplayer demos
+Client: allow CD forcetrack in Quake demos
+Render: correct seamless between beam segments
+Render: reduce brightness for decals on semi-transparent surfaces
+Render: get support for compressed image format ATI2N (normalmaps)
+Render: rectangle textures is not nessesary to match with current screen resolution
+Render: translate gl-errors code to string while loading textures
+Render: texture manager is completely rewritten, some bugs is fixed
+Render: rotate culling bbox for static client entities for right culling
+Render: improve r_lighting_extended, get lighting from ceiling or bmodels if world light gather is failed (completely black)
+Render: fix fog rendering for Spirit 1.6 and higher
+Render: remove alpha to coverage mode, it's too bugly
+Render: remove auto-generation for detail textures list
+Render: correct fog for studio parts with 'additive' and 'masked' flag
+Render: fixup some bugs in alpha-blend sorting
+Render: remove -glcore setting it has no effect
+Render: restore "width" and "height" read-only console cvars, it's used by debug systems of XashXT
+Sound: dsp_off now saved into config.cfg
+Sound: fix crash in dsp processing
+Sound: eliminate stupid message FS_LoadSound: couldn't load ""
+Sound: default sound is now keep in memory permanently
+Sound: fix playing for CHAN_STREAM
+VGUI: revision for string rendering, fix some bugs
+Console: tune linewidth length
+FS: grab field "edicts" from liblist.gam that used to conversion into gameinfo.txt
+Engine: IMPORTANT: console variable "build" is renamed to "buildnum" to avoid confilcs with gameplay command in TeamFortress!!!
+Engine: disallow to load save, change map or somewhat until finale credits is active
+Input: properly pass key events into client user-side
+Engine: fix bug in custom library loader
+Studio: correct bbox compute for giantic models
+Engine: revert old code for PVS to keep it compressed (save memory)
+Engine: flag for ignore lightmaps SURF_DRAWTILED is now based once and only by TEX_SPECIAL flag (not a special texture names)
+Engine: prevent to potential crash if logfile couldn't be created
+Sound: fix crash while playing mp3 files through ambient_generic
+Server: making freezing player on background maps an options that called "sv_background_freeze" (console variable)
+Server: keep network messages for one frame before changelevel and send them during changelevel (GoldSrc rules).
+Server: fix critical bug in pfnSetModel function
+Server: NPC is now ignore corpses and don't stuck into them
+Server: physics pusher is now completely matched with GoldSrc (but extended version can be enabled by engine feature)
+GameUI: fix savegame menu bugs after engine global update
+
+build 4150
+
+Server: fixed a very old bug with ambient_generic restating sounds after save\restore
+Client: first implementation of playback Quake demos. May be bugly
+Engine: rewrite static entities proto. Now available full entity_state_t across network instead of sv_static_entity_t
+Physic: fixed bug with underwater fog
+Client: fixed bug with TE_BEAMCYLINDER message (houndeye attack)
+Render: optimize R_RecursiveWorldNode
+Render: fixed a bug with bonecontrollers in internal studio renderer
+Render: added experimental commandline option -glcore to switch to WGL_CONTEXT_CORE_PROFILE instead of WGL_CONTEXT_COMPATIBILITY_PROFILE
+FS: fixed a bug with custom dll loader in some cases
+Engine: added a fatal error if gfx.wad is missed (needes to rendering console chars)
+Input: potentially fix a bug with camera infinity rotation after vid_mode change
+Engine: now maploader shows list of really used wads in the loaded map
+Network: change the MSG_WriteCoord multiplier to allow coords +\- 32768
+Sound: fixed a crash while playing too small mp3 sounds
+Engine: allow console command "reload" from commandline
+
+build 4143
+
+Engine: fixed crash with debug collision hulls
+Engine: fixed bug with bsp-lumps management functions
+Engine: some minor changes
+
+build 4140
+
+Engine: finalize custom bsp lumps representation standard (see bspfile.h for details)
+Engine: decal_t struct is some expanded with reserved variables for mod-makers
+Engine: client trace is now allowed trace mins and trace maxs same as on the server (see EventAPI for details)
+Render: added special texture that called "alphacontrast" (for MSAA)
+Engine: implement new debug system of visualization collision hulls (original code from TyrQuake), cvar called "r_showhull"
+Memory: remove code that clumps small allocations (no need anymore)
+Client: fixed bug with hot precache in singleplayer
+Sound: increase MAX_SENTENCES up to 4096 (and do some changes with network proto, but keep compatible with previous version)
+Client: fixed bug with downloading resources "in-game"
+Client: fixed bug with ScreenFade duration
+Client: r_speeds message string increased up to 2048 characters
+Render: now models can use deluxe map vectors for more realistic lighting (Note: ENGINE_LOAD_DELUXEDATA must be set)
+Render: fix alias models flip code for viewmodel
+Render: remove image gamma processing, only lightmaps.
+Render: implement support alpha to coverage mode for MSAA processing
+Render: fixed very old bug with broken lightmaps on individual brush models in Quake (like shells, healthkits etc)
+Render: now MSAA can be controlled dynamically in game
+Engine: some code changes for support new MSVC compilers
+Server: fixed trigger_endsection
+Server: fixed unlag code
+
+build 4097
+
+Client: implement predictable laser spot for weapon RPG
+Server: fix bug with chat code that doesn't passed russian letters
+Engine: BSP31 now is obsolete and removed from the engine (please use bsp31migrate.exe tool for migration)
+Engine: new version of extended BSP30 map format (increase clipnode limits, tuneable lightmap resolution, per-vertex lighting etc)
+Render: mirrors are no longer support and has been removed from the engine (but leaved in the mods like XashXT or P2:Savior)
+Engine: mextrasurf_t was reorganized, please check your source code
+Engine: event API was reorganized, two functions was removed new one added
+Engine: engine feature ENGINE_FIXED_FRAMERATE are no longer supported
+Engine: RenderAPI was changed version to 37 and reorganized
+Server: "decalfrequency" is now stored into config.cfg
+Engine: some unused functions from undocumented part of game and client interface was replaced with stubs
+GameUI: import interface was updated with two new functions (save file and remove file)
+Console: rewrite debug messages system like in Quake (Con_Printf instead of MsgDev)
+Network: completely rewrite the network connection to allow downloading and uploading files (missing resources, player logos)
+Network: first implementation of player customization (logos)
+Network: protocol was changed to version 49
+Engine: demo protocol was changed to version 3
+Engine: implement timedemo command
+Network: implement a signon sequence
+Sound: fixup static sounds save\restore bug
+Network: user messages max size will be increased up to 2048 bytes
+Client: rewrite HudSprite manager allow to download missed HUD sprites
+Client: rewrite SPR_GetList to prevent memory leak (old Half-Life bug)
+Console: fix the ConsolePrint to allow to goes message only to notify buffer
+Engine: fix very old bug in CheckParm export function (internal version is not bugged)
+Client: getAppID was changed to 70
+Network: IPX protocol will no longer supported and has been removed
+Client: single export for client.dll was renamed to GetClientAPI
+VGUI: class CEngineApp was declared as static
+GameUI: fix old crash with playersetup and changelevel on a background map
+Engine: new queue system for change maps (not sticked with Cbuf_Execute)
+Engine: experimental function CL_ChangeGame was removed from the engine
+Engine: enable interpolation for addangle (fixangle = 2)
+Network: new experimenal system to get maximum pack size for UDP (official size 1200 bytes but in theory it can be larger up to 64000 bytes)
+Network: new generic resource system that included sounds, models, events, decals and all other types
+Client: add mp3 command like in GoldSrc (warn this is not tested)
+Server: implement instanced baselines (baselines that specified by user)
+Server: implement a consistency resource check (model CRC and bounds)
+Network: StudioDecal message is completely moved out from the engine
+Client: request cvar value now can detect mismatch between cvar.string and cvar.value for detect potential cheaters
+Render: allow remap colors on a alias player models (Quake1)
+Client: added built-in resource pathes to list of download resources
+Client: do revision of tempents code, fix some bugs
+Client: make work EF_MUZZLEFLASH for alias-models
+Render: tune intencity from dymanic lights (alias and studio models affected)
+Render: enable built-in MSAA feature (cvar gl_enable_msaa in opengl.cfg)
+Render: fix bug with 'sticky bind' while texture is uploaded
+Render: the most of internal procedural textures has been moved out from the engine (keep'd only textures that engine is used himself)
+Render: R_LightPoint has a contain VERY old bug from Quake1 with inaccurate samples from lightmap color and produce invalid results in some cases
+Render: new extension of BSP file format (lightmaps that based on luxel per units instead of luxel per texels). Also check P2:Savior compile tools
+Render: fix bug with sort STUDIO_NF_ADDITIVE meshes in studio models (old Half-Life bug)
+Render: fix water subdivision bug that kill the prefomance while water is rendering
+Render: r_drawentities 7 is now shows world position of luxel for lighting
+Render: removed all unused GL-extensions
+Render: fixed 16-bit color mode and NPOT textures case
+Render: throw a system error on failed initalization video sybsystem instead of fallthrough into dedicated mode
+Render: remove of rotational sky support (it's just was not used by nobody)
+Sound: some minor changes in DirectSound backend code
+VGUI: rewrite Font manager, enable vertex arrays support
+Network: fragmented packets it's can be compressed by LZSS algorhytm
+Console: mapinfo now shows information about editor and compiler
+Engine: handle exception in Q_vsnprintf to prevent crash engine from the mistake of formatted args
+Engine: new polymorphic BSP loader
+Memory: fix bug in Mem_CheckFilename
+Server: first implementation of server game log
+Server: cmd 'changelevel' was no longer provided (only internal cnhagelevel is possible)
+Server: cmd 'kill' moved from server to the client
+Server: new save\restore system that compatible sav. files from GoldSrc
+Server: implement server fps control that called a 'sv_fps' use with precaution
+Server: fix some bugs with unlag system
+
+build 3886
+
+Client: fixup processing russian leter 'ÿ' in READ_STRING()
+Client: fixup russian leters support in VGUI
+Engine: add support for Arguire QBSP 'broken' clipnodes  (engine is need to rebuilt with broken binary compatibility)
+Engine: add support of Darkplaces BSP2 format (engine is need to rebuilt with broken binary compatibility)
+Engine: re-organize model_t structures for easy acess to custom user data
+Engine: full implementation of Quake1 alias models (this is usefull for my new project that called QWrap)
+Engine: kRenderWorldGlow is no longer supported and removed
+Engine: re-organize cvar system for better consistency, replace variable 'modified' with same flag to get acess from user dlls
+Engine: some expansion of event_api_t
+Engine: HD-textures is no longer supported and removed
+Engine: global revision for engine feature flags
+Engine: client beams code was totally rewrited
+Render: tracers code was rewrited
+Engine: for custom renderering from client-side was created new interface struct that called ref_viewpass_t. ref_params_t now is macthed with GoldSrc
+Engine: RenderAPI version was updated to 36.
+Render: hardware gamma in no longer supported and completely changed to software gamma like in GoldSrc.
+FS: get support of quake WAD2 file format
+Engine: allow to save cvars at game-side into config.cfg and properly restore them
+Render: new frustum culling code (come from P2:Savior renderer)
+GameUI: allow menu request video-res list from the engine instead of keep copy of array into the menu code (this may cause potentital mismatch trouble)
+Render: full implementation of Quake1 sprites and LordHavoc spr32 file format (this is usefull for my new project that called QWrap) 
+Render: studio model renderer was rewrited to get more compatibility with GoldSrc.
+Render: studio shadows now using light direction (instead of fixed vector)
+Render: studio boneweighting implementation (for new P2:Savior mdl format extesion)
+Sound: musicvolume was renamed to MP3Volume to match same name in GoldSrc
+Client: demo playing is now using viewangle interpolation and movement predicting
+Client: rewrite client-side events queue and playing code
+Client: rewrite client frame delta-compression
+Client: rewrite client predicting
+Client: rewrite client interpolation
+Client: fix old trouble with beam follow that tends to glueing with new unsupposed entity
+Sound: fix sound origin for rotating bmodels
+Client: reorganize client frame for better compatibility
+Network: protocol was updatetd to version 49 (this is not match with GoldSrc just same number)
+Client: rewrite handling of client-only models
+Engine: rewrite conception of network user variables (info strings)
+Network: fix network message fragmentation
+Console: now in-game console can displayed all the message from engine starts and nothing to skip
+Network: rewrite net graph code, optimize
+Newtork: adds the debugging tools fakelag and fakeloss
+Client: rewrite client trace allow to collide with pmove->visents properly
+Client: loading quake-style icons for "loading" and "paused" images.
+Client: get support for quake1 fixed fonts
+Client: rewrite temp entities, tune effects constants and other things
+Client: cull tempentities with PVS
+Render: change fog handle to prevent some troubles in mods that based on SoHL.
+Render: decals on translucent surfaces is now properly sorted from backside view
+Render: optimize water waves (perfomance)
+Render: merge decals into batches on world geometry (perfomance)
+Render: add a new cvar r_lightmap_nearest to show unsmoothed lightmaps (debugging thing)
+Render: apply box filter to 1-bit alpha channel (remove ugly borders)
+Render: get support with func_details that contain alpha-test textures
+Render: rewrite sorting of translucent entities and brushfaces
+Render: new code for lighting studio and alias models
+Render: handle typical gl-errors while gl_check_errors is set to 1
+Render: particles code was rewrited
+Render: now tracers uses external texture sprites/dot.spr instead of procedural particle (same as in GoldSrc)
+Render: some fixes for random tiled textures
+Render: rewrite sprite lerping between frames, fixup some errors
+Render: interpolate attachment origin for attached sprites in case a parent doesn't have a real attachment points
+Render: studio glow-shells was rewritten, fix broken shell normals (old GoldSrc bug)
+Render: allow model scale on studio models culling (cause problems in SoHL-based mods)
+Render: compute true min-max for all studio models automagically (this useful on client trace for pmove->visents)
+Render: remove picmip and skymip code
+Render: disable GL_EXT_texture_lod_bias on all Intel cards (this cause problems)
+Render: handle skybox images for Quake1 and Half-Life rules (underline suffix issues)
+Render: render stub texture for missed skyboxes
+Sound: rewrite sound PHS occlusion, fixup some errors
+Input: fix old bug where buttons automatically unpressed during changelevel
+Engine: totaly rewritten code for system of config executes, eliminate re-executing etc
+Console: cmd "mapstats" now displayed map compiler name (if available)
+Console: commandline option -oldfont is cause to load console font from gfx.wad (like in GoldSrc)
+FS: allow to place wad-files into pak-files (and keep right acess order)
+FS: rewriting games analyze on engine startup (missing gameinfo, empty mod folders and other problems)
+Engine: clipping hull sizes is now shared across network
+Server: disable extended pusher physics as default (it will activated with feature ENGINE_PHYSICS_PUSHER_EXT)
+Engine: rewrited dedicated server code (restarting and cmdline)
+Engine: load colored lighting from external file mapname.lit (quake feature)
+ImageLib: allow to interpret masked textures as colored decals (GoldSrc can too)
+SoundLib: update mpeglib version to avoid glitches and crashes on mp3-seeking.
+Server: remember last issued map and restart from them (cvar hostmap)
+Server: properly handle of func_monsterclip tracelines
+Server: disable PAS for singleplayer (same as in GoldSrc)
+Server: fix error with user message overflows (thx albatross)
+Server: allow to spawn unnamed entity with class "custom"
+Server: new code of velocity normalization
+GameUI: fixup menu buttons loader (0-entries palettes)
+Engine: many small fixes and other improvements that i can't to list all them here
+
+build 3597
+
+Engine: implemenantion of generic extension of BSP file format. Some extra lumps used by mods to get a new features like terrains, improved lighting etc
+Engine: rewrite PVS system for variable PVS radius that can be used as FAT pvs or FAT phs without recalculating vis-array
+Engine: starting to implement a new global feature that called HOST_FIXED_FRAMERATE to get client and server with constant fps (xash-based mods only)
+Render: some unsed funcs from RenderAPI was replaced with usefully funcs. Backward compatibility stay keep on
+Render: added few function in RenderAPI for SDLash3D by Albatross request
+Render: get support for loading multi-layered textures (for potential landscape implemenantion)
+Client: added two funcs into engine interface for custom interpolation on the client
+Server: allow to write map lums on a server to store userdata (physic collision, ai nodegraph as example). Works with extended BSP format only
+Server: physic interface was updated and expanded to get more control over player and entities simulation
+Client: demo protocol was changed to 2 ( allow comment in demo header)
+Client: demo playing is now using interpolation of client view angles
+Client: fixup some issues on demo playback
+Client: fix broken parametric entities (rockets in TFC as example) in multiplayer
+Client: net graph implementation like in GoldSrc
+Client: fixup ugly "un-duck" effect while after changing level (see for example transition from c0a0b to c0a0c)
+Client: clean-up and rewrite predicting code to get more compatibility for original prediction
+Client: handle colon separately for client version of COM_ParseFile (like in goldsrc)
+Client: finalize NETAPI. Now it can handle servers list from a master server (and display on a built-in client browser of course)
+GameUI: fixup color-strings that sended across network as server names or player names
+Client: texturebrower and overview mode now is not affected to player moving in world
+Client: accumulate pmove entities right after handling delta's not after world rendering
+Client: change master server address and request to actual
+Client: exclude dead bodies from solid objects in pmove processing
+Engine: fixup wad parsing from "wad" string in worldspawn settings (broken in previous version)
+Client: new style of displaying FPS counter
+Network: remove compression routine (very low efficiency)
+Client: fix muzzleflashes decoding from an studio animation event
+Engine: fix crash\hanging while trying to play AVI-file when codec is not-installed
+Client: change color handle for viewbeams (remove color normalization)
+Render: rewrite waves on water surfaces, uses table sin, increase speed and look close GoldSrc
+Render: completely rewrite texture loader, remove obsolete code, added support for multi-layered textures and float textures, fix errors
+Render: now "gl_texturemode" is obsolete and removed. Use "gl_texture_nearest" cvar instead
+Render: improved doble-cloud layering sky for Quake. reduce parallax distorsion
+Render: completely rewrite OpenGL loader. Remove obsolete extensions, fixup some errors
+Render: moved lightstyle animation from render frame loop to client frame loop (to prevent execute lightstyle animation on multipass viewing)
+Client: fixup studio culling on models with non-default scaling (large models in SoHL)
+Sound: change DSP code to get DSP effects like in original GoldSrc
+Sound: rewite sound PHS code. Now it can be useful
+Sound: first implenantion of raw-channels manager (in future this will be used for a custom video playing in xash-based mods and voice stream)
+Sound: sentence sounds now can be freed after playing (and saves some memory)
+Client: get VGUI backend to implement of lastest version of vgui.dll
+Engine: sort commands and cvars in alpha-bethical order. Include scripting functions from SDLash3D
+Console: now map list show an extension or type of various map and mapstats check level for transparent water support
+Console: replace the console buffer with effectively circular buffer (up to 1mb messages)
+FS: do complete revision of filesystem code, remove WAD2 support
+ImageLib: fix crash in quantizer while image is completely black
+Server: ignore sounds from pmove code when prediction is enabled
+Server: change userinfo handling, fixup info send to all the clients
+Server: fixup player animtion timings
+Server: enable cl_msglevel to filter up unneeded messages
+Server: restart server right if circular buffer pointer was exceeded 32-bit limit value
+Server: fixup player think timings
+    
+
+build 3366
+
+Render: get support for custom DXT encoding (custom renderers only)
+Render: remove image program stuff (just not used)
+Engine: adding support for new wad filetypes (like DDS images) and wad imagetypes (normalmap, glossmap etc)
+Render: implement tiling on the studiomodels
+Client: do revision of predicting implementation, fix errors, more clean code
+Client: implement prediction error to avoid ugly blinking view on moving platforms when predicting is enabled
+Render: fixup the DDS loading code (invalid calc for mip-sizes)
+Client: fixup parser of detailtextures when texturename contain symbol '{'
+Render: added experimental hint for Nvidia drivers for force select Nvidia videocard when engine is running
+Engine: rewrote condition to calculate level CRC (singleplayer or multiplayer)
+Engine: added cvar r_wadtextures like in HL. First load textures from the wad, then from BSP
+Server: fix bug with cl_updaterate variable (always get default values if not changed by user)
+Server: recalc the ping time correctly
+Server: fix bug with too long player name
+GameUI: fix bug with 4-bit bmps buttons (image cutter)
+
+build 3224
+
+Client: make players solid for prediction code
+Client: change out of band request to make compatibility with custom master-servers
+Client: reject triggers and other like things for prediction code
+Client: fix the potential crash in prediction code
+Render: fix the potential crash in image loader
+Client: fix thirdperson camera culling
+Console: experimental fix for console problems with word-wrapping
+Network: fix bug in BF_WriteBitAngle function (thx mittorn)
+Network: rewrite clamping bounds for delta-variables (it was incorrectly)
+Network: change address of master server (now master is working)
+Server: some changes for client connection\disconnection to prevent possible errors or crash the server
+
+build 3153
+
+Render: RenderAPI update. New parm PARM_REBUILD_GAMMA to differentiate from map restart or change level when called from GL_BuildLightmaps
+GameUI: increased slots for savedgames\multiplayer maps up to 900
+
+build 3145
+
+Engine: add support for studiomodels with fixed texcoords multiplier (a studiomodel format extension)
+Engine: first experimental implementation of client movement predicting code (thx SovietCoder)
+Engine: first experimental implementation of client movement interpolation code (thx SovietCoder)
+Engine: some small bugfixes
+
+build 3030
+
+Client: remove demoheader.tmp while engine is shutting down
+Render: allow .dds format for detail textures
+Render: get support up to 16384 verts per submodel for studio models
+Render: disable vertical sync while level is loading
+ImageLib: allow support big textures up to 8192x8192
+ImageLib: rewrited code for detecting alpha in DXT3, DXT5 formats
+
+build 3000
+
+Render: new render info parm PARM_TEX_GLFORMAT for getting a real format for a given texture
+Server: added a engine memory allocations through internal mempool and function GetTextureData (a part of tracing alpha-textures)
+Client: clamping client pmove time if fps is too high
+Client: new fps counter-style that showing min and max values (cl_showfps 2 to enable)
+Render: get support for DDS textures (DXT1, DXT3, DXT5 and ARGB is allowed)
+Render: get support for floating depth-buffer texture (high prescision depth-buffer)
+Render: added VSDCT internal texture
+Render: add support for seamless cubemaps
+Render: fullscreen resolution auto-detect on first launch
+Render: added resolution 1600x900
+Render: new command line option -gldebug (enable internal GL-driver debug info)
+Engine: fix bug with CRC calculation on BSP31 format (thx [WPMG]PRoSToTeM@)
+FS: additional check to prevent error "Mem_Free: not allocated or double freed (free at filesystem.c:1489)"
+FS: fix FS_Eof function (thx [WPMG]PRoSToTeM@)
+VGUI: handle ESC key while VGUI is shown
+Engine: allows to load "deluxedata" from base folder even if a map placed in game folder (probably it was a stupid limitation)
+Server: replace Host_Error "ED_Alloc: no free edicts" with Sys_Error to prevent possible troubles
+
+build 2900
+
+Console: add detection for Paranoia 2 maps (show message in console)
+Engine: fix playing video when fps_max is 0 and framerate too high
+Engine: add function TraceSurface into pmove, EventAPI and PhysicAPI interfaces
+
+build 2867
+
+Client: another extension for EventAPI: function EV_SoundForIndex to get soundpath from soundindex
+Render: RenderAPI update. New flag TF_NOCOMPARE to disable comparing for depth-textures and PARM_CLIENT_ACTIVE (self-explanatory)
+Server: PhysicAPI update. Add support for file searching.
+Client: fix a little bug in CL_AddVisibleEntity
+Client: check rectangles right for hud.txt
+Client: fix demoplaying in background mode (changelevel etc)
+Client: fix SOLID_CUSTOM support in client trace
+Render: create debug context for powerful OpenGL debugging
+Render: fix bug with kRenderWorldGlow
+Sound: add two new cmds: spk and speak like in GoldSrc
+GameUI: fix buttons bmp loader
+
+build 2664
+
+Engine: restore right ordering of arguments of SV_StudioSetupBones export
+Render: a some cosmetic changes in RenderAPI
+Client: make levelshots for background demos
+Client: now cmd 'startdemos' invoke to play demos sequence like as background map
+Client: increase demo auto-naming from 100 up to 10000
+Client: fix bug with inverted PITCH of non-local playermodel
+Client: added FireCustomDecal into EfxAPI (was missed)
+GameUI: fix some crashes after end the background map (like call of trigger_endsection)
+Client: eliminate muzzleflash copy from mirror reflection in normal view
+Render: fix bug with max_texture_units clamping
+Render: completely remove glScissor calls (just unused)
+Render: update thirdperson code for mirrors
+Render: rewrite viewport setup code
+Render: fix software gamma adjustment bug while flashlight is enabled
+Render: reset vid_displayfrequency if current value isn't support by user display. Throw warning message
+Engine: allow new param in gameinfo.txt who called soundclip_dist <radius>. Default is 1000.
+Sound: new cmd 'playvol' like in GoldSrc
+Server: fix crash in 'Gunman Chronicles' at map end1.bsp
+Engine: show more infos with cmd 'mapstats'
+Network: fix bug with DT_TIMEWINDOW_8
+Server: fix bug with triggers with 'liquid' textures
+Server: fix some bugs in PVS calculation on server
+GameUI: enable auto-refresh of actual multiplayer maps list
+GameUI: update 3D playermodel preview for 16:9 screen aspect
+
+build 2636
+
+Engine: added internal loader for deluxemap data (.dlit file that produces VHLT)
+Engine: msurfmesh_t was reorganized to complex vertex data instead of single arrays (VBO-ready)
+Engine: decal_t now contain msurfmesh_t with all vertices and texcoords
+Render: RenderAPI interface updated to version 35
+Render: get support for float textures format (GL_ARB_texture_float is required)
+Render: implementation of image program preprocessor, like in Doom3, syntax: AddNormals( texture1.tga, texture2.tga );
+Render: get acess to internal tesselator through RenderAPI
+Server: a little update for PhysicInterface: get support for custom decal save\restore
+Client: separate levelshots for wide-screen and normal screen
+Client: revert parametric rocket implementation (previous was lost between two backups)
+Client: fix a potentially crash when calling function IsSpectateOnly
+Client: now 'ESC' button while playing video invoke jump to next video in list (instead of completely stopping video)
+Client: fix bug when demo ends up (Connection Problem)
+Client: now compensate screenshot gamma is toggleable (cvar "gl_compensate_gamma_screenshots")
+Render: optimize decal code, remove unused functions
+Render: now all the lightmaps stored into 1024x1024 texture
+Render: add cvar "gl_detailscale" for customize _detail.txt generation
+Render: fix some errors with studiomodels lighting
+Sound: increase maximum count of words in sentence up to 64 (from 29)
+Engine: fix broken recursion in Cmd_CheckMapLis_R (potentially crash)
+Client: passed keyup event through HUD_KeyEvent callback
+Network: change delta params for skycolor_* variables (in some cases color value was incorrect received)
+Network: fixed TIMEWINDOW_BIG mode
+Engine: add engine build number into console log
+
+build 2463
+
+Engine: reorganize data in texture_t. Release one variable for mod-makers
+Engine: change decal_t structure get compatibility with GoldSrc
+Engine: expanded mextrasurf_t reserved fields up 32
+Engine: update player_info_t (added customization_t like in SDK 2.3)
+Engine: increase local_state_t->weapondata up 64 slots
+Engine: update IVoiceTweak interface
+Engine: new lightstyle system with local time and custom interpolation
+Engine: fix bug with lightstyle save\restore (only first 64 symbols of pattern was saved)
+Engine: update r_efx_api_t interface
+Engine: update engine_studio_api_t, remove uncompatible function StudioGetTexture, added three new (thats came from CS:CZ)
+Engine: added ref_overview to support custom overview implementation
+Engine: render interface is outdated now. New render interface has version 30 (too much changed)
+Engine: update triangleapi_t interface
+Engine: update cl_dll interface (also added support for signle export that called 'F')
+Engine: a lttle update for enginefuncs_t (server interface)
+Client: fixed crash on shutdown when custom renderer uses AVI-files
+Engine: applaying scale for decals on brushmodels or world geometry
+Engine: update model_state_t thats keep info about studiomodels for studio decals. Include body and skin
+Engine: get support for custom studiocache on static and tempents
+Engine: write R_Srpite_WallPuff from pEfxAPI
+Client: fix bug with beam sorting (solid beams was drawing in translucent pass)
+Render: add special flag for decals thats indicated local space (any decal after first shoot)
+Render: apply emboss filter on studiomodel textures
+Render: rewrite client event system for studiomodels. Get more predictable results
+Network: write existing decals and static entities into new demo
+Network: protocol was changed to 48
+ImageLib: fix old bug with save non-aligned 8-bit bmp files
+Server: fix bug with reloading hl.dll when map was changed every time
+Server: a client part of save-file is outdated. New version is 0.68
+
+build 2402
+
+Engine: added new feature flag for compensate stupid quake bug
+Client: update the render interface, added usefully function GL_TextureTarget
+Render: get support for GL_RECTANGLE textures
+Client: fix playerangles in event receive (Paranoia bug with decals)
+Render: fixed mipmap generation for normalmaps (TF_NORMALMAP)
+Render: added two built-in textures: *blankbump and *whiteCube (self-explanatory names)
+Engine: made better check for Half-Life alpha maps (version 29 with colored lighting)
+
+build 2271
+
+Client: fix message TE_GLOWSPRITE. The gaussgun in Xash Mod is properly worked now.
+Client: restore studio check for missed models and ignore them instead of call the Sys_Error
+Server: fix crash in Gunman Chronicles (scorcher issues)
+
+build 2223
+
+Engine: added option "nomodels" for liblist.gam (disallow user to choose playermodel)
+Client: a new callback for render interface who called R_DrawCubemapView. This fixes cmd "envshot" for XashXT
+Client: store screenshots into root of folder "scrshots" instead of "scrshots\mapname"
+Client: engine using callback CL_CameraOffset now
+Client: fix angles for cmd "envshot"
+Render: rename a miss cvar "r_anisotropy" to real name "gl_anisotropy"
+Render: now "r_speeds 4" displays an actual count of "real" static entities that was created by call of MAKE_STATIC function
+Render: fix bug with blinking Quake Sky while autosave in progress
+Render: keep actual hardware gamma for multiple instances of application
+Engine: get support for Half-Life alpha maps (that has version 29)
+Server: fix the client rejection mechanism
+Server: using the pfnClientDisconnect callback
+Server: some changes in physics code (for MOVETYPE_PUSH)
+
+build 2153
+
+Render: added cvar "gl_nosort" that disables sorting of translucent surfaces
+
+build 2148
+
+Engine: implement support of new BSP format that called BSP31
+Engine: added new feature - big lightmaps 256x256 instead of 128x128. This is used for new BSP format 31
+Render: new texture viewer implemented (navigate pages with arrow keys)
+Engine: added cvar gl_keeptjunctions from Quake (removes a collinear points, economy some vertexes)
+Sound: test thing: release sentence sounds after playing
+Engine: rewrited code for anti (_-=ZhekA=-_) system
+Console: don't moving cursor if autocomplete was failed on second or all next arguments
+Engine: release all elements of client game cvar (was potential memory leak)
+Engine: allow change game for dedicated servers
+Server: added default case for Studio Blending Interface while server is not loaded (e.g. remote connection). Was here a potential crashpoint.
+Engine: parse "wad" field from entity string and use wad ordering for loading textures that may have matched names but placed in different wads
+Network: change protocol to 47. Old demos will stop working.
+Network: rewrite delta-comparing code. In theory this may reduce a network traffic
+Server: fix crash for fast switching between singleplayer and multiplayer
+Server: optimize MOVETYPE_COMPOUND code
+Server: added missed flag FL_FAKECLIENT for bots
+
+build 2112
+
+Engine: fix bug with ambient sounds that won't writes into demo
+Client: allow plaque 'loading' between demos change
+Client: make work fade flag FFADE_MODULATE
+Render: fixed underwater fog recursive leaf search code (thx XaeroX)
+Render: replace all 'random' calls in CL_RocketTrail code from RANDOM_LONG to rand() to get more compatibility with original quake particles
+Render: adding default studiomodel bbox for right culling client static entities
+Sound: add info about background track state into console command "s_info"
+Sound: increase static channels count up to 128
+Client: write background track state into demo
+Engine: fix crash when typing 'cvarlist' into console
+FS: allows lookup system files into root directory (e.g. vgui.dll etc)
+Engine: added new command 'modellist" (prints list about all loaded models)
+Engine: add terminator for entity string to be guranteed have valid end of the entity string
+Engine: purge all fake bmodels from previous map when server is changed
+Memory: increase check for filename debug length from 32 to 128 characters
+Server: background track which will be specfied from worldpsawn settings now are looped
+Engine: fix bug with recorded demos in Quake Remake after changelevel
+GameUI: 'gamestartup.mp3' now are looped
+Server: fix the SV_StudioSetupBones interface declaration error (thx maricool)
+Render: change MAXSTUDIOTEXTURES limit from 128 to 256
+Client: change passed argument for HUD_Frame callback from cl.time to host.frametime (thx XWider)
+Client: remove screen align to prevent deform on resolution 1366x768
+FS: do check what mod folder is really existed (this helps avoid to creating empty folder)
+GameUI: replace checkbox "Allow Software" with "Vertical Sync" in menu "Video Modes"
+
+
+build 2015
+
+Server: fix the sound problem with weapons
+Render: added rendermode kRenderWorldGlow (6) like in HL2
+Server: added new callback into PhysicsInterface that named SV_TriggerTouch
+Client: kill a little jitter for monsters that standing on elevators
+Client: fix very old bug (initially comes from Quake1) with efrags relinking on a static client entities
+Sound: got rid of message "S_PickChannel: no free channels" when breakble objects were broken.
+Engine: ignore to load HD-textures when dedicated server is running
+Client: count of static entities increased up to 512
+Render: fixed bug with wrong clamping on 3D textures
+Render: added a new one internal texture - gray cubemap that named as "*grayCube" without quotes
+Render: disable depth mask on studiomodels when render mode is "additive" (original HL rules)
+Sound: added a new untested feature for cull sounds by PAS on the client. Cvar "s_phs".
+Sound: add save\restore for all dynamic sounds in-game
+Sound: add save\restore for background track
+Engine: added two new cvars called "build" and "ver" for more info
+Engine: get support for loading game dlls from packfile
+Engine: get support for transparent conveyor belts. Texture name must starting from "{scroll"
+Sound: fix bug in wav-streaming code
+Server: add save\restore for client static entities (engine function MAKE_STATIC is now useful!)
+Server: remove command "map_backgound" in dedicated server mode
+Server: disable "Touch" function when playersonly-mode is active
+GameUI: don't draw logo.avi from root folder with user mods
+Client: added partially HD-textures support for sprites
+Server: now custom message code check all the visible portals (Xash-mod feature)
+Server: add quake-style for BSP hulls selection (cvar sv_quakehulls set to 1)
+Engine: remove jpeg image support (just unneeded)
+Server: remove ugly movement delay after map loaging in singleplayer
+Render: check studio skins for negative values to prevent possible crashes 
+Console: fixup negative values for "scr_conspeed" variable
+Render: fix interpolation bug for studiomodels on internal studio renderer
+Physic: transform trace BBox into local space of bmodel
+Engine: implement new system of engine features that can be enabled by Mod-Maker request
+Engine: build BSP surface meshes for Mod-Makers. e.g. for build collision tree of VBO\VA custom rendering
+Engine: allow support of large maps up to +\- 16384 units (need to edit delta.lst and enable feature in the engine)
+Engine: rewrite MOVETYPE_TOSS, MOVETYPE_BOUNCE etc
+Client: implement new draw type TRI_POINTS for TriAPI
+Client: changed snapshot name from mapnameXXXX.bmp to mapname_XXXX.bmp (by Qwertyus request)
+Client: write experimental code for interpolate bmodels movement (pev->animtime must not equal 0 for enable)
+GameUI: allow scissor for enginefunc pfnDrawCharacter
+Network: protocol changed. replace obsolete message svc_frame with message svc_restoresound
+Client: remove pieces that stuck in the walls for TE_BREAKMODEL message
+Render: fix mode r_lighting_extended 1 for prevent permanently black lighting in some cases
+Render: global fog update. get the uniform color for all the underwater objects (thx n00b)
+Render: fix issues with conveyor HD-textures (it can moves slower than physical conveyor speed)
+Render: added support for HD-textures for normal sprite frames (non-HUD sprites)
+Render: sorting meshes for studiomodel surfaces (draw "adiitive" surfaces at end of the list)
+Render: release GL-context when engine is shutting down
+Render: set gl_allow_static to zero as default
+Sound: set s_cull to zero as default
+Input: fix problems with call WC_SYSMENU instead of user-defined command when ALT is pressed
+Console: add a new command that called "mapstats" and works like bspinfo.exe
+Physic: added new meta-type SOLID_CUSTOM that could be traced in game dlls with physic API
+Pmove: get to work PM_CheckStuck on a server-side
+Server: added a new cvar that called a "sv_validate_changelevel" for skip any checks with changelevel problems
+Server: make check for recursive changelevel (and ignore it)
+Server: fix the problem with non-sended events when a player sight cross-line contents
+Server: rewrite MOVETYPE_STEP and MOVETYPE_PUSHSTEP physics
+Server: allow to MOVETYEP_PUSH blocking by dead bodies
+Server: fix bug with MOVETYPE_FOLLOW
+Server: added TriAPI through Server_PhysicsInterface for debug purposes
+GameUI: replace broken letter '¸' with 'å'
+GameUI: don't draw logo.avi for mods without this file in gamedir
+GameUI: fix buttons loader bug
+GameUI: enable scissor for all ScrollList menus
+GameUI: restore the menu buttons control from keyboard
+Client: get walk animation support for 'wrong' player models that uses different skeleton
+Server: ignore savegame during intermission (used for Quake remake)
+Render: merge mirrors with same plane into one pass (perfomance option)
+Render: fix errors in function GL_CleanupTextureUnits (it was cause problems in XashXT)
+Render: allow decals on 'Solid" surfaces: grates, ladders etc (thx n00b)
+Render: rewrite "r_lighting_extended 2" mode
+Render: add optional texture sorting for models with Additive and Transparent textures (r_studio_sort_textures cvar)
+Engine: makes AABB transform trace an option for switchable engine features
+Engine: allow studiomodel textures up to 4096x4096 (for indexed images)
+Server: merge PVS for looking for client through portal cameras
+Server: fix bug with collect savegame info from basedir (e.g. valve)
+
+
+build 1905
+
+Physic: fix trace bug when model is missing
+Client: implement function TriScreenToWorld
+Server: add local times for all the clients
+Server: implement unlag system
+Client: added ex_interp variable
+GameUI: added support for playermodel images (preview thumbnails)
+Engine: fix potentially crash in menu after calling Host_Error
+Engine: fix crash on Cry Of Fear modification (memory corrupts)
+Engine: first implementation of HLTV
+Render: fix a little bug with engine mirrors
+Sound: implement separate volume controls for background track and game sounds
+Sound: fix wrong position for dynamic sounds in case parent entity never has updates on the client
+Client: first implementation of extended engineinterface.
+Server: fix bug with update movevars after the server initialization.
+Input: cancel mouse movement while switches between menu\console and game
+Render: added function R_EntityRemoveDecals into RendererInterface
+Render: fixed bug with crash engine on custom resolutions while makes a screenshot (e.g. 1366x768)
+
+build 1850
+
+Physic: add check for liquid brushes that has only hull0
+Render: draw decals without culling on the transparent surfaces
+Engine: fix decal transition bug on global entities
+Client: fix "r_drawentities 5" debug code in client.dll
+Render: rewrited detail texture code for using detail scale for each diffuse texture instead of each detail texture
+Render: custom render interface is changed to version 26
+Engine: added custom studio decals serializtaion
+Server: fixed check for russian letters in the commands "say" and "say_team"
+Server: physics interface is changed to version 6
+Client: allow console in multiplayer even while dev-mode is disabled
+Engine: added new message SVC_STUDIODECAL that passed through engine and call function in extended rendered interface
+Engine: hook PrintScreen and manually writing screenshot into clipboard
+Render: fix decals drawing when rendermode is TransColor
+Render: add support for cubemaps, 1D and 3D textures
+Render: added some new internal textures that using by Xash-Mod 0.5
+Render: fix reflection for Glow-Sprites and follow beams
+Studio: fix poly-counter for studio models
+Engine: add support for userconfig
+Engine: allow letter '¸' in console and chat-mode
+Engine: fix REG_USER_MSG for messages that registering in-game
+Server: clear savedir when new game is started
+GameUI: loading maps.lst from basedir while mod doesn't contain multiplayer maps
+Network: implemented QueryCvarValue and QueryCvarValue2
+Physic: new pm-trace code, new server trace code, new studio hitbox trace code
+Client: rewrite demo record and playback
+Render: add support for STUDIO_NF_FULLBRIGHT
+Physic: fix pmove trace bug
+
+build 1770
+
+Client: add command "on"-"off" for virtual CD-player
+Client: add command "snapshot" that save screenshots into root folder
+Client: add studiomodel missed flags like in Quake (EF_ROTATE, EF_ROCKET, EF_GIB etc)
+Sound: clear LOOP flag for engine funcs PlaySoundByIndex and PlaySoundAtLocation
+Render: fix r_wateralpha, move cvar to server and allow save-restore it
+Render: fix old bug with surface->flags
+Render: fix crash when studiomodel isn't loaded but trying to draw
+Render: remove cvar gl_texturebits
+Render: allow 16-bit color mode when decktop has same
+Render: rename "vid_gamma" to "gamma", make backward compatibility with GoldSource config
+Sound: get support for automatic ambient sounds like in Quake
+Sound: add cvar "s_combine_channels" that trying to combine mutilpe channels with same sounds into one
+Engine: add "secure" option support for both liblist.gam and gameinfo.txt
+Engine: fix bug determine current directory
+Server: fix bug when some sound messages can't be sended to client (e.g. not vised map)
+Render: allow to load hi-res quake sky (two layers called as sky_solid and sky_alpha)
+Physic: fix trace bug when bbox mins are 0 0 0 and bbox maxs are positive values (like quake boxes)
+GameUI: add checkbox "allow materials" in menu Video Options.
+Client: implement "viewsize" cvar
+GameUI: add new function to inteface called as pfnProcessImage
+Client: add support for default studiomodel flags like quake effects (light, smoke, blood etc)
+Render: add engine mirrors (can be set on map with texture "decals.wad\reflect1")
+Client: rewrite client font system to allow support for "hud_scale" feature
+Client: re-enable client static entities (see engine function MAKE_STATIC for details)
+Sound: clear "loop" flags for client engine functions PlaySoundByName and PlaySoundByIndex
+Client: fix potentially crash in StudioRemap code
+Client: finalize 'GlowShell' effect on StudioModels
+Render: implement software gamma control that based on lightmap adjusting (gl_ignorehwgamma 1)
+Render: restore projection and modelview matrices before call V_CalcRefdef to avoid errors on custom rendering (e.g. HLFX 0.5, Trinity Renderers)
+Render: remove all stuff for 3dfx gamma control
+Render: add missing function R_ScreenToWorld
+Engine: add "icon" option support for both liblist.gam and gameinfo.txt
+Render: get support for rotational skybox that can be saved and restored with current angle
+Engine: fix bug with incorrect detecting Blue-Shift maps in some rare cases
+Engine: add autocomplete for 'entpatch' command
+Engine: fix Host_Error issues
+Network: add IPX and IPX_BROADCAST for backward compatibility with GoldSrc
+Engine: do revision for 'allow_studio_scale' cvar in trace code
+GameUI: added support for Steam backgrounds
+GameUI: hide input symbols for "password" field in "create server" menu page
+Client: initial implementation of NetAPI
+Render: clear decals code. Add transparent rendering for 'glass' decals
+GameUI: added new argument for pfnPIC_Load.
+GameUI: fix loading flipped Steam background images
+Client: remove gravity for R_Implosion effect
+Sound: add SND_MoveMouth16 for support 16-bit sounds lip-sync
+Engine: fix potentially crash during parsing titles.txt when file is empty
+Engine: increase MAX_VALUE field up to 2048 characters
+Console: rename con_gamemaps to con_mapfilter
+Sound: add check by PVS for dynamic entity channels
+Sound: add sound culling by geometry (cvar 's_cull' for enable or disable)
+Server: fix changelevel bug
+Engine: fix sound pathes with backward slash
+Engine: rewrite COM_LoadFile and LoadFileForMe for use malloc instead of engine Mem_Alloc
+Server: check date for entitypatch to avoid loading too old pathes (when map is never than path)
+Server: bug fixed in CreateNamedEntity (on create not existed entities).
+Server: rewrite engine func pfnAlertMessage to avoid crash in AM:Rebrith
+Server: align memory for edicts by 4 (this help to avoid crash in Poke646)
+Render: bugfixed with rotational brush culling (perfomance)
+Server: changelevel bug fixed (accumulate global entities)
+Server: changelevel bug when entitypath on new level is too old (new level is never than him entitypath)
+Server: physical inetrface for custom physic implementation is updated to version 5
+Physic: fix bug with MOVETYPE_COMPOUND
+Server: fix bug with force_retouch on start the level (to avoid crash in Todesangst2 on t2e1m10)
+Render: fix rendering for FACE_UPRIGHT sprite types (doom-like sprite monsters)
+Protocol: shifted up additional EF_ flags to avoid collisions with Trinity Renderers
+Render: now hardware gamma-control is fixed
+Client: implement new render interface for custom renderer implementation (current version is 12)
+Client: added two new funcstions into event API (IndexForEvent and EventForIndex)
+Client: added new function into IEngineStudio interface (StudioGetTexture) for custom rendering implementation
+Client: passed server beam entity through client function HUD_AddEntity, make force to add menu entity (player setup)
+Client: passed static client entities through client function HUD_AddEntity
+Physic: add support for rotational water and triggers
+
+build 1662
+
+Client: implement StudioRemapColors function
+Client: add simple shadows for stduiomodels (disabled like in GoldSrc)
+Client: fix some Paranoia bugs when custom renderer is disabled
+Client: implement overview tool (dev_overview)
+Client: add debug commands linefile and pointfile
+Client: get support for full-color external textures (tga format) - world, studiomodels and decals
+Client: fixed some HLFX 0.6 bugs
+Client: fixed follow studiomodels (like flags in CTF)
+Server: add pfnGetApproxWavePlayLen
+Sound: get support for mp3's with wav header
+Server: fixed FIND_CLIENT_IN_PVS
+Server: fixed PlaybackEvent, use camera PVS point when client see in
+Render: enable lightmaps on a transparent surfaces like windows (r_lighting_extended 2)
+Server: func_pushable can push players which standing on (sv_fix_pushstep)
+Render: partially fix for underwater fog (temporary solution)
+
+build 1613
+
+Client: fix drawing beams for 'solid' mode
+Image: fix BMP loader for 4-bit color bmp's
+Client: fix lightlevel calculating for local client (remove 'ambient' base from final value)
+GameUI: first implementation of custom strings and support 'strings.lst' parsing
+GameUI: replace unneeded button 'credits' with button 'previews'
+Render: fix sprite interpolation
+Render: fix angled sprites offset
+Render: implement detail textures like in Steam Half-Life (thx n00b)
+Client: rework env_funnel effect
+Engine: get full support for input, processing and drawing russian letters
+Console: add console commands 'messagemode' and 'messagemode2'
+Console: fix bug with autocomplete (enable sort for found cmds)
+Client: added HUD_ChatInputPosition for CS 1.6
+
+build 1598
+
+Client: fix crosshair drawing
+Sound: change libmad mp3 decoder on a mpg123
+Client: fix gibs randomization for TE_BREAKMODEL
+Engine: fix modelloader bug (engine crash after not found map)
+Video: add resolution 1366x768
+GameUI: fix skill select
+Network: change 'svc_setangle' message, include rollangle
+Render: fix chrome rendering on a studiomodels
+Render: added video memory economy mode - cvar 'gl_luminance_textures'
+GameDLL: first implementation of extended engineinterface. Metamod is supported now
+
+build 1557
+
+Sound: fixed wrong sound angles when client see in the camera
+Render: fix crash on change gl_texturemode and gl_anisotropy.
+Client: change relationsip for GetLocalPlayer. Now it's always valid.
+Server: rewrite SV_Multicast for correct work with custom user cameras
+Server: rewrite FIND_CLIENT_IN_PVS like in QW 
+
+build 1540
+
+Fixed many-many small and large bugs before final release
+
+build 1529
+
+FS: add "fallback_dir" option
+Server: fix func_pushable interaction with movers. Add new cvar "sv_allow_rotate_pushables"
+Server: added support for 'SV_SaveGameComment' export
+Server: fixed backup for quick.sav and autosave.save (quick01.sav and autosave01.sav) 
+Client: add commandline option "-nointro" to skip start movies
+Pmove: add sv_clienttrace that shared across network
+Render: implement "envshot" and "skyshot" commands for make cubemaps or skyboxes
+Server: fix remote connection (rcon)
+Render: add glare reduction option in menu
+Server: fix FindEntityInSphere bug (satchel issues in multiplayer)
+GameUI: added to scrollbar in srcoll lists (thx ADAMIX)
+
+build 1516
+
+Engine: fix Sys_Error blowout
+GameUI: implement new credits effect in Half-Life (when game is end)
+GameUI: use system cursor instead of emulated
+
+build 1515
+
+Engine: fix some bugs
+
+build 1507
+
+Console: implement Con_NPrintf and Con_NXPrintf
+Render:  adding better lighting for studiomodels (right lighting for long sequences e.g. forklift.mdl)
+Network: clamp all integer values to prevent them out of range
+Client: VGUI implementation
+Render: fix decals loading
+Server: fix NAN error on a crossbow launch
+
+build 1488
+
+Render: fix invisible sprites when game is paused
+Render: implement new better sprites lighting
+GameUI: HL-style buttons (old good menu form WON version)
+Render: fix some rendering bugs
+
+build 1482
+
+Engine: fixed critical bug
+Launch: remove all built-in tools
+Engine: add underwater fog
+Engine: add cvar to control studio model scaling (enable or disable)
+Engine: fixed bug with mouse in multiplayer (not work in menu)
+Engine: fixed lag on rpg laserspot
+Engine: added weapon and movement prediction (may be bugly, use with caution)
+GameUI: added pfnRandomLong and pfnRandomFloat built-ins (and keep compatibility with old versions)
+Engine: added map_background (special command for loading background maps like in Source Engine)
+GameUI: added support for chaptermapbackground.txt script-file (random choose background maps)
+Render: fix some rendering bugs for mods with custom renderer (Paranoia, HLFX etc)
+
+build 1433
+
+Engine: rework hitbox trace
+Engine: implement new check for blue-shift map format
+Engine: fix PointContents for custom contents checking (spirit)
+Engine: fix "angle" field on maps (typically for gearbox)
+GameUI: implement 'mouse look' checkbox
+
+build 1430
+
+Engine: fix crash with invalid room_type set (more than 60)
+Engine: fix stuck on elevators or tracktrains for clients
+
+build 1428
+
+Engine: fix trigger_camera serialization bug
+Engine: many-many physics bugs fixed
+Engine: reworking monster's movement and path finding
+Engine: hlfx 0.6 is now working
+FS: fix bug with game and base directory dectecting when they matches
+FS: watch for changes in liblist.gam and update gameinfo.txt (feature)
+Engine: fix some rendering bugs
+GameUI: added 'suitvolume' control
+GameUI: rewrite playeyrmodel drawing, so you can shows changes when hi\low resolution button is toggled
+GameUI: remove choosing audio and video library (interface changed!)
+Engine: fix train startup sound on new level 
+
+build 1422
+
+Render: fix decals serialization bug
+Engine: fix movie plaback bug (black screen)
+Engine: fix crash on loading encrypted client.dll
+GameUI: now recalc resolution when vid_mode is changed
+Sound: fix musicvolume bug
+Image: fix indexalpha palette bug
+Physic: fix stuck on some items (weapons, ammo)
+
+build 1418
+
+Tools: move all tools into launch.dll
+Sound: moving snd_dx.dll into engine.dll
+Sound: implement CDAudio emulator with support mp3 tracks from original Half-Life
+Sound: implement mp3 support
+GameUI: GameUI.dll renamed to MainUI.dll to avoid conflict with original valve's GameUI.dll
+Engine: support for StartupVids.txt
+Engine: get full compatibility with hl.dll
+FS: recode wad resource management (now support lumps from wads with same name)
+Engine: trigger_camera is now correctly saved and restored
+Render: add sorting for translucent surfaces
+Render: make support for 'static' models (any opaque non-moving brushes engine automatically make as part of world)
+Render: correct serialization for decals on bmodels
+
+build 1338
+
+Engine: fix a broken demos recording\playing
+GameUI: get support for internal resources (built-in)
+GameUI: make font.bmp, cursor.bmp and typing.bmp as part of GameUI.dll
+GameUI: remove demo menus heads.
+
+build 1334
+
+Engine: prevent auto-repeat for most keys in-game
+Engine: implement AVI movies support (instead of RoQ support)
+Engine: enable logo.avi in main menu (see GameUI source for details) 
+
+build 1313
+
+Launch: code revision, remove dead code, implement some missed functions
+Sound: fix some errors and crash
+Sound: implement music volume
+Sound: reworking sound mixer
+Sound: implement DSP
+Engine: add support for five mouse extra-buttons
+Engine: fix some physics bugs
+SDK: add blue-shift game source to SDK (combined with main game source)
+
+build 1305
+
+Engine: implement bit-stream network buffer
+Engine: implement custom delta-encoding with user defined script (delta.lst)
+Engine: reworking client entity for get more compatibility with original HL client
+Engine: make SDK compatible with HLSDK 2.3 on the server-side
+Engine: fixup across transition time-bug
+Engine: completely rewrite server trace
+Engine: rewrite hitbox trace
+Engine: rewrite SV_PointContents
+Engine: implement a new movetype: compound for gluing two entities together (like movewith in spirit)
+Engine: fix toss entities on conveyors
+Engine: rewrite MOVETYPE_PUSH
+Engine: rewrite monsters movement code
+Engine: reworking client and game interfaces
+Engine: fix camera bugs (no sounds when client see in the camera)
+SDK: fix many-many small HL bugs in original sdk code
+Engine: fix trigger retouching system
+Engine: adjust beam visibility
+
+build 1271
+
+Engine: enable server.cfg, listenserver.cfg, mapcycle.txt etc
+Engine: got to work mapcycle.txt
+GameUI: implement redefine keys menu
+Engine: added autocomplete for cmd 'exec'
+Engine: added version info in menu
+
+build 1270
+
+SDK: Shared launcher code
+Engine: Partially fix bmodel interpolation
+Engine: use standard .cfg files instead of .rc files
+
+build 1269
+
+Render: cut invisible water polygons
+Render: implement EF_NOWATERCSG for control func_water backface culling
+Tools: fix wadlib and spritegen round bugs
+FS: implement binary search for wadlumps
+Engine: revert low-res timer
+Network: fixup userinfo fields 'model' and 'name'
+Sound: implement custom pause for various sources
+Input: disable mouse events when level is loading
+GameUI: adding some missed dialogs
+Render: fix interpolation on flying monsters
+Render: fix wrong sprite attachments
+Render: fix invalid frustum culling for studiomodels ( e.g. barnacle.mdl )
+Physic: fix trace for rotating bmodels
+Engine: fixup physinfo save\restore bug
+
+build 1262
+
+Engine: add 'allow_levelshots' cvar (disabled by default) to switch between custom levelshots and normal 'loading' screen
+Client: remove fmod.dll implementation
+Engine: implement variable-sized fonts (console, menu hints)
+Sound: added support for stereo wavs plays (menu sounds)
+Render: enable custom game icons (game.ico in mod folder)
+Engine: move menu code into new user dll called GameUI.dll (based on original q2e 0.40 menu code)
+FS: implement simple converter liblist.gam to gameinfo.txt
+
+build 1254
+
+SoundLib: ogg loop points (LOOP_START comment)
+Client: recalc fov y for more matched with original HL
+Bshift: fix env_laser entity
+Client: fix fadeout for break model pieces
+Gfx: replace default.bmp font with fixed alpha-channel (thx LokiMb)
+Render: fix invisible beams behind glass
+Render: fix glow-sprites drawing through walls (see also r_cullflares cvar)
+FS: implement filter wadlumps by wadname (e.g. gfx.wad/backtile)
+Render: implement kRenderTransColor
+Engine: completely moving particle code into the client.dll
+Client: implement tracers for sparks, garg streaks and bullets 
+
+build 1249
+
+ImageLib: added support for 4-bits and monochrome uncompressed BMPs.
+ImageLib: fix data align for NPOT textures in menu (e.g. slider.bmp).
+StdLib: skip empty symbols in numerical string for atoi and atof.
+Render: implement LoadSprite for custom client sprites (e.g. hud)
+Sound: fixed bug with background music looping
+Fonts: implement Half-Life creditfonts
+Client: move client.dll to valve folder
