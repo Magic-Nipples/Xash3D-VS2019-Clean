@@ -45,6 +45,7 @@ public:
 		float				m_flFieldOfView;// width of monster's field of view ( dot product )
 		float				m_flWaitFinished;// if we're told to wait, this is the time that the wait will be over.
 		float				m_flMoveWaitFinished;
+		float				m_flLastYawTime; //magic nipples - yaw speed fix
 
 		Activity			m_Activity;// what the monster is doing (animation)
 		Activity			m_IdealActivity;// monster should switch to this activity

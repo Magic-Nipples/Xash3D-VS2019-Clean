@@ -2272,11 +2272,11 @@ qboolean S_Init( void )
 		return false;
 	}
 
-	s_volume = Cvar_Get( "volume", "0.7", FCVAR_ARCHIVE, "sound volume" );
-	s_musicvolume = Cvar_Get( "MP3Volume", "1.0", FCVAR_ARCHIVE, "background music volume" );
-	s_mixahead = Cvar_Get( "_snd_mixahead", "0.12", 0, "how much sound to mix ahead of time" );
+	s_volume = Cvar_Get( "volume", "0.5", FCVAR_ARCHIVE, "sound volume" );
+	s_musicvolume = Cvar_Get( "MP3Volume", "0.25", FCVAR_ARCHIVE, "background music volume" );
+	s_mixahead = Cvar_Get( "_snd_mixahead", "0.11", 0, "how much sound to mix ahead of time" ); //magic nipples - was 0.12
 	s_show = Cvar_Get( "s_show", "0", FCVAR_ARCHIVE, "show playing sounds" );
-	s_lerping = Cvar_Get( "s_lerping", "0", FCVAR_ARCHIVE, "apply interpolation to sound output" );
+	s_lerping = Cvar_Get( "s_lerping", "1", FCVAR_ARCHIVE, "apply interpolation to sound output" );
 	s_ambient_level = Cvar_Get( "ambient_level", "0.3", FCVAR_ARCHIVE, "volume of environment noises (water and wind)" );
 	s_ambient_fade = Cvar_Get( "ambient_fade", "1000", FCVAR_ARCHIVE, "rate of volume fading when client is moving" );
 	s_combine_sounds = Cvar_Get( "s_combine_channels", "0", FCVAR_ARCHIVE, "combine channels with same sounds" ); 

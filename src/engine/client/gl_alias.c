@@ -986,7 +986,10 @@ void R_AliasLighting( float *lv, const vec3_t normal )
 
 	illum += g_alias.shadelight;
 
-	r = SHADE_LAMBERT;
+	if ((r_overbright->value > 0))
+		r = r_studio_lambert->value + 0.4;
+	else
+		r = r_studio_lambert->value; //r = SHADE_LAMBERT;
 
 	// do modified hemispherical lighting
 	if( r <= 1.0f )

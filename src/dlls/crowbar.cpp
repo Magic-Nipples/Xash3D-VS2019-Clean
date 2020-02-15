@@ -148,7 +148,7 @@ void CCrowbar::PrimaryAttack()
 	if (! Swing( 1 ))
 	{
 		SetThink( &CCrowbar::SwingAgain );
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = UTIL_WeaponTimeBase() + 0.1; //magic nipples - swing fix
 	}
 }
 

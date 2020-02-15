@@ -69,6 +69,8 @@ convar_t	*r_lockfrustum;
 convar_t	*r_traceglow;
 convar_t	*r_dynamic;
 convar_t	*r_lightmap;
+convar_t* r_overbright; //magic nipples - overbright
+convar_t* r_studio_lambert;
 
 convar_t	*vid_displayfrequency;
 convar_t	*vid_fullscreen;
@@ -1122,8 +1124,16 @@ qboolean VID_CreateWindow( int width, int height, qboolean fullscreen )
 #endif
 	if( !fullscreen )
 	{
-		x = window_xpos->value;
-		y = window_ypos->value;
+		if ((window_xpos->value == -1) || (window_ypos->value == -1))
+		{
+			x = glw_state.desktopWidth * 0.5 - glState.width * 0.5;
+			y = glw_state.desktopHeight * 0.5 - glState.height * 0.5;
+		}
+		else
+		{
+			x = window_xpos->value;
+			y = window_ypos->value;
+		}
 
 		// adjust window coordinates if necessary 
 		// so that the window is completely on screen
@@ -1366,7 +1376,7 @@ qboolean VID_SetMode( void )
 
 		ReleaseDC( NULL, hDCScreen );
 
-		if( R_DescribeVIDMode( iScreenWidth, iScreenHeight ))
+		/* if( R_DescribeVIDMode( iScreenWidth, iScreenHeight ))
 		{
 			Con_Reportf( "found specified vid mode %i [%ix%i]\n", (int)vid_mode->value, iScreenWidth, iScreenHeight );
 			Cvar_SetValue( "fullscreen", 1 );
@@ -1375,7 +1385,7 @@ qboolean VID_SetMode( void )
 		{
 			Con_Reportf( "failed to set specified vid mode [%ix%i]\n", iScreenWidth, iScreenHeight );
 			Cvar_SetValue( "vid_mode", VID_DEFAULTMODE );
-		}
+		} */
 	}
 
 	fullscreen = vid_fullscreen->value;
@@ -1598,8 +1608,11 @@ void GL_InitCommands( void )
 	r_drawentities = Cvar_Get( "r_drawentities", "1", FCVAR_CHEAT|FCVAR_ARCHIVE, "render entities" );
 	r_decals = Cvar_Get( "r_decals", "4096", FCVAR_ARCHIVE, "sets the maximum number of decals" );
 	r_showtree = Cvar_Get( "r_showtree", "0", FCVAR_ARCHIVE, "build the graph of visible BSP tree" );
-	window_xpos = Cvar_Get( "_window_xpos", "130", FCVAR_RENDERINFO, "window position by horizontal" );
-	window_ypos = Cvar_Get( "_window_ypos", "48", FCVAR_RENDERINFO, "window position by vertical" );
+	r_overbright = Cvar_Get("gl_overbright", "1", FCVAR_ARCHIVE, "world overbrights"); //magic nipples - overbright
+	r_studio_lambert = Cvar_Get("r_studio_lambert", "1.495", FCVAR_ARCHIVE, "");
+
+	window_xpos = Cvar_Get( "_window_xpos", "-1", FCVAR_RENDERINFO, "window position by horizontal" );
+	window_ypos = Cvar_Get( "_window_ypos", "-1", FCVAR_RENDERINFO, "window position by vertical" );
 
 	gl_extensions = Cvar_Get( "gl_allow_extensions", "1", FCVAR_GLCONFIG, "allow gl_extensions" );			
 	gl_wgl_msaa_samples = Cvar_Get( "gl_wgl_msaa_samples", "4", FCVAR_GLCONFIG, "enable multisample anti-aliasing" );

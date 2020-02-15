@@ -37,7 +37,7 @@ extern byte	*r_temppool;
 #define MAX_DRAW_STACK	2		// normal view and menu view
 
 #define SHADEDOT_QUANT 	16		// precalculated dot products for quantized angles
-#define SHADE_LAMBERT	1.495f
+//#define SHADE_LAMBERT	1.495f
 #define DEFAULT_ALPHATEST	0.0f
 
 // refparams
@@ -683,5 +683,7 @@ extern convar_t	*vid_fullscreen;
 extern convar_t	*vid_brightness;
 extern convar_t	*vid_gamma;
 extern convar_t	*vid_mode;
+
+extern convar_t* r_overbright; //magic nipples - overbright
 
 #endif//GL_LOCAL_H
