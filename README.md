@@ -3,8 +3,7 @@
 ***
 **Credits:**\
 [Uncle Mike](https://hlfx.ru/forum/index.php) - Original creator of Xash3D.\
-[Magic_Nipples](https://twitter.com/Magic_Nipples) - continued work on this branch of the engine.\
-[Slartibarty](https://twitter.com/Slartbarty) - Initial conversion to  VS2019.
+[Magic_Nipples](https://twitter.com/Magic_Nipples) - Conversion to VS2019.
 
 **Donations:**\
 [Patreon](https://www.patreon.com/magicnipples) \
