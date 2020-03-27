@@ -45,7 +45,7 @@ void CL_RunLightStyles( void )
 
 	//magic nipples - overbright
 	if ((r_overbright->value == 1))
-		scale = r_lighting_modulate->value / 1.5f;
+		scale = r_lighting_modulate->value / 1.6f;
 	else
 		scale = r_lighting_modulate->value;
 

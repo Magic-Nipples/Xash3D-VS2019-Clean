@@ -629,7 +629,11 @@ int CBasePlayer :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, 
 		}
 	}
 
-	pev->punchangle.x = -2;
+	//pev->punchangle.x = -2;
+
+	if (bitsDamage & DMG_FALL) {}
+	else
+		pev->punchangle.x = -2;
 
 	if (fTookDamage && !ftrivial && fmajor && flHealthPrev >= 75) 
 	{
@@ -2527,7 +2531,7 @@ void CBasePlayer::PostThink()
 			if ( flFallDamage > 0 )
 			{
 				TakeDamage(VARS(eoNullEntity), VARS(eoNullEntity), flFallDamage, DMG_FALL ); 
-				pev->punchangle.x = 0;
+				//pev->punchangle.x = 0;
 			}
 		}
 

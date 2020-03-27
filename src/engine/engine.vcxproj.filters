@@ -350,6 +350,9 @@
     <ClCompile Include="common\zone.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="client\gl_downsample.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client\cl_tent.h">

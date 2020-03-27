@@ -78,6 +78,9 @@ convar_t	*vid_brightness;
 convar_t	*vid_gamma;
 convar_t	*vid_mode;
 
+//magic nipples - down sampling
+convar_t* r_downsample;
+
 byte		*r_temppool;
 
 ref_globals_t	tr;
@@ -1628,7 +1631,7 @@ void GL_InitCommands( void )
 	gl_showtextures = Cvar_Get( "r_showtextures", "0", FCVAR_CHEAT, "show all uploaded textures" );
 	gl_finish = Cvar_Get( "gl_finish", "0", FCVAR_ARCHIVE, "use glFinish instead of glFlush" );
 	gl_nosort = Cvar_Get( "gl_nosort", "0", FCVAR_ARCHIVE, "disable sorting of translucent surfaces" );
-	gl_clear = Cvar_Get( "gl_clear", "0", FCVAR_ARCHIVE, "clearing screen after each frame" );
+	gl_clear = Cvar_Get( "gl_clear", "1", FCVAR_ARCHIVE, "clearing screen after each frame" );
 	gl_test = Cvar_Get( "gl_test", "0", 0, "engine developer cvar for quick testing new features" );
 	gl_wireframe = Cvar_Get( "gl_wireframe", "0", FCVAR_ARCHIVE|FCVAR_SPONLY, "show wireframe overlay" );
 	gl_round_down = Cvar_Get( "gl_round_down", "2", FCVAR_RENDERINFO, "round texture sizes to nearest POT value" );
@@ -1645,6 +1648,9 @@ void GL_InitCommands( void )
 	vid_mode = Cvar_Get( "vid_mode", VID_AUTOMODE, FCVAR_RENDERINFO|FCVAR_VIDRESTART, "display resolution mode" );
 	vid_fullscreen = Cvar_Get( "fullscreen", "0", FCVAR_RENDERINFO|FCVAR_VIDRESTART, "enable fullscreen mode" );
 	vid_displayfrequency = Cvar_Get ( "vid_displayfrequency", "0", FCVAR_RENDERINFO|FCVAR_VIDRESTART, "fullscreen refresh rate" );
+
+	//magic nipples - down sampling
+	r_downsample = Cvar_Get("r_scale", "0", FCVAR_ARCHIVE, "downscale the view 1 - 1/2, 2 - 1/4, etc...");
 
 	Cmd_AddCommand( "r_info", R_RenderInfo_f, "display renderer info" );
 

@@ -74,10 +74,10 @@ entities sent from the server may not include everything in the pvs, especially
 when crossing a water boudnary.
 */
 
-extern cvar_t	*cl_forwardspeed;
-extern cvar_t	*chase_active;
-extern cvar_t	*scr_ofsx, *scr_ofsy, *scr_ofsz;
-extern cvar_t	*cl_vsmoothing;
+extern cvar_t* cl_forwardspeed;
+extern cvar_t* chase_active;
+extern cvar_t* scr_ofsx, * scr_ofsy, * scr_ofsz;
+extern cvar_t* cl_vsmoothing;
 
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
@@ -91,18 +91,21 @@ qboolean	v_resetCamera = 1;
 
 vec3_t ev_punchangle;
 
-cvar_t	*scr_ofsx;
-cvar_t	*scr_ofsy;
-cvar_t	*scr_ofsz;
+cvar_t* scr_ofsx;
+cvar_t* scr_ofsy;
+cvar_t* scr_ofsz;
 
-cvar_t	*v_centermove;
-cvar_t	*v_centerspeed;
+cvar_t* v_centermove;
+cvar_t* v_centerspeed;
 
-cvar_t	*cl_bobcycle;
-cvar_t	*cl_bob;
-cvar_t	*cl_bobup;
-cvar_t	*cl_waterdist;
-cvar_t	*cl_chasedist;
+cvar_t* cl_bobcycle;
+cvar_t* cl_bob;
+cvar_t* cl_bobup;
+cvar_t* cl_waterdist;
+cvar_t* cl_chasedist;
+
+cvar_t* cl_rollspeed;
+cvar_t* cl_rollangle;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
 // Register these cvars in V_Init() if needed for easy tweaking
@@ -403,18 +406,15 @@ Roll is induced by movement and damage
 */
 void V_CalcViewRoll ( struct ref_params_s *pparams )
 {
-	float		side;
-	cl_entity_t *viewentity;
-	
-	viewentity = gEngfuncs.GetEntityByIndex( pparams->viewentity );
-	if ( !viewentity )
+	cl_entity_t* viewentity;
+
+	viewentity = gEngfuncs.GetEntityByIndex(pparams->viewentity);
+	if (!viewentity)
 		return;
 
-	side = V_CalcRoll ( viewentity->angles, pparams->simvel, pparams->movevars->rollangle, pparams->movevars->rollspeed );
+	pparams->viewangles[ROLL] = V_CalcRoll(pparams->viewangles, pparams->simvel, cl_rollangle->value, cl_rollspeed->value) * 4; // magic nipples - view roll
 
-	pparams->viewangles[ROLL] += side;
-
-	if ( pparams->health <= 0 && ( pparams->viewheight[2] != 0 ) )
+	if (pparams->health <= 0 && (pparams->viewheight[2] != 0))
 	{
 		// only roll the view if the player is dead and the viewheight[2] is nonzero 
 		// this is so deadcam in multiplayer will work.
@@ -661,6 +661,8 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	view->angles[YAW]   -= bob * 0.5;
 	view->angles[ROLL]  -= bob * 1;
 	view->angles[PITCH] -= bob * 0.3;
+
+	VectorCopy(view->angles, view->curstate.angles);
 
 	// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
 	// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
@@ -1687,6 +1689,9 @@ void V_Init (void)
 	cl_bobup			= gEngfuncs.pfnRegisterVariable( "cl_bobup","0.5", 0 );
 	cl_waterdist		= gEngfuncs.pfnRegisterVariable( "cl_waterdist","4", 0 );
 	cl_chasedist		= gEngfuncs.pfnRegisterVariable( "cl_chasedist","112", 0 );
+
+	cl_rollspeed		= gEngfuncs.pfnRegisterVariable("cl_rollspeed", "325", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	cl_rollangle		= gEngfuncs.pfnRegisterVariable("cl_rollangle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 }
 
 

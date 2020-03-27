@@ -105,18 +105,21 @@ typedef struct
 } studio_draw_state_t;
 
 // studio-related cvars 
-convar_t			*r_studio_sort_textures;
-convar_t			*r_drawviewmodel;
-convar_t			*cl_righthand = NULL;
-convar_t			*cl_himodels;
+convar_t* r_studio_sort_textures;
+convar_t* r_drawviewmodel;
+convar_t* cl_righthand = NULL;
+convar_t* cl_himodels;
 
-convar_t*	r_shadows; //magic nipples - shadows
-convar_t*	r_shadow_height;
-convar_t*	r_shadow_x;
-convar_t*	r_shadow_y;
-convar_t*	r_shadow_alpha;
+convar_t* r_shadows; //magic nipples - shadows
+convar_t* r_shadow_height;
+convar_t* r_shadow_x;
+convar_t* r_shadow_y;
+convar_t* r_shadow_alpha;
 
-static r_studio_interface_t	*pStudioDraw;
+convar_t* r_viewmodelfov; //magic nipples - weapon fov
+convar_t* r_warp; //magic nipples - vertex warp
+
+static r_studio_interface_t* pStudioDraw;
 static studio_draw_state_t	g_studio;		// global studio state
 
 // global variables
@@ -147,6 +150,10 @@ void R_StudioInit( void )
 	r_shadow_x = Cvar_Get("r_shadow_x", "0.75", FCVAR_ARCHIVE, "shadow distance x axis");
 	r_shadow_y = Cvar_Get("r_shadow_y", "0", FCVAR_ARCHIVE, "shadow distance y-axis");
 	r_shadow_alpha = Cvar_Get("r_shadow_alpha", "0.5", FCVAR_ARCHIVE, "shadow opacity");
+
+	r_viewmodelfov = Cvar_Get("cl_viewmodel_fov", "90", FCVAR_ARCHIVE, "fov of view models"); //magic nipples - weapon fov
+
+	r_warp = Cvar_Get("r_studiowarp", "0", FCVAR_ARCHIVE, "ps1 vertex jiggle"); //magic nipples - weapon fov
 
 	Matrix3x4_LoadIdentity( g_studio.rotationmatrix );
 	Cvar_RegisterVariable( &r_glowshellfreq );
@@ -2346,8 +2353,32 @@ static void R_StudioDrawPoints( void )
 	{
 		for( i = 0; i < m_pSubModel->numverts; i++ )
 		{
+			//pstudioverts[0][i] = floorf(pstudioverts[0][i]);
+			//pstudioverts[1][i] = floorf(pstudioverts[1][i]);
+			//pstudioverts[2][i] = floorf(pstudioverts[2][i]);
+
 			Matrix3x4_VectorTransform( g_studio.bonestransform[pvertbone[i]], pstudioverts[i], g_studio.verts[i] );
+
 			R_LightStrength( pvertbone[i], pstudioverts[i], g_studio.lightpos[i] );
+		}
+	}
+
+	if (r_warp->value > 0)
+	{
+		int p;
+
+		for (i = 0; i < MAXSTUDIOVERTS; i++)
+		{
+			if (RI.currententity == &clgame.viewent)
+			{
+				for (p = 0; p < 3; p++)
+					g_studio.verts[p][i] = floor(40 * g_studio.verts[p][i]) / 40;
+			}
+			else
+			{
+				for (p = 0; p < 3; p++)
+					g_studio.verts[p][i] = floor(06 * g_studio.verts[p][i]) / 06;
+			}
 		}
 	}
 
@@ -3713,12 +3744,56 @@ void R_GatherPlayerLight( void )
 }
 
 /*
+=============
+R_GetFarClip //magic nipples - weapon fov
+=============
+*/
+float R_GetFarClip(void)
+{
+	if (cl.worldmodel && RI.drawWorld)
+		return clgame.movevars.zmax * 1.5f; //cl.refdef.movevars->zmax * 1.5f;
+	return 2048.0f;
+}
+
+/*
+=============
+R_SetupProjectionMatrix2 //magic nipples - weapon fov
+=============
+*/
+void R_SetupProjectionMatrix2(float fov_x, float fov_y, matrix4x4 m)
+{
+	GLdouble	xMin, xMax, yMin, yMax, zNear, zFar;
+
+	if (RI.drawOrtho)
+	{
+		ref_overview_t* ov = &clgame.overView;
+		Matrix4x4_CreateOrtho(m, ov->xLeft, ov->xRight, ov->yTop, ov->yBottom, ov->zNear, ov->zFar);
+		//RI.clipFlags = 0;
+		return;
+	}
+
+	RI.farClip = R_GetFarClip();
+
+	zNear = 4.0f;
+	zFar = max(256.0f, RI.farClip);
+
+	yMax = zNear * tan(fov_y * M_PI / 360.0);
+	yMin = -yMax;
+
+	xMax = zNear * tan(fov_x * M_PI / 360.0);
+	xMin = -xMax;
+
+	Matrix4x4_CreateProjection(m, xMax, xMin, yMax, yMin, zNear, zFar);
+}
+
+/*
 =================
 R_DrawViewModel
 =================
 */
 void R_DrawViewModel( void )
 {
+	float	m_flViewmodelFov, flFOVOffset, x, fov_x, fov_y;
 	cl_entity_t	*view = &clgame.viewent;
 
 	R_GatherPlayerLight();
@@ -3760,7 +3835,41 @@ void R_DrawViewModel( void )
 		break;
 	case mod_studio:
 		R_StudioSetupTimings();
-		R_StudioDrawModelInternal( RI.currententity, STUDIO_RENDER );
+		//R_StudioDrawModelInternal( RI.currententity, STUDIO_RENDER );
+
+		//magic nipples - weapon fov below this till the 'break;'
+		// Find the offset our current FOV is from the default value
+		flFOVOffset = cl.local.scr_fov - RI.fov_x;
+
+		// Adjust the viewmodel's FOV to move with any FOV offsets on the viewer's end
+		m_flViewmodelFov = r_viewmodelfov->value - flFOVOffset;
+
+		// calc local FOV
+		x = glState.width / tan(m_flViewmodelFov / 360 * M_PI);
+
+		fov_x = m_flViewmodelFov;
+		fov_y = atan(glState.height / x) * 360 / M_PI;
+
+		if (fov_x != RI.fov_x)
+		{
+			//matrix4x4	oldProjectionMatrix = RI.projectionMatrix;
+			R_SetupProjectionMatrix2(fov_x, fov_y, RI.projectionMatrix);
+
+			pglMatrixMode(GL_PROJECTION);
+			GL_LoadMatrix(RI.projectionMatrix);
+
+			R_StudioDrawModelInternal(RI.currententity, STUDIO_RENDER);
+
+			// restore original matrix
+			//RI.projectionMatrix = oldProjectionMatrix;
+
+			pglMatrixMode(GL_PROJECTION);
+			GL_LoadMatrix(RI.projectionMatrix);
+		}
+		else
+		{
+			R_StudioDrawModelInternal(RI.currententity, STUDIO_RENDER);
+		}
 		break;
 	}
 

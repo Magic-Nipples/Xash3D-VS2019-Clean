@@ -53,6 +53,7 @@ extern byte	*r_temppool;
 #define RP_NORMALPASS()	( FBitSet( RI.params, RP_NONVIEWERREF ) == 0 )
 
 #define TF_SKY		(TF_SKYSIDE|TF_NOMIPMAP)
+#define TF_SKY_NEAREST	(TF_NEAREST) //magic nipples - nearest skybox
 #define TF_FONT		(TF_NOMIPMAP|TF_CLAMP)
 #define TF_IMAGE		(TF_NOMIPMAP|TF_CLAMP)
 #define TF_DECAL		(TF_CLAMP)
@@ -468,6 +469,12 @@ qboolean R_Init( void );
 void R_Shutdown( void );
 
 //
+// gl_downsample.c //magic nipples - down sampling
+//
+void R_InitDownSampleTextures(void);
+void R_DownSampling(void);
+
+//
 // renderer exports
 //
 qboolean R_Init( void );
@@ -685,5 +692,13 @@ extern convar_t	*vid_gamma;
 extern convar_t	*vid_mode;
 
 extern convar_t* r_overbright; //magic nipples - overbright
+
+//magic nipples - down sampling
+extern convar_t* r_downsample;
+
+extern convar_t* gl_allow_mirrors; //Magic Nipples - readding mirrors
+extern convar_t* r_overbright; //magic nipples - overbright
+
+extern convar_t* r_lighting_lambert;
 
 #endif//GL_LOCAL_H

@@ -2436,22 +2436,12 @@ PM_Jump
 void PM_Jump (void)
 {
 	int i;
-	qboolean tfc = false;
 
 	qboolean cansuperjump = false;
 
 	if (pmove->dead)
 	{
 		pmove->oldbuttons |= IN_JUMP ;	// don't jump again until released
-		return;
-	}
-
-	tfc = atoi( pmove->PM_Info_ValueForKey( pmove->physinfo, "tfc" ) ) == 1 ? true : false;
-
-	// Spy that's feigning death cannot jump
-	if ( tfc && 
-		( pmove->deadflag == ( DEAD_DISCARDBODY + 1 ) ) )
-	{
 		return;
 	}
 
@@ -2521,14 +2511,8 @@ void PM_Jump (void)
 
 	PM_PreventMegaBunnyJumping();
 
-	if ( tfc )
-	{
-		pmove->PM_PlaySound( CHAN_BODY, "player/plyrjmp8.wav", 0.5, ATTN_NORM, 0, PITCH_NORM );
-	}
-	else
-	{
-		PM_PlayStepSound( PM_MapTextureTypeStepType( pmove->chtexturetype ), 1.0 );
-	}
+	//pmove->PM_PlaySound( CHAN_BODY, "player/plyrjmp8.wav", 0.5, ATTN_NORM, 0, PITCH_NORM );
+	PM_PlayStepSound( PM_MapTextureTypeStepType( pmove->chtexturetype ), 1.0 );
 
 	// See if user can super long jump?
 	cansuperjump = atoi( pmove->PM_Info_ValueForKey( pmove->physinfo, "slj" ) ) == 1 ? true : false;
@@ -2655,27 +2639,22 @@ void PM_CheckFalling( void )
 		{
 			// NOTE:  In the original game dll , there were no breaks after these cases, causing the first one to 
 			// cascade into the second
-			//switch ( RandomLong(0,1) )
-			//{
-			//case 0:
-				//pmove->PM_PlaySound( CHAN_VOICE, "player/pl_fallpain2.wav", 1, ATTN_NORM, 0, PITCH_NORM );
-				//break;
-			//case 1:
+			switch ( pmove->RandomLong(0,1) )
+			{
+			case 0:
+				pmove->PM_PlaySound( CHAN_VOICE, "player/pl_fallpain2.wav", 1, ATTN_NORM, 0, PITCH_NORM );
+				break;
+			case 1:
 				pmove->PM_PlaySound( CHAN_VOICE, "player/pl_fallpain3.wav", 1, ATTN_NORM, 0, PITCH_NORM );
-			//	break;
-			//}
+				break;
+			}
 			fvol = 1.0;
+
+			// Knock the screen around a little bit, temporary effect
+			pmove->punchangle[2] = pmove->flFallVelocity * 0.013;	// punch z axis
 		}
 		else if ( pmove->flFallVelocity > PLAYER_MAX_SAFE_FALL_SPEED / 2 )
 		{
-			qboolean tfc = false;
-			tfc = atoi( pmove->PM_Info_ValueForKey( pmove->physinfo, "tfc" ) ) == 1 ? true : false;
-
-			if ( tfc )
-			{
-				pmove->PM_PlaySound( CHAN_VOICE, "player/pl_fallpain3.wav", 1, ATTN_NORM, 0, PITCH_NORM );
-			}
-
 			fvol = 0.85;
 		}
 		else if ( pmove->flFallVelocity < PLAYER_MIN_BOUNCE_SPEED )
@@ -2690,11 +2669,11 @@ void PM_CheckFalling( void )
 			
 			PM_UpdateStepSound();
 			
+
+			pmove->punchangle[0] = pmove->flFallVelocity * 0.013;
+
 			// play step sound for current texture
 			PM_PlayStepSound( PM_MapTextureTypeStepType( pmove->chtexturetype ), fvol );
-
-			// Knock the screen around a little bit, temporary effect
-			pmove->punchangle[ 2 ] = pmove->flFallVelocity * 0.013;	// punch z axis
 
 			if ( pmove->punchangle[ 0 ] > 8 )
 			{
