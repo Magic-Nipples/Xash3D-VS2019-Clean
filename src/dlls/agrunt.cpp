@@ -467,15 +467,6 @@ void CAGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 			CBaseEntity *pHornet = CBaseEntity::Create( "hornet", vecArmPos, UTIL_VecToAngles( vecDirToEnemy ), edict() );
 			UTIL_MakeVectors ( pHornet->pev->angles );
 			pHornet->pev->velocity = gpGlobals->v_forward * 300;
-			
-			
-			
-			switch ( RANDOM_LONG ( 0 , 2 ) )
-			{
-				case 0:	EMIT_SOUND_DYN ( ENT(pev), CHAN_WEAPON, "agrunt/ag_fire1.wav", 1.0, ATTN_NORM, 0, 100 );	break;
-				case 1:	EMIT_SOUND_DYN ( ENT(pev), CHAN_WEAPON, "agrunt/ag_fire2.wav", 1.0, ATTN_NORM, 0, 100 );	break;
-				case 2:	EMIT_SOUND_DYN ( ENT(pev), CHAN_WEAPON, "agrunt/ag_fire3.wav", 1.0, ATTN_NORM, 0, 100 );	break;
-			}
 
 			CBaseMonster *pHornetMonster = pHornet->MyMonsterPointer();
 

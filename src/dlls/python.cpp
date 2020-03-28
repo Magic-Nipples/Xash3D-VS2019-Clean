@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -34,6 +34,24 @@ enum python_e {
 	PYTHON_IDLE3
 };
 
+class CPython : public CBasePlayerWeapon
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	int iItemSlot( void ) { return 2; }
+	int GetItemInfo(ItemInfo *p);
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void PrimaryAttack( void );
+	void SecondaryAttack( void );
+	BOOL Deploy( void );
+	void Holster( void );
+	void Reload( void );
+	void WeaponIdle( void );
+	float m_flSoundDelay;
+
+	BOOL m_fInZoom;// don't save this. 
+};
 LINK_ENTITY_TO_CLASS( weapon_python, CPython );
 LINK_ENTITY_TO_CLASS( weapon_357, CPython );
 
@@ -92,17 +110,11 @@ void CPython::Precache( void )
 	PRECACHE_SOUND ("weapons/357_cock1.wav");
 	PRECACHE_SOUND ("weapons/357_shot1.wav");
 	PRECACHE_SOUND ("weapons/357_shot2.wav");
-
-	m_usFirePython = PRECACHE_EVENT( 1, "events/python.sc" );
 }
 
 BOOL CPython::Deploy( )
 {
-#ifdef CLIENT_DLL
-	if ( bIsMultiplayer() )
-#else
 	if ( g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		// enable laser sight geometry.
 		pev->body = 1;
@@ -112,11 +124,11 @@ BOOL CPython::Deploy( )
 		pev->body = 0;
 	}
 
-	return DefaultDeploy( "models/v_357.mdl", "models/p_357.mdl", PYTHON_DRAW, "python", UseDecrement(), pev->body );
+	return DefaultDeploy( "models/v_357.mdl", "models/p_357.mdl", PYTHON_DRAW, "python" );
 }
 
 
-void CPython::Holster( int skiplocal /* = 0 */ )
+void CPython::Holster( )
 {
 	m_fInReload = FALSE;// cancel any reload in progress.
 
@@ -125,34 +137,30 @@ void CPython::Holster( int skiplocal /* = 0 */ )
 		SecondaryAttack();
 	}
 
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 1.0;
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
+	m_pPlayer->m_flNextAttack = gpGlobals->time + 1.0;
+	m_flTimeWeaponIdle = gpGlobals->time + 10 + RANDOM_FLOAT ( 0, 5 );
 	SendWeaponAnim( PYTHON_HOLSTER );
 }
 
 void CPython::SecondaryAttack( void )
 {
-#ifdef CLIENT_DLL
-	if ( !bIsMultiplayer() )
-#else
 	if ( !g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		return;
 	}
 
-	if ( m_pPlayer->pev->fov != 0 )
+	if ( m_fInZoom )
 	{
 		m_fInZoom = FALSE;
-		m_pPlayer->pev->fov = m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
+		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
 	}
-	else if ( m_pPlayer->pev->fov != 40 )
+	else
 	{
 		m_fInZoom = TRUE;
-		m_pPlayer->pev->fov = m_pPlayer->m_iFOV = 40;
+		m_pPlayer->m_iFOV = 40;
 	}
 
-	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_flNextSecondaryAttack = gpGlobals->time + 0.5;
 }
 
 void CPython::PrimaryAttack()
@@ -161,7 +169,7 @@ void CPython::PrimaryAttack()
 	if (m_pPlayer->pev->waterlevel == 3)
 	{
 		PlayEmptySound( );
-		m_flNextPrimaryAttack = 0.15;
+		m_flNextPrimaryAttack = gpGlobals->time + 0.15;
 		return;
 	}
 
@@ -171,71 +179,80 @@ void CPython::PrimaryAttack()
 			Reload( );
 		else
 		{
+	//		if (m_iClip == 0)
+			//PlayEmptySound( );
+
 			EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_cock1.wav", 0.8, ATTN_NORM);
-			m_flNextPrimaryAttack = 0.15;
+			m_flNextPrimaryAttack = gpGlobals->time + 0.15;
 		}
 
 		return;
 	}
-
+/*
+	if (m_iClip <= 0)
+	{
+		Reload( );
+		if (m_iClip == 0)
+			PlayEmptySound( );
+		return;
+	}
+*/
 	m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
 	m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
 
 	m_iClip--;
 
+/*
+	if (m_iClip || m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == 0)
+*/
+		SendWeaponAnim( PYTHON_FIRE1 );
+
+		// player "shoot" animation
+		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+/*
+	else
+		Reload( );
+*/
 	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 
-	// player "shoot" animation
-	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-
+	switch(RANDOM_LONG(0,1))
+	{
+	case 0:
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_shot1.wav", RANDOM_FLOAT(0.8, 0.9), ATTN_NORM);
+		break;
+	case 1:
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_shot2.wav", RANDOM_FLOAT(0.8, 0.9), ATTN_NORM);
+		break;
+	}
 
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
 
 	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );
-
-	Vector vecDir;
-	vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, VECTOR_CONE_1DEGREES, 8192, BULLET_PLAYER_357, 0, 0, m_pPlayer->pev, m_pPlayer->random_seed );
-
-    int flags;
-#if defined( CLIENT_WEAPONS )
-	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
-
-	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usFirePython, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, vecDir.x, vecDir.y, 0, 0, 0, 0 );
+	m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_1DEGREES, 8192, BULLET_PLAYER_357, 0 );
 
 	if (!m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		// HEV suit - indicate out of ammo condition
 		m_pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 
-	m_flNextPrimaryAttack = 0.75;
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
+	m_flNextPrimaryAttack = gpGlobals->time + 0.75;
+	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT ( 10, 15 );
+
+	m_pPlayer->pev->punchangle.x -= 10;
 }
 
 
 void CPython::Reload( void )
 {
-	if ( m_pPlayer->ammo_357 <= 0 )
-		return;
-
-	if ( m_pPlayer->pev->fov != 0 )
+	if ( m_fInZoom )
 	{
 		m_fInZoom = FALSE;
-		m_pPlayer->pev->fov = m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
+		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
 	}
 
-	int bUseScope = FALSE;
-#ifdef CLIENT_DLL
-	bUseScope = bIsMultiplayer();
-#else
-	bUseScope = g_pGameRules->IsMultiplayer();
-#endif
-
-	if (DefaultReload( 6, PYTHON_RELOAD, 2.0, bUseScope ))
+	if (DefaultReload( 6, PYTHON_RELOAD, 2.0 ))
 	{
-		m_flSoundDelay = 1.5;
+		m_flSoundDelay = gpGlobals->time + 1.5;
 	}
 }
 
@@ -247,46 +264,47 @@ void CPython::WeaponIdle( void )
 	m_pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );
 
 	// ALERT( at_console, "%.2f\n", gpGlobals->time - m_flSoundDelay );
-	if (m_flSoundDelay != 0 && m_flSoundDelay <= UTIL_WeaponTimeBase() )
+	if (m_flSoundDelay != 0 && m_flSoundDelay <= gpGlobals->time)
 	{
 		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_reload1.wav", RANDOM_FLOAT(0.8, 0.9), ATTN_NORM);
 		m_flSoundDelay = 0;
+
+		/*
+		for (int i = 0; i < 6; i++)
+		{
+			EjectBrass ( m_pPlayer->pev->origin, 
+						Vector( RANDOM_FLOAT( -10.0, 10.0 ), RANDOM_FLOAT( -10.0, 10.0 ), (float)0.0 ), 
+						m_pPlayer->pev->angles.y, TE_BOUNCE_SHELL); 
+		}
+		*/
 	}
 
-	if (m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
+	if (m_flTimeWeaponIdle > gpGlobals->time)
 		return;
 
 	int iAnim;
-	float flRand = UTIL_SharedRandomFloat( m_pPlayer->random_seed, 0.0f, 1.0f );
+	float flRand = RANDOM_FLOAT(0, 1);
 	if (flRand <= 0.5)
 	{
 		iAnim = PYTHON_IDLE1;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (70.0/30.0);
+		m_flTimeWeaponIdle = gpGlobals->time + (70.0/30.0);
 	}
 	else if (flRand <= 0.7)
 	{
 		iAnim = PYTHON_IDLE2;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (60.0/30.0);
+		m_flTimeWeaponIdle = gpGlobals->time + (60.0/30.0);
 	}
 	else if (flRand <= 0.9)
 	{
 		iAnim = PYTHON_IDLE3;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (88.0/30.0);
+		m_flTimeWeaponIdle = gpGlobals->time + (88.0/30.0);
 	}
 	else
 	{
 		iAnim = PYTHON_FIDGET;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (170.0/30.0);
+		m_flTimeWeaponIdle = gpGlobals->time + (170.0/30.0);
 	}
-	
-	int bUseScope = FALSE;
-#ifdef CLIENT_DLL
-	bUseScope = bIsMultiplayer();
-#else
-	bUseScope = g_pGameRules->IsMultiplayer();
-#endif
-	
-	SendWeaponAnim( iAnim, UseDecrement() ? 1 : 0, bUseScope );
+	SendWeaponAnim( iAnim );
 }
 
 

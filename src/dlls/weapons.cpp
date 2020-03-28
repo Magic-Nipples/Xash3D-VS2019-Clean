@@ -642,7 +642,7 @@ BOOL CanAttack( float attack_time, float curtime, BOOL isPredicted )
 
 void CBasePlayerWeapon::ItemPostFrame( void )
 {
-	if ((m_fInReload) && ( m_pPlayer->m_flNextAttack <= UTIL_WeaponTimeBase() ) )
+	if ((m_fInReload) && ( m_pPlayer->m_flNextAttack <= gpGlobals->time ) )
 	{
 		// complete the reload. 
 		int j = min( iMaxClip() - m_iClip, m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]);	
@@ -750,7 +750,7 @@ void CBasePlayerItem::Kill( void )
 	pev->nextthink = gpGlobals->time + .1;
 }
 
-void CBasePlayerItem::Holster( int skiplocal /* = 0 */ )
+void CBasePlayerItem::Holster( void )
 { 
 	m_pPlayer->pev->viewmodel = 0; 
 	m_pPlayer->pev->weaponmodel = 0;
@@ -994,8 +994,8 @@ BOOL CBasePlayerWeapon :: DefaultDeploy( char *szViewModel, char *szWeaponModel,
 	strcpy( m_pPlayer->m_szAnimExtention, szAnimExt );
 	SendWeaponAnim( iAnim, skiplocal, body );
 
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.0;
+	m_pPlayer->m_flNextAttack = gpGlobals->time + 0.5;
+	m_flTimeWeaponIdle = gpGlobals->time + 1.0;
 
 	return TRUE;
 }
@@ -1011,14 +1011,14 @@ BOOL CBasePlayerWeapon :: DefaultReload( int iClipSize, int iAnim, float fDelay,
 	if (j == 0)
 		return FALSE;
 
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + fDelay;
+	m_pPlayer->m_flNextAttack = gpGlobals->time + fDelay;
 
 	//!!UNDONE -- reload sound goes here !!!
 	SendWeaponAnim( iAnim, UseDecrement() ? 1 : 0 );
 
 	m_fInReload = TRUE;
 
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 3;
+	m_flTimeWeaponIdle = gpGlobals->time + 3;
 	return TRUE;
 }
 
@@ -1052,7 +1052,7 @@ int CBasePlayerWeapon::SecondaryAmmoIndex( void )
 	return -1;
 }
 
-void CBasePlayerWeapon::Holster( int skiplocal /* = 0 */ )
+void CBasePlayerWeapon::Holster( void )
 { 
 	m_fInReload = FALSE; // cancel any reload in progress.
 	m_pPlayer->pev->viewmodel = 0; 
@@ -1523,58 +1523,3 @@ void CBasePlayerWeapon::PrintState( void )
 
 	ALERT( at_console, "m_iclip:  %i\n", m_iClip );
 }
-
-
-TYPEDESCRIPTION	CRpg::m_SaveData[] = 
-{
-	DEFINE_FIELD( CRpg, m_fSpotActive, FIELD_INTEGER ),
-	DEFINE_FIELD( CRpg, m_cActiveRockets, FIELD_INTEGER ),
-};
-IMPLEMENT_SAVERESTORE( CRpg, CBasePlayerWeapon );
-
-TYPEDESCRIPTION	CRpgRocket::m_SaveData[] = 
-{
-	DEFINE_FIELD( CRpgRocket, m_flIgniteTime, FIELD_TIME ),
-	DEFINE_FIELD( CRpgRocket, m_pLauncher, FIELD_CLASSPTR ),
-};
-IMPLEMENT_SAVERESTORE( CRpgRocket, CGrenade );
-
-TYPEDESCRIPTION	CShotgun::m_SaveData[] = 
-{
-	DEFINE_FIELD( CShotgun, m_flNextReload, FIELD_TIME ),
-	DEFINE_FIELD( CShotgun, m_fInSpecialReload, FIELD_INTEGER ),
-	DEFINE_FIELD( CShotgun, m_flNextReload, FIELD_TIME ),
-	// DEFINE_FIELD( CShotgun, m_iShell, FIELD_INTEGER ),
-	DEFINE_FIELD( CShotgun, m_flPumpTime, FIELD_TIME ),
-};
-IMPLEMENT_SAVERESTORE( CShotgun, CBasePlayerWeapon );
-
-TYPEDESCRIPTION	CGauss::m_SaveData[] = 
-{
-	DEFINE_FIELD( CGauss, m_fInAttack, FIELD_INTEGER ),
-//	DEFINE_FIELD( CGauss, m_flStartCharge, FIELD_TIME ),
-//	DEFINE_FIELD( CGauss, m_flPlayAftershock, FIELD_TIME ),
-//	DEFINE_FIELD( CGauss, m_flNextAmmoBurn, FIELD_TIME ),
-	DEFINE_FIELD( CGauss, m_fPrimaryFire, FIELD_BOOLEAN ),
-};
-IMPLEMENT_SAVERESTORE( CGauss, CBasePlayerWeapon );
-
-TYPEDESCRIPTION	CEgon::m_SaveData[] = 
-{
-//	DEFINE_FIELD( CEgon, m_pBeam, FIELD_CLASSPTR ),
-//	DEFINE_FIELD( CEgon, m_pNoise, FIELD_CLASSPTR ),
-//	DEFINE_FIELD( CEgon, m_pSprite, FIELD_CLASSPTR ),
-	DEFINE_FIELD( CEgon, m_shootTime, FIELD_TIME ),
-	DEFINE_FIELD( CEgon, m_fireState, FIELD_INTEGER ),
-	DEFINE_FIELD( CEgon, m_fireMode, FIELD_INTEGER ),
-	DEFINE_FIELD( CEgon, m_shakeTime, FIELD_TIME ),
-	DEFINE_FIELD( CEgon, m_flAmmoUseTime, FIELD_TIME ),
-};
-IMPLEMENT_SAVERESTORE( CEgon, CBasePlayerWeapon );
-
-TYPEDESCRIPTION	CSatchel::m_SaveData[] = 
-{
-	DEFINE_FIELD( CSatchel, m_chargeReady, FIELD_INTEGER ),
-};
-IMPLEMENT_SAVERESTORE( CSatchel, CBasePlayerWeapon );
-

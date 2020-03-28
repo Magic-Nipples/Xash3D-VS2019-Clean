@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -39,7 +39,6 @@ enum tripmine_e {
 };
 
 
-#ifndef CLIENT_DLL
 
 class CTripmineGrenade : public CGrenade
 {
@@ -191,7 +190,7 @@ void CTripmineGrenade :: PowerupThink( void  )
 		{
 			STOP_SOUND( ENT(pev), CHAN_VOICE, "weapons/mine_deploy.wav" );
 			STOP_SOUND( ENT(pev), CHAN_BODY, "weapons/mine_charge.wav" );
-			SetThink( &CBaseEntity::SUB_Remove );
+			SetThink( &CTripmineGrenade::SUB_Remove );
 			pev->nextthink = gpGlobals->time + 0.1;
 			ALERT( at_console, "WARNING:Tripmine at %.0f, %.0f, %.0f removed\n", pev->origin.x, pev->origin.y, pev->origin.z );
 			KillBeam();
@@ -206,7 +205,7 @@ void CTripmineGrenade :: PowerupThink( void  )
 		CBaseEntity *pMine = Create( "weapon_tripmine", pev->origin + m_vecDir * 24, pev->angles );
 		pMine->pev->spawnflags |= SF_NORESPAWN;
 
-		SetThink( &CBaseEntity::SUB_Remove );
+		SetThink( &CTripmineGrenade::SUB_Remove );
 		KillBeam();
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
@@ -317,7 +316,7 @@ int CTripmineGrenade :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttac
 	{
 		// disable
 		// Create( "weapon_tripmine", pev->origin + m_vecDir * 24, pev->angles );
-		SetThink( &CBaseEntity::SUB_Remove );
+		SetThink( &CTripmineGrenade::SUB_Remove );
 		pev->nextthink = gpGlobals->time + 0.1;
 		KillBeam();
 		return FALSE;
@@ -350,9 +349,28 @@ void CTripmineGrenade::DelayDeathThink( void )
 
 	Explode( &tr, DMG_BLAST );
 }
-#endif
 
+class CTripmine : public CBasePlayerWeapon
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	int iItemSlot( void ) { return 5; }
+	int GetItemInfo(ItemInfo *p);
+	void SetObjectCollisionBox( void )
+	{
+		//!!!BUGBUG - fix the model!
+		pev->absmin = pev->origin + Vector(-16, -16, -5);
+		pev->absmax = pev->origin + Vector(16, 16, 28); 
+	}
+
+	void PrimaryAttack( void );
+	BOOL Deploy( void );
+	void Holster( void );
+	void WeaponIdle( void );
+};
 LINK_ENTITY_TO_CLASS( weapon_tripmine, CTripmine );
+
 
 void CTripmine::Spawn( )
 {
@@ -369,11 +387,7 @@ void CTripmine::Spawn( )
 
 	m_iDefaultAmmo = TRIPMINE_DEFAULT_GIVE;
 
-#ifdef CLIENT_DLL
-	if ( !bIsMultiplayer() )
-#else
 	if ( !g_pGameRules->IsDeathmatch() )
-#endif
 	{
 		UTIL_SetSize(pev, Vector(-16, -16, 0), Vector(16, 16, 28) ); 
 	}
@@ -384,8 +398,6 @@ void CTripmine::Precache( void )
 	PRECACHE_MODEL ("models/v_tripmine.mdl");
 	PRECACHE_MODEL ("models/p_tripmine.mdl");
 	UTIL_PrecacheOther( "monster_tripmine" );
-
-	m_usTripFire = PRECACHE_EVENT( 1, "events/tripfire.sc" );
 }
 
 int CTripmine::GetItemInfo(ItemInfo *p)
@@ -407,20 +419,20 @@ int CTripmine::GetItemInfo(ItemInfo *p)
 
 BOOL CTripmine::Deploy( )
 {
-	//pev->body = 0;
+	pev->body = 0;
 	return DefaultDeploy( "models/v_tripmine.mdl", "models/p_tripmine.mdl", TRIPMINE_DRAW, "trip" );
 }
 
 
-void CTripmine::Holster( int skiplocal /* = 0 */ )
+void CTripmine::Holster( )
 {
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_pPlayer->m_flNextAttack = gpGlobals->time + 0.5;
 
 	if (!m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType])
 	{
 		// out of mines
 		m_pPlayer->pev->weapons &= ~(1<<WEAPON_TRIPMINE);
-		SetThink( &CBasePlayerItem::DestroyItem );
+		SetThink(&CTripmine::DestroyItem );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 
@@ -441,30 +453,29 @@ void CTripmine::PrimaryAttack( void )
 
 	UTIL_TraceLine( vecSrc, vecSrc + vecAiming * 128, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
 
-	int flags;
-#ifdef CLIENT_WEAPONS
-	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
-
-	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usTripFire, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, 0, 0, 0, 0 );
-
 	if (tr.flFraction < 1.0)
 	{
+		// ALERT( at_console, "hit %f\n", tr.flFraction );
+
 		CBaseEntity *pEntity = CBaseEntity::Instance( tr.pHit );
-		if ( pEntity && !(pEntity->pev->flags & FL_CONVEYOR) )
+		if (pEntity && !(pEntity->pev->flags & FL_CONVEYOR))
 		{
 			Vector angles = UTIL_VecToAngles( tr.vecPlaneNormal );
 
 			CBaseEntity *pEnt = CBaseEntity::Create( "monster_tripmine", tr.vecEndPos + tr.vecPlaneNormal * 8, angles, m_pPlayer->edict() );
 
+			CTripmineGrenade *pMine = (CTripmineGrenade *)pEnt;
+
 			m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 
 			// player "shoot" animation
 			m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-			
-			if ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )
+
+			if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] > 0)
+			{
+				SendWeaponAnim( TRIPMINE_DRAW );
+			}
+			else
 			{
 				// no more mines! 
 				RetireWeapon();
@@ -480,17 +491,17 @@ void CTripmine::PrimaryAttack( void )
 	{
 
 	}
-	
-	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.3;
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
+
+	m_flNextPrimaryAttack = gpGlobals->time + 0.3;
+	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT ( 10, 15 );
 }
 
 void CTripmine::WeaponIdle( void )
 {
-	if ( m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
+	if (m_flTimeWeaponIdle > gpGlobals->time)
 		return;
 
-	if ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] > 0 )
+	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] > 0)
 	{
 		SendWeaponAnim( TRIPMINE_DRAW );
 	}
@@ -501,24 +512,25 @@ void CTripmine::WeaponIdle( void )
 	}
 
 	int iAnim;
-	float flRand = UTIL_SharedRandomFloat( m_pPlayer->random_seed, 0, 1 );
+	float flRand = RANDOM_FLOAT(0, 1);
 	if (flRand <= 0.25)
 	{
 		iAnim = TRIPMINE_IDLE1;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 90.0 / 30.0;
+		m_flTimeWeaponIdle = gpGlobals->time + 90.0 / 30.0;
 	}
 	else if (flRand <= 0.75)
 	{
 		iAnim = TRIPMINE_IDLE2;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 60.0 / 30.0;
+		m_flTimeWeaponIdle = gpGlobals->time + 60.0 / 30.0;
 	}
 	else
 	{
 		iAnim = TRIPMINE_FIDGET;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 100.0 / 30.0;
+		m_flTimeWeaponIdle = gpGlobals->time + 100.0 / 30.0;
 	}
 
 	SendWeaponAnim( iAnim );
+	
 }
 
 

@@ -40,7 +40,6 @@ CHud gHUD;
 TeamFortressViewport *gViewPort = NULL;
 
 void InitInput (void);
-void EV_HookEvents( void );
 void IN_Commands( void );
 
 /*
@@ -146,8 +145,6 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 		return 0;
 
 	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t));
-
-	EV_HookEvents();
 
 	return 1;
 }

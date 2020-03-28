@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -26,6 +26,23 @@
 #define	CROWBAR_BODYHIT_VOLUME 128
 #define	CROWBAR_WALLHIT_VOLUME 512
 
+class CCrowbar : public CBasePlayerWeapon
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	int iItemSlot( void ) { return 1; }
+	void EXPORT SwingAgain( void );
+	void EXPORT Smack( void );
+	int GetItemInfo(ItemInfo *p);
+
+	void PrimaryAttack( void );
+	int Swing( int fFirst );
+	BOOL Deploy( void );
+	void Holster( void );
+	int m_iSwing;
+	TraceResult m_trHit;
+};
 LINK_ENTITY_TO_CLASS( weapon_crowbar, CCrowbar );
 
 
@@ -65,8 +82,6 @@ void CCrowbar::Precache( void )
 	PRECACHE_SOUND("weapons/cbar_hitbod2.wav");
 	PRECACHE_SOUND("weapons/cbar_hitbod3.wav");
 	PRECACHE_SOUND("weapons/cbar_miss1.wav");
-
-	m_usCrowbar = PRECACHE_EVENT ( 1, "events/crowbar.sc" );
 }
 
 int CCrowbar::GetItemInfo(ItemInfo *p)
@@ -91,9 +106,9 @@ BOOL CCrowbar::Deploy( )
 	return DefaultDeploy( "models/v_crowbar.mdl", "models/p_crowbar.mdl", CROWBAR_DRAW, "crowbar" );
 }
 
-void CCrowbar::Holster( int skiplocal /* = 0 */ )
+void CCrowbar::Holster( )
 {
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_pPlayer->m_flNextAttack = gpGlobals->time + 0.5;
 	SendWeaponAnim( CROWBAR_HOLSTER );
 }
 
@@ -147,8 +162,8 @@ void CCrowbar::PrimaryAttack()
 {
 	if (! Swing( 1 ))
 	{
-		SetThink( &CCrowbar::SwingAgain );
-		pev->nextthink = UTIL_WeaponTimeBase() + 0.1; //magic nipples - swing fix
+		SetThink(&CCrowbar::SwingAgain );
+		pev->nextthink = gpGlobals->time + 0.1;
 	}
 }
 
@@ -177,7 +192,6 @@ int CCrowbar::Swing( int fFirst )
 
 	UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
 
-#ifndef CLIENT_DLL
 	if ( tr.flFraction >= 1.0 )
 	{
 		UTIL_TraceHull( vecSrc, vecEnd, dont_ignore_monsters, head_hull, ENT( m_pPlayer->pev ), &tr );
@@ -191,26 +205,36 @@ int CCrowbar::Swing( int fFirst )
 			vecEnd = tr.vecEndPos;	// This is the point on the actual surface (the hull could have hit space)
 		}
 	}
-#endif
-
-	PLAYBACK_EVENT_FULL( FEV_NOTHOST, m_pPlayer->edict(), m_usCrowbar, 
-	0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0, 0, 0,
-	0.0, 0, 0.0 );
-
 
 	if ( tr.flFraction >= 1.0 )
 	{
 		if (fFirst)
 		{
 			// miss
-			m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.5;
-			
+			switch( (m_iSwing++) % 3 )
+			{
+			case 0:
+				SendWeaponAnim( CROWBAR_ATTACK1MISS ); break;
+			case 1:
+				SendWeaponAnim( CROWBAR_ATTACK2MISS ); break;
+			case 2:
+				SendWeaponAnim( CROWBAR_ATTACK3MISS ); break;
+			}
+			m_flNextPrimaryAttack = gpGlobals->time + 0.5;
+			// play wiff or swish sound
+			EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/cbar_miss1.wav", 1, ATTN_NORM, 0, 94 + RANDOM_LONG(0,0xF));
+
 			// player "shoot" animation
 			m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		}
 	}
 	else
 	{
+		// hit
+		fDidHit = TRUE;
+
+		CBaseEntity *pEntity = CBaseEntity::Instance(tr.pHit);
+
 		switch( ((m_iSwing++) % 2) + 1 )
 		{
 		case 0:
@@ -223,16 +247,9 @@ int CCrowbar::Swing( int fFirst )
 
 		// player "shoot" animation
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-		
-#ifndef CLIENT_DLL
-
-		// hit
-		fDidHit = TRUE;
-		CBaseEntity *pEntity = CBaseEntity::Instance(tr.pHit);
 
 		ClearMultiDamage( );
-
-		if ( (m_flNextPrimaryAttack + 1 < UTIL_WeaponTimeBase() ) || g_pGameRules->IsMultiplayer() )
+		if ( (m_flNextPrimaryAttack + 1 < gpGlobals->time) || g_pGameRules->IsMultiplayer() )
 		{
 			// first swing does full damage
 			pEntity->TraceAttack(m_pPlayer->pev, gSkillData.plrDmgCrowbar, gpGlobals->v_forward, &tr, DMG_CLUB ); 
@@ -244,29 +261,31 @@ int CCrowbar::Swing( int fFirst )
 		}	
 		ApplyMultiDamage( m_pPlayer->pev, m_pPlayer->pev );
 
+		m_flNextPrimaryAttack = gpGlobals->time + 0.25;
+
 		// play thwack, smack, or dong sound
 		float flVol = 1.0;
 		int fHitWorld = TRUE;
 
 		if (pEntity)
 		{
-			if ( pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE )
+			if (pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE)
 			{
 				// play thwack or smack sound
 				switch( RANDOM_LONG(0,2) )
 				{
 				case 0:
-					EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/cbar_hitbod1.wav", 1, ATTN_NORM); break;
+					EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/cbar_hitbod1.wav", 1, ATTN_NORM); break;
 				case 1:
-					EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/cbar_hitbod2.wav", 1, ATTN_NORM); break;
+					EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/cbar_hitbod2.wav", 1, ATTN_NORM); break;
 				case 2:
-					EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/cbar_hitbod3.wav", 1, ATTN_NORM); break;
+					EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/cbar_hitbod3.wav", 1, ATTN_NORM); break;
 				}
 				m_pPlayer->m_iWeaponVolume = CROWBAR_BODYHIT_VOLUME;
-				if ( !pEntity->IsAlive() )
-					  return TRUE;
+				if (!pEntity->IsAlive() )
+					return TRUE;
 				else
-					  flVol = 0.1;
+					flVol = 0.1;
 
 				fHitWorld = FALSE;
 			}
@@ -291,25 +310,22 @@ int CCrowbar::Swing( int fFirst )
 			switch( RANDOM_LONG(0,1) )
 			{
 			case 0:
+				//UTIL_EmitAmbientSound(ENT(0), ptr->vecEndPos, "weapons/cbar_hit1.wav", fvolbar, ATTN_NORM, 0, 98 + RANDOM_LONG(0,3));
 				EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/cbar_hit1.wav", fvolbar, ATTN_NORM, 0, 98 + RANDOM_LONG(0,3)); 
 				break;
 			case 1:
+				//UTIL_EmitAmbientSound(ENT(0), ptr->vecEndPos, "weapons/cbar_hit2.wav", fvolbar, ATTN_NORM, 0, 98 + RANDOM_LONG(0,3));
 				EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/cbar_hit2.wav", fvolbar, ATTN_NORM, 0, 98 + RANDOM_LONG(0,3)); 
 				break;
 			}
-
-			// delay the decal a bit
-			m_trHit = tr;
 		}
 
-		m_pPlayer->m_iWeaponVolume = flVol * CROWBAR_WALLHIT_VOLUME;
-#endif
-		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.25;
-		
+		// delay the decal a bit
+		m_trHit = tr;
 		SetThink( &CCrowbar::Smack );
-		pev->nextthink = UTIL_WeaponTimeBase() + 0.2;
+		pev->nextthink = gpGlobals->time + 0.2;
 
-		
+		m_pPlayer->m_iWeaponVolume = flVol * CROWBAR_WALLHIT_VOLUME;
 	}
 	return fDidHit;
 }

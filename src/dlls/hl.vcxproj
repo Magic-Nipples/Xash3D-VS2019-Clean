@@ -59,7 +59,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>..\dlls;..\engine;..\common;..\pm_shared;..\game_shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;VOXEL;CLIENT_WEAPONS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;VOXEL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformation>true</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>

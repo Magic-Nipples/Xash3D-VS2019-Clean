@@ -2802,7 +2802,7 @@ void CBasePlayer::Spawn( void )
 	m_flFieldOfView		= 0.5;// some monsters use this to determine whether or not the player is looking at them.
 
 	m_bloodColor	= BLOOD_COLOR_RED;
-	m_flNextAttack	= UTIL_WeaponTimeBase();
+	m_flNextAttack = gpGlobals->time;//m_flNextAttack	= UTIL_WeaponTimeBase();
 	StartSneaking();
 
 	m_iFlashBattery = 99;
@@ -2985,23 +2985,23 @@ int CBasePlayer::Restore( CRestore &restore )
 
 void CBasePlayer::SelectNextItem( int iItem )
 {
-	CBasePlayerItem *pItem;
+	CBasePlayerItem* pItem;
 
-	pItem = m_rgpPlayerItems[ iItem ];
-	
+	pItem = m_rgpPlayerItems[iItem];
+
 	if (!pItem)
 		return;
 
 	if (pItem == m_pActiveItem)
 	{
 		// select the next one in the chain
-		pItem = m_pActiveItem->m_pNext; 
-		if (! pItem)
+		pItem = m_pActiveItem->m_pNext;
+		if (!pItem)
 		{
 			return;
 		}
 
-		CBasePlayerItem *pLast;
+		CBasePlayerItem* pLast;
 		pLast = pItem;
 		while (pLast->m_pNext)
 			pLast = pLast->m_pNext;
@@ -3009,23 +3009,23 @@ void CBasePlayer::SelectNextItem( int iItem )
 		// relink chain
 		pLast->m_pNext = m_pActiveItem;
 		m_pActiveItem->m_pNext = NULL;
-		m_rgpPlayerItems[ iItem ] = pItem;
+		m_rgpPlayerItems[iItem] = pItem;
 	}
 
-	ResetAutoaim( );
+	ResetAutoaim();
 
 	// FIX, this needs to queue them up and delay
 	if (m_pActiveItem)
 	{
-		m_pActiveItem->Holster( );
+		m_pActiveItem->Holster();
 	}
-	
+
 	m_pActiveItem = pItem;
 
 	if (m_pActiveItem)
 	{
-		m_pActiveItem->Deploy( );
-		m_pActiveItem->UpdateItemInfo( );
+		m_pActiveItem->Deploy();
+		m_pActiveItem->UpdateItemInfo();
 	}
 }
 
