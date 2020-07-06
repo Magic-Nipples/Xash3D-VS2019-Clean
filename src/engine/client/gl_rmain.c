@@ -226,6 +226,7 @@ void R_ClearScene( void )
 	tr.draw_list->num_solid_entities = 0;
 	tr.draw_list->num_trans_entities = 0;
 	tr.draw_list->num_beam_entities = 0;
+	tr.num_mirror_entities = 0; //Magic Nipples - readding mirrors
 }
 
 /*
@@ -744,7 +745,7 @@ static void R_CheckFog( void )
 
 	RI.cached_waterlevel = cl.local.waterlevel;
 
-	if( !IsLiquidContents( RI.cached_contents ) && IsLiquidContents( cnt ))
+	if( !IsLiquidContents( RI.cached_contents ) && IsLiquidContents( cnt )) //Magic Nipples - THIS NO LONGER WORKS. It worked in the previous engine version. I'll have to diff check later...
 	{
 		tex = NULL;
 
@@ -777,7 +778,7 @@ static void R_CheckFog( void )
 		RI.fogColor[0] = tex->fogParams[0] / 255.0f;
 		RI.fogColor[1] = tex->fogParams[1] / 255.0f;
 		RI.fogColor[2] = tex->fogParams[2] / 255.0f;
-		RI.fogDensity = tex->fogParams[3] * 0.000025f;
+		RI.fogDensity = tex->fogParams[3] * 0.000055f; //magic nipples - water fog alpha was 0.000025f
 		RI.fogStart = RI.fogEnd = 0.0f;
 		RI.fogColor[3] = 1.0f;
 		RI.fogCustom = false;
@@ -1009,7 +1010,7 @@ void R_RenderScene( void )
 
 	R_DrawEntitiesOnList();
 
-	R_DrawWaterSurfaces();
+	//R_DrawWaterSurfaces();
 
 	R_InitDownSampleTextures(); //magic nipples - down sampling
 
@@ -1175,8 +1176,14 @@ void R_RenderFrame( const ref_viewpass_t *rvp )
 		R_RunViewmodelEvents();
 
 	tr.realframecount++; // right called after viewmodel events
-	R_RenderScene();
 
+	if (gl_allow_mirrors->value) //Magic Nipples - readding mirrors
+	{
+		// render mirrors
+		R_FindMirrors();
+		R_DrawMirrors();
+	}
+	R_RenderScene();
 	R_DownSampling(); //magic nipples - down sampling
 }
 

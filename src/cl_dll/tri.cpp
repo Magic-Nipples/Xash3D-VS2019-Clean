@@ -16,6 +16,7 @@
 #include "entity_state.h"
 #include "cl_entity.h"
 #include "triangleapi.h"
+#include "rope.h" //magic nipples - ropes
 
 #define DLLEXPORT __declspec( dllexport )
 
@@ -102,6 +103,9 @@ void DLLEXPORT HUD_DrawNormalTriangles( void )
 {
 
 	gHUD.m_Spectator.DrawOverview();
+
+	if (CVAR_GET_FLOAT("cl_drawropes")) //magic nipples - ropes
+		gRopeRender.DrawRopes(1);
 	
 #if defined( TEST_IT )
 //	Draw_Triangles();
@@ -117,7 +121,6 @@ Render any triangles with transparent rendermode needs here
 */
 void DLLEXPORT HUD_DrawTransparentTriangles( void )
 {
-
 #if defined( TEST_IT )
 //	Draw_Triangles();
 #endif

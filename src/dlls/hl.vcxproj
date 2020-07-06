@@ -107,7 +107,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\dlls;..\engine;..\common;..\game_shared;..\pm_shared;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;WIN32;VOXEL;VALVE_DLL;CLIENT_WEAPONS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;WIN32;VOXEL;VALVE_DLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformation>true</BrowseInformation>
       <StringPooling>true</StringPooling>
     </ClCompile>
@@ -170,6 +170,8 @@
     <ClCompile Include="doors.cpp" />
     <ClCompile Include="effects.cpp" />
     <ClCompile Include="egon.cpp" />
+    <ClCompile Include="elight.cpp" />
+    <ClCompile Include="env_model.cpp" />
     <ClCompile Include="explode.cpp" />
     <ClCompile Include="flyingmonster.cpp" />
     <ClCompile Include="func_break.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="gman.cpp" />
     <ClCompile Include="handgrenade.cpp" />
     <ClCompile Include="hassassin.cpp" />
+    <ClCompile Include="hassault.cpp" />
     <ClCompile Include="headcrab.cpp" />
     <ClCompile Include="healthkit.cpp" />
     <ClCompile Include="hgrunt.cpp" />
@@ -210,6 +213,7 @@
     <ClCompile Include="multiplay_gamerules.cpp" />
     <ClCompile Include="nihilanth.cpp" />
     <ClCompile Include="nodes.cpp" />
+    <ClCompile Include="op4_rope.cpp" />
     <ClCompile Include="osprey.cpp" />
     <ClCompile Include="pathcorner.cpp" />
     <ClCompile Include="plane.cpp" />
@@ -218,6 +222,7 @@
     <ClCompile Include="python.cpp" />
     <ClCompile Include="rat.cpp" />
     <ClCompile Include="roach.cpp" />
+    <ClCompile Include="ropes.cpp" />
     <ClCompile Include="rpg.cpp" />
     <ClCompile Include="satchel.cpp" />
     <ClCompile Include="schedule.cpp" />
@@ -240,6 +245,7 @@
     <ClCompile Include="tripmine.cpp" />
     <ClCompile Include="turret.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="water.cpp" />
     <ClCompile Include="weapons.cpp" />
     <ClCompile Include="world.cpp" />
     <ClCompile Include="xen.cpp" />

@@ -67,6 +67,14 @@ int R_CullModel( cl_entity_t *e, const vec3_t absmin, const vec3_t absmax )
 		return 1;
 	}
 
+	// don't reflect this entity in mirrors //Magic Nipples - readding mirrors
+	if (FBitSet(e->curstate.effects, EF_NOREFLECT) && FBitSet(RI.params, RP_MIRRORVIEW))
+		return 1;
+
+	// draw only in mirrors //Magic Nipples - readding mirrors
+	if (FBitSet(e->curstate.effects, EF_REFLECTONLY) && !FBitSet(RI.params, RP_MIRRORVIEW))
+		return 1;
+
 	// local client can't view himself if camera or thirdperson is not active
 	if( RP_LOCALCLIENT( e ) && !cl.local.thirdperson && cl.viewentity == ( cl.playernum + 1 ))
 		return 1;
@@ -116,7 +124,8 @@ int R_CullSurface( msurface_t *surf, gl_frustum_t *frustum, uint clipflags )
 		}
 		else dist = PlaneDiff( tr.modelorg, surf->plane );
 
-		if( glState.faceCull == GL_FRONT )
+		//if( glState.faceCull == GL_FRONT )
+		if (glState.faceCull == GL_FRONT || (RI.params & RP_MIRRORVIEW)) //Magic Nipples - readding mirrors
 		{
 			if( FBitSet( surf->flags, SURF_PLANEBACK ))
 			{

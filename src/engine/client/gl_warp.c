@@ -824,3 +824,158 @@ void EmitWaterPolys( msurface_t *warp, qboolean reverse )
 
 	GL_SetupFogColorForSurfaces();
 }
+
+/*
+=============
+EmitSoftwareWaterPolys(
+
+Does a source like water effect using sprites and what not
+=============
+*/
+
+#define MAX_WATER_FRAMES 29
+#define MAX_TOXIC_FRAMES 15
+
+int grgWaterFrame[MAX_WATER_FRAMES] =
+{
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+	21, 22, 23, 24, 25, 26, 27, 28
+};
+
+int grgToxicFrame[MAX_TOXIC_FRAMES] =
+{
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+};
+
+void EmitSoftwareWaterPolys(msurface_t* warp, qboolean reverse)
+{
+	float* v, nv;
+	float	s, t, os, ot;
+	glpoly_t* p;
+	int	i, iFrame, j, gl_texturenum;
+
+	if (!warp->polys) return;
+
+	//Con_Printf("%i\n", RI.currententity->curstate.iuser3);
+
+	if (RI.currententity->curstate.iuser3 >= 1)
+	{
+		iFrame = (int)(cl.time * 15) % MAX_TOXIC_FRAMES;
+		j = grgToxicFrame[iFrame];
+
+		if ((gl_texturenum = R_GetSpriteTexture(CL_LoadClientSprite("sprites/water_toxic.spr"), j)) == 0)
+			return;
+	}
+	else
+	{
+		iFrame = (int)(cl.time * 16) % MAX_WATER_FRAMES;
+		j = grgWaterFrame[iFrame];
+
+		if ((gl_texturenum = R_GetSpriteTexture(CL_LoadClientSprite("sprites/water.spr"), j)) == 0)
+			return;
+	}
+	//Con_Printf("%i\n", j);
+
+	//if (gl_texturenum <= 0 || gl_texturenum > MAX_TEXTURES)
+	//	gl_texturenum = tr.defaultTexture;
+
+	gl_texture_t* tex = R_GetTexture(warp->texinfo->texture->gl_texturenum);
+
+	GL_Bind(GL_TEXTURE0, gl_texturenum);
+
+	//Con_Printf("%i\n", RI.currententity->curstate.iuser1);
+	//Con_Printf("%i\n", RI.currententity->curstate.iuser2);
+
+
+	if (RI.currententity->curstate.iuser3 >= 1)
+	{
+		pglColor4ub(165, 250, 0, RI.currententity->curstate.renderamt);
+
+		if (cl.local.waterlevel >= 3)
+		{
+			RI.fogColor[0] = 165 / 255.0f;
+			RI.fogColor[1] = 250 / 255.0f;
+			RI.fogColor[2] = 0;
+			RI.fogDensity = RI.currententity->curstate.iuser4 * 0.00025;
+			RI.fogStart = RI.fogEnd = 0.0f;
+			RI.fogColor[3] = 1.0f;
+			RI.fogCustom = false;
+			RI.fogEnabled = true;
+			RI.fogSkybox = true;
+		}
+	}
+	else
+	{
+		pglColor4ub(
+			RI.currententity->curstate.rendercolor.r,
+			RI.currententity->curstate.rendercolor.g,
+			RI.currententity->curstate.rendercolor.b,
+			RI.currententity->curstate.renderamt);
+
+		if (cl.local.waterlevel >= 3)
+		{
+			RI.fogColor[0] = RI.currententity->curstate.rendercolor.r / 255.0f;
+			RI.fogColor[1] = RI.currententity->curstate.rendercolor.g / 255.0f;
+			RI.fogColor[2] = RI.currententity->curstate.rendercolor.b / 255.0f;
+			RI.fogDensity = RI.currententity->curstate.iuser4 * 0.00025;
+			RI.fogStart = RI.fogEnd = 0.0f;
+			RI.fogColor[3] = 1.0f;
+			RI.fogCustom = false;
+			RI.fogEnabled = true;
+			RI.fogSkybox = true;
+		}
+	}
+
+	pglFogi(GL_FOG_MODE, GL_EXP);
+	pglFogfv(GL_FOG_COLOR, RI.fogColor);
+	pglFogf(GL_FOG_START, RI.fogStart);
+	pglFogf(GL_FOG_END, RI.fogEnd);
+	pglHint(GL_FOG_HINT, GL_NICEST);
+
+	if (FBitSet(warp->flags, SURF_DRAWTURB_QUADS))
+		pglBegin(GL_QUADS);
+
+	for (p = warp->polys; p; p = p->next)
+	{
+		if (reverse)
+			v = p->verts[0] + (p->numverts - 1) * VERTEXSIZE;
+		else v = p->verts[0];
+
+		if (!FBitSet(warp->flags, SURF_DRAWTURB_QUADS))
+			pglBegin(GL_POLYGON);
+
+		for (i = 0; i < p->numverts; i++)
+		{
+			nv = v[2];
+
+			os = v[3];
+			ot = v[4];
+
+			s = os;// +r_turbsin[(int)((ot * 0.125f + cl.time) * TURBSCALE) & 255];
+			s *= (0.20f / SUBDIVIDE_SIZE);
+
+			t = ot;// +r_turbsin[(int)((os * 0.125f + cl.time) * TURBSCALE) & 255];
+			t *= (0.20f / SUBDIVIDE_SIZE);
+
+			s += cl.time * ((float)RI.currententity->curstate.iuser1 * 0.01);
+			t += cl.time * ((float)RI.currententity->curstate.iuser2 * 0.01);
+
+			pglTexCoord2f(s, t);
+			pglVertex3f(v[0], v[1], nv);
+
+			if (reverse)
+				v -= VERTEXSIZE;
+			else v += VERTEXSIZE;
+		}
+
+		if (!FBitSet(warp->flags, SURF_DRAWTURB_QUADS))
+			pglEnd();
+	}
+
+	if (FBitSet(warp->flags, SURF_DRAWTURB_QUADS))
+		pglEnd();
+
+	pglColor4ub(255, 255, 255, 255);
+
+	GL_ResetFogColor();
+}

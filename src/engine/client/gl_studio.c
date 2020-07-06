@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "cl_tent.h"
 
 #define EVENT_CLIENT	5000	// less than this value it's a server-side studio events
-#define MAX_LOCALLIGHTS	4
+#define MAX_LOCALLIGHTS	32 //4
 
 CVAR_DEFINE_AUTO( r_glowshellfreq, "2.2", 0, "glowing shell frequency update" );
 //CVAR_DEFINE_AUTO( r_shadows, "0", 0, "cast shadows from models" );
@@ -119,6 +119,8 @@ convar_t* r_shadow_alpha;
 convar_t* r_viewmodelfov; //magic nipples - weapon fov
 convar_t* r_warp; //magic nipples - vertex warp
 
+convar_t* r_elightsys; //magic nipples - vertex lighting
+
 static r_studio_interface_t* pStudioDraw;
 static studio_draw_state_t	g_studio;		// global studio state
 
@@ -154,6 +156,8 @@ void R_StudioInit( void )
 	r_viewmodelfov = Cvar_Get("cl_viewmodel_fov", "90", FCVAR_ARCHIVE, "fov of view models"); //magic nipples - weapon fov
 
 	r_warp = Cvar_Get("r_studiowarp", "0", FCVAR_ARCHIVE, "ps1 vertex jiggle"); //magic nipples - weapon fov
+
+	r_elightsys = Cvar_Get("r_elightsys", "0", FCVAR_ARCHIVE, "Vertex lighting system based on elights");
 
 	Matrix3x4_LoadIdentity( g_studio.rotationmatrix );
 	Cvar_RegisterVariable( &r_glowshellfreq );
@@ -1627,6 +1631,10 @@ R_StudioDynamicLight
 
 ===============
 */
+#define AMBIENT_INSUN 0.2f
+#define AMBIENT_VERTSYS 0.35f
+#define AMBIENT 0.2f
+
 void R_StudioDynamicLight( cl_entity_t *ent, alight_t *plight )
 {
 	movevars_t	*mv = &clgame.movevars;
@@ -1783,6 +1791,8 @@ void R_StudioDynamicLight( cl_entity_t *ent, alight_t *plight )
 
 	plight->shadelight = VectorLength( lightDir );
 	plight->ambientlight = total - plight->shadelight;
+	//plight->shadelight = 0;
+	//plight->ambientlight = (float)(VectorLength(lightDir) * AMBIENT_VERTSYS);
 
 	total = Q_max( Q_max( finalLight[0], finalLight[1] ), finalLight[2] );
 
@@ -1821,6 +1831,9 @@ void R_StudioEntityLight( alight_t *lightinfo )
 	g_studio.numlocallights = 0;
 
 	if( !ent || !r_dynamic->value )
+		return;
+
+	if (r_elightsys->value < 1)
 		return;
 
 	for( i = 0; i < MAX_LOCALLIGHTS; i++ )
@@ -1869,10 +1882,28 @@ void R_StudioEntityLight( alight_t *lightinfo )
 
 			if( k != -1 )
 			{
+				vec3_t mid;
+				VectorCopy(RI.currententity->origin, mid);
+
+				if (RI.currententity != &clgame.viewent)
+					mid[2] = RI.currententity->origin[2] + 24; //hardcoded value so origin isn't at models feet
+
+				pmtrace_t tr = CL_TraceLine(el->origin, mid, PM_STUDIO_IGNORE | PM_GLASS_IGNORE);
+
 				g_studio.locallightcolor[k].r = LightToTexGamma( el->color.r );
 				g_studio.locallightcolor[k].g = LightToTexGamma( el->color.g );
 				g_studio.locallightcolor[k].b = LightToTexGamma( el->color.b );
-				g_studio.locallightR2[k] = r2;
+
+				if (tr.fraction == 1.0f)
+				{
+					g_studio.locallightR2[k] = r2;
+				}
+				else
+				{
+					g_studio.locallightR2[k] = 0;
+				}
+
+				//g_studio.locallightR2[k] = r2;
 				g_studio.locallight[k] = el;
 				lstrength[k] = minstrength;
 
@@ -2011,6 +2042,9 @@ void R_LightLambert( vec4_t light[MAX_LOCALLIGHTS], vec3_t normal, vec3_t color 
 				if( r2 > 0.0f )
 					light[i][3] = g_studio.locallightR2[i] / ( r2 * sqrt( r2 ));
 				else light[i][3] = 0.0001f;
+
+				if (light[i][3] > 0.025f) //magic nipples - cap elight distance so it doesn't look bad.
+					light[i][3] = 0.025f;
 			}
 
 			localLight[0] = Q_min( g_studio.locallightcolor[i].r * r * light[i][3], 255.0f );

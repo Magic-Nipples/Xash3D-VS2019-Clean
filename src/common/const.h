@@ -113,7 +113,9 @@
 #define EF_NOINTERP			32	// don't interpolate the next frame
 #define EF_LIGHT			64	// rocket flare glow sprite
 #define EF_NODRAW			128	// don't draw entity
+#define EF_NOREFLECT		256 // Entity won't reflecting in mirrors //Magic Nipples - readding mirrors
 
+#define EF_REFLECTONLY		(1<<25)	// Entity will be drawing only in mirrors //Magic Nipples - readding mirrors
 #define EF_WATERSIDES		(1<<26)	// Do not remove sides for func_water entity
 #define EF_FULLBRIGHT		(1<<27)	// Just get fullbright
 #define EF_NOSHADOW			(1<<28)	// ignore shadow for this entity

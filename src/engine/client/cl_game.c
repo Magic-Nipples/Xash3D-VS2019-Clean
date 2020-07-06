@@ -3148,7 +3148,7 @@ void TriFog( float flFogColor[3], float flStart, float flEnd, int bOn )
 	RI.fogSkybox = true;
 	RI.fogEnd = flEnd;
 
-	pglFogi( GL_FOG_MODE, GL_LINEAR );
+	pglFogi( GL_FOG_MODE, GL_EXP );
 	pglFogfv( GL_FOG_COLOR, RI.fogColor );
 	pglFogf( GL_FOG_START, RI.fogStart );
 	pglFogf( GL_FOG_END, RI.fogEnd );

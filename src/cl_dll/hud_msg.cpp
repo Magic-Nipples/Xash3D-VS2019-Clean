@@ -20,6 +20,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "r_efx.h"
+#include "rope.h" //magic nipples - ropes
 
 #define MAX_CLIENTS 32
 
@@ -66,6 +67,8 @@ void CHud :: MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 			pList->p->InitHUDData();
 		pList = pList->pNext;
 	}
+
+	gRopeRender.ResetRopes(); //magic nipples - ropes
 }
 
 
@@ -111,4 +114,50 @@ int CHud :: MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf )
 	else
 		this->m_StatusIcons.DisableIcon("dmg_concuss");
 	return 1;
+}
+
+int CHud::MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+
+	dlight_t* dl = gEngfuncs.pEfxAPI->CL_AllocElight(READ_SHORT());
+
+	int bELightActive = READ_BYTE();
+	if (bELightActive <= 0)
+	{
+		dl->die = gEngfuncs.GetClientTime();
+	}
+	else
+	{
+		dl->die = gEngfuncs.GetClientTime() + 1E6;
+
+		dl->origin[0] = READ_COORD();
+		dl->origin[1] = READ_COORD();
+		dl->origin[2] = READ_COORD();
+		dl->radius = READ_COORD();
+		dl->color.r = READ_BYTE();
+		dl->color.g = READ_BYTE();
+		dl->color.b = READ_BYTE();
+	}
+	return 1;
+}
+
+void CHud::MsgFunc_AddRope(const char* pszName, int iSize, void* pbuf) //magic nipples - ropes
+{
+	BEGIN_READ(pbuf, iSize);
+
+	vec3_t start_source;
+	vec3_t end_source;
+
+	start_source.x = READ_COORD();
+	start_source.y = READ_COORD();
+	start_source.z = READ_COORD();
+
+	end_source.x = READ_COORD();
+	end_source.y = READ_COORD();
+	end_source.z = READ_COORD();
+
+	char* datafile = READ_STRING();
+
+	gRopeRender.CreateRope(datafile, start_source, end_source);
 }

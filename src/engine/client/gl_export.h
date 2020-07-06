@@ -40,6 +40,10 @@ typedef char GLcharARB;
 typedef uint GLhandleARB;
 typedef float GLmatrix[16];
 
+#define GL_TEXTURE_WIDTH                        0x1000
+#define GL_TEXTURE_HEIGHT                       0x1001
+#define GL_TEXTURE_INTERNAL_FORMAT              0x1003
+
 #define GL_MODELVIEW			0x1700
 #define GL_PROJECTION			0x1701
 #define GL_TEXTURE				0x1702
@@ -1168,6 +1172,10 @@ void ( APIENTRY *pglTexParameteri )(GLenum target, GLenum pname, GLint param);
 void ( APIENTRY *pglTexParameteriv )(GLenum target, GLenum pname, const GLint *params);
 void ( APIENTRY *pglTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 void ( APIENTRY *pglTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
+
+void ( APIENTRY *pglGetTexLevelParameteriv)(GLenum target, GLint level, GLenum pname, GLint* params);
+void ( APIENTRY *pglGetTexImage)(GLenum target, GLint level, GLenum format, GLenum type, GLvoid* pixels);
+
 void ( APIENTRY *pglTranslated )(GLdouble x, GLdouble y, GLdouble z);
 void ( APIENTRY *pglTranslatef )(GLfloat x, GLfloat y, GLfloat z);
 void ( APIENTRY *pglVertex2d )(GLdouble x, GLdouble y);

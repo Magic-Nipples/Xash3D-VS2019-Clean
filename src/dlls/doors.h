@@ -29,5 +29,51 @@
 #define SF_DOOR_SILENT				0x80000000
 
 
+class CBaseDoor : public CBaseToggle
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	virtual void KeyValue(KeyValueData* pkvd);
+	virtual void Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
+	virtual void Blocked(CBaseEntity* pOther);
+
+
+	virtual int	ObjectCaps(void)
+	{
+		if (pev->spawnflags & SF_ITEM_USE_ONLY)
+			return (CBaseToggle::ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | FCAP_IMPULSE_USE;
+		else
+			return (CBaseToggle::ObjectCaps() & ~FCAP_ACROSS_TRANSITION);
+	};
+	virtual int	Save(CSave& save);
+	virtual int	Restore(CRestore& restore);
+
+	static	TYPEDESCRIPTION m_SaveData[];
+
+	virtual void SetToggleState(int state);
+
+	// used to selectivly override defaults
+	void EXPORT DoorTouch(CBaseEntity* pOther);
+
+	// local functions
+	int DoorActivate();
+	void EXPORT DoorGoUp(void);
+	void EXPORT DoorGoDown(void);
+	void EXPORT DoorHitTop(void);
+	void EXPORT DoorHitBottom(void);
+
+	BYTE	m_bHealthValue;// some doors are medi-kit doors, they give players health
+
+	BYTE	m_bMoveSnd;			// sound a door makes while moving
+	BYTE	m_bStopSnd;			// sound a door makes when it stops
+
+	locksound_t m_ls;			// door lock sounds
+
+	BYTE	m_bLockedSound;		// ordinals from entity selection
+	BYTE	m_bLockedSentence;
+	BYTE	m_bUnlockedSound;
+	BYTE	m_bUnlockedSentence;
+};
 
 #endif		//DOORS_H

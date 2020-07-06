@@ -147,6 +147,8 @@ typedef struct
 	vec3_t		mins;		// real accuracy world bounds
 	vec3_t		maxs;
 	vec3_t		size;
+
+	qboolean	has_mirrors;	// one or more brush models contain reflective textures //Magic Nipples - readding mirrors
 } world_static_t;
 
 extern world_static_t	world;

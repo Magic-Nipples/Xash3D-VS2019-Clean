@@ -1916,6 +1916,7 @@ static void Mod_LoadTextures( dbspmodel_t *bmod )
 		GL_FreeTexture( tr.alphaskyTexture );
 		tr.solidskyTexture = 0;
 		tr.alphaskyTexture = 0;
+		world.has_mirrors = false; //Magic Nipples - readding mirrors
 	}
 
 	if( !bmod->texdatasize )
@@ -2303,6 +2304,12 @@ static void Mod_LoadSurfaces( dbspmodel_t *bmod )
 		if(( tex->name[0] == '*' && Q__stricmp( tex->name, "*default" )) || tex->name[0] == '!' )
 			SetBits( out->flags, SURF_DRAWTURB );
 
+		if (!Q_strncmp(tex->name, "sourcewater", 11))
+		{
+			SetBits(out->flags, SURF_DRAWTURB);
+			SetBits(out->flags, SURF_SPECIALWATER);
+		}
+
 		if( !CL_IsQuakeCompatible( ))
 		{
 			if( !Q_strncmp( tex->name, "water", 5 ) || !Q__strnicmp( tex->name, "laser", 5 ))
@@ -2318,6 +2325,13 @@ static void Mod_LoadSurfaces( dbspmodel_t *bmod )
 		// g-cont. added a combined conveyor-transparent
 		if( !Q_strncmp( tex->name, "{scroll", 7 ))
 			SetBits( out->flags, SURF_CONVEYOR|SURF_TRANSPARENT );
+
+		// support !reflect for reflected water
+		if (!Q_strcmp(tex->name, "reflect1") || !Q_strncmp(tex->name, "!reflect", 8)) //Magic Nipples - readding mirrors
+		{
+			out->flags |= SURF_REFLECT;
+			world.has_mirrors = true;
+		}
 
 		if( tex->name[0] == '{' )
 			SetBits( out->flags, SURF_TRANSPARENT );

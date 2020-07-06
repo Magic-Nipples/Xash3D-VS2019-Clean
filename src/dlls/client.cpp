@@ -1176,6 +1176,14 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		state->health		= ent->v.health;
 	}
 
+	//Magic Nipples - restoring these and in the delta.lst for mod use again!
+	state->iuser1 = ent->v.iuser1;
+	state->iuser2 = ent->v.iuser2;
+	state->iuser3 = ent->v.iuser3;
+	state->iuser4 = ent->v.iuser4;
+
+	state->vuser1 = ent->v.vuser1;
+
 	return 1;
 }
 

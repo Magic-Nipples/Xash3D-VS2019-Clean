@@ -458,6 +458,8 @@ extern DLL_GLOBAL int			g_Language;
 
 #define SF_TRIG_PUSH_ONCE		1
 
+#define SF_BREAK_SOLID		512// is this entity solid? func_mirrors only! //magic nipples - func_mirror
+
 
 // Sound Utilities
 
