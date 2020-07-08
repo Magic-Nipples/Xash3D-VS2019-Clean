@@ -35,6 +35,7 @@ extern byte	*r_temppool;
 #define SUBDIVIDE_SIZE	64
 #define MAX_DECAL_SURFS	4096
 #define MAX_DRAW_STACK	2		// normal view and menu view
+#define MAX_MIRRORS		32	// per one frame! //Magic Nipples - readding mirrors
 
 #define SHADEDOT_QUANT 	16		// precalculated dot products for quantized angles
 //#define SHADE_LAMBERT	1.495f
@@ -42,11 +43,14 @@ extern byte	*r_temppool;
 
 // refparams
 #define RP_NONE		0
-#define RP_ENVVIEW		BIT( 0 )	// used for cubemapshot
-#define RP_OLDVIEWLEAF	BIT( 1 )
-#define RP_CLIPPLANE	BIT( 2 )
+#define RP_MIRRORVIEW	BIT( 0 )	// lock pvs at vieworg //Magic Nipples - readding mirrors
+#define RP_ENVVIEW		BIT( 1 )//0 // used for cubemapshot
+#define RP_OLDVIEWLEAF	BIT( 2 )//1	
+#define RP_CLIPPLANE	BIT( 3 )//2
 
-#define RP_NONVIEWERREF	(RP_ENVVIEW)
+//#define RP_NONVIEWERREF	(RP_ENVVIEW)
+#define RP_NONVIEWERREF	(RP_MIRRORVIEW|RP_ENVVIEW) //Magic Nipples - readding mirrors
+
 #define R_ModelOpaque( rm )	( rm == kRenderNormal )
 #define R_StaticEntity( ent )	( VectorIsNull( ent->origin ) && VectorIsNull( ent->angles ))
 #define RP_LOCALCLIENT( e )	((e) != NULL && (e)->index == ( cl.playernum + 1 ) && e->player )
@@ -95,6 +99,13 @@ typedef struct gltexture_s
 	uint		hashValue;
 	struct gltexture_s	*nextHash;
 } gl_texture_t;
+
+// mirror entity
+typedef struct gl_entity_s //Magic Nipples - readding mirrors
+{
+	cl_entity_t* ent;
+	mextrasurf_t* chain;
+} gl_entity_t;
 
 typedef struct
 {
@@ -179,6 +190,11 @@ typedef struct
 	int		skyboxTextures[6];	// skybox sides
 	int		cinTexture;      	// cinematic texture
 
+	int		mirrorTextures[MAX_MIRRORS]; //Magic Nipples - readding mirrors
+	int		num_mirrors_used;	// used mirror textures
+	gl_entity_t	mirror_entities[MAX_VISIBLE_PACKET];	// an entities that has mirror
+	uint		num_mirror_entities;
+
 	int		skytexturenum;	// this not a gl_texturenum!
 	int		skyboxbasenum;	// start with 5800
 
@@ -231,6 +247,7 @@ typedef struct
 	uint		c_studio_models_drawn;
 	uint		c_sprite_models_drawn;
 	uint		c_particle_count;
+	uint		c_mirror_passes; //Magic Nipples - readding mirrors
 
 	uint		c_client_ents;	// entities that moved to client
 	double		t_world_node;
@@ -334,6 +351,14 @@ void R_ShutdownImages( void );
 int GL_TexMemory( void );
 
 //
+// gl_mirror.c //Magic Nipples - readding mirrors
+//
+void R_BeginDrawMirror(msurface_t* fa);
+void R_EndDrawMirror(void);
+void R_DrawMirrors(void);
+void R_FindMirrors(void);
+
+//
 // gl_refrag.c
 //
 void R_StoreEfrags( efrag_t **ppefrag, int framecount );
@@ -401,6 +426,7 @@ void R_ClearStaticEntities( void );
 void R_MarkLeaves( void );
 void R_DrawWorld( void );
 void R_DrawWaterSurfaces( void );
+void R_DrawMirrors(void); //Magic Nipples - readding mirrors
 void R_DrawBrushModel( cl_entity_t *e );
 void GL_SubdivideSurface( msurface_t *fa );
 void GL_BuildPolygonFromSurface( model_t *mod, msurface_t *fa );

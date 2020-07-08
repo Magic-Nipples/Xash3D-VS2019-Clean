@@ -176,6 +176,7 @@
     <ClCompile Include="client\gl_draw.c" />
     <ClCompile Include="client\gl_frustum.c" />
     <ClCompile Include="client\gl_image.c" />
+    <ClCompile Include="client\gl_mirror.c" />
     <ClCompile Include="client\gl_refrag.c" />
     <ClCompile Include="client\gl_rlight.c" />
     <ClCompile Include="client\gl_rmain.c" />

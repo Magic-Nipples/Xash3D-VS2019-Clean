@@ -1,4 +1,4 @@
-/*
+﻿/*
 gl_rmain.c - renderer main loop
 Copyright (C) 2010 Uncle Mike
 
@@ -332,7 +332,7 @@ void R_SetupFrustum( void )
 {
 	ref_overview_t	*ov = &clgame.overView;
 
-	if( RP_NORMALPASS() && ( cl.local.waterlevel >= 3 ))
+	if( RP_NORMALPASS() && ( cl.local.waterlevel >= 3 )) //magic nipples - underwater view stretching
 	{
 		//RI.fov_x = atan(tan(DEG2RAD(RI.fov_x) / 2) * (0.97 + sin(cl.time * 4.5) * 0.23)) * 2 / (M_PI / 180.0); // :)
 		//RI.fov_y = atan(tan(DEG2RAD(RI.fov_y) / 2) * (1.03 - sin(cl.time * 5.5) * 0.23)) * 2 / (M_PI / 180.0); // :)
@@ -744,7 +744,7 @@ static void R_CheckFog( void )
 
 	RI.cached_waterlevel = cl.local.waterlevel;
 
-	if( !IsLiquidContents( RI.cached_contents ) && IsLiquidContents( cnt ))
+	if( !IsLiquidContents( RI.cached_contents ) && IsLiquidContents( cnt )) //Magic Nipples - This no longer works with func_water! ¯\_(ツ)_/¯
 	{
 		tex = NULL;
 
@@ -777,7 +777,7 @@ static void R_CheckFog( void )
 		RI.fogColor[0] = tex->fogParams[0] / 255.0f;
 		RI.fogColor[1] = tex->fogParams[1] / 255.0f;
 		RI.fogColor[2] = tex->fogParams[2] / 255.0f;
-		RI.fogDensity = tex->fogParams[3] * 0.000025f;
+		RI.fogDensity = tex->fogParams[3] * 0.000050f; //0.000025f
 		RI.fogStart = RI.fogEnd = 0.0f;
 		RI.fogColor[3] = 1.0f;
 		RI.fogCustom = false;
@@ -1175,8 +1175,15 @@ void R_RenderFrame( const ref_viewpass_t *rvp )
 		R_RunViewmodelEvents();
 
 	tr.realframecount++; // right called after viewmodel events
-	R_RenderScene();
 
+	if (gl_allow_mirrors->value) //Magic Nipples - readding mirrors
+	{
+		// render mirrors
+		R_FindMirrors();
+		R_DrawMirrors();
+
+	}
+	R_RenderScene();
 	R_DownSampling(); //magic nipples - down sampling
 }
 

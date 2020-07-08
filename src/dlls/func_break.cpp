@@ -124,6 +124,7 @@ void CBreakable::KeyValue( KeyValueData* pkvd )
 // func_breakable - bmodel that breaks into pieces after taking damage
 //
 LINK_ENTITY_TO_CLASS( func_breakable, CBreakable );
+LINK_ENTITY_TO_CLASS(func_mirror, CBreakable);//magic nipples - func_mirror
 TYPEDESCRIPTION CBreakable::m_SaveData[] =
 {
 	DEFINE_FIELD( CBreakable, m_Material, FIELD_INTEGER ),
