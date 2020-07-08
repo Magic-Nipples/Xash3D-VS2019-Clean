@@ -1623,9 +1623,8 @@ static int pfnGetScreenInfo( SCREENINFO *pscrinfo )
 
 	if( Cvar_VariableInteger( "hud_scale" ))
 	{
-		if( glState.width < 640 )
-		{
-			// virtual screen space 320x200
+		/*if( glState.width < 640 )
+w			// virtual screen space 320x200
 			clgame.scrInfo.iWidth = 320;
 			clgame.scrInfo.iHeight = 200;
 		}
@@ -1634,7 +1633,17 @@ static int pfnGetScreenInfo( SCREENINFO *pscrinfo )
 			// virtual screen space 640x480
 			clgame.scrInfo.iWidth = 640;
 			clgame.scrInfo.iHeight = 480;
-		}
+		}*/
+		float xscale;
+		if (glState.height < 700)
+			xscale = 1;
+		else if (glState.height < 1000)
+			xscale = 0.75;
+		else
+			xscale = 0.5;
+
+		clgame.scrInfo.iWidth = glState.width * xscale;
+		clgame.scrInfo.iHeight = glState.height * xscale;
 		clgame.scrInfo.iFlags |= SCRINFO_STRETCHED;
 	}
 	else
