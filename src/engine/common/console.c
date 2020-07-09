@@ -105,6 +105,8 @@ typedef struct
 	// console fonts
 	cl_font_t		chars[CON_NUMFONTS];// fonts.wad/font1.fnt
 	cl_font_t		*curFont, *lastUsedFont;
+
+	int			scale;
 	
 	// console input
 	field_t		input;
@@ -639,9 +641,9 @@ static void Con_LoadConsoleFont( int fontNumber, cl_font_t *font )
 	if( font->valid ) return; // already loaded
 
 	// loading conchars
-	if( Sys_CheckParm( "-oldfont" ))
-		Con_LoadVariableWidthFont( "gfx.wad/conchars.fnt", font );
-	else Con_LoadVariableWidthFont( va( "fonts.wad/font%i", fontNumber ), font );
+	//if( Sys_CheckParm( "-oldfont" ))
+		Con_LoadVariableWidthFont( "gfx.wad/conchars.fnt", font ); //magic nipples - load old console font 
+	//else Con_LoadVariableWidthFont( va( "fonts.wad/font%i", fontNumber ), font );
 
 	// quake fixed font as fallback
 	if( !font->valid ) Con_LoadFixedWidthFont( "gfx/conchars", font );
@@ -661,11 +663,22 @@ static void Con_LoadConchars( void )
 		Con_LoadConsoleFont( i, con.chars + i );
 
 	// select properly fontsize
-	if( glState.width <= 640 )
-		fontSize = 0;
-	else if( glState.width >= 1280 )
-		fontSize = 2;
-	else fontSize = 1;
+	//if( glState.width <= 640 )
+	//	fontSize = 0;
+	//else if( glState.width >= 1280 )
+	//	fontSize = 2;
+	//else fontSize = 1;
+
+	fontSize = 1;
+
+	if (glState.height >= 1080)
+		con.scale = 3;
+	else if (glState.height >= 720)
+		con.scale = 2;
+	else if (glState.height > 320)
+		con.scale = 1;
+	else
+		con.scale = 1; //fallback if somehow you are below 320x240?
 
 	// sets the current font
 	con.lastUsedFont = con.curFont = &con.chars[fontSize];
@@ -750,9 +763,10 @@ static int Con_DrawGenericChar( int x, int y, int number, rgba_t color )
 		return con.curFont->charWidths[number];
 
 	// don't apply color to fixed fonts it's already colored
-	if( con.curFont->type != FONT_FIXED || glt->format == GL_LUMINANCE8_ALPHA8 )
-		pglColor4ubv( color );
-	else pglColor4ub( 255, 255, 255, color[3] );
+	//if( con.curFont->type != FONT_FIXED || glt->format == GL_LUMINANCE8_ALPHA8 )
+	//	pglColor4ubv( color );
+	//else pglColor4ub( 255, 255, 255, color[3] );
+	pglColor4ub(255, 255, 255, color[3]); //magic nipples - just solid white please
 	R_GetTextureParms( &width, &height, con.curFont->hFontTexture );
 
 	// calc rectangle
@@ -763,12 +777,17 @@ static int Con_DrawGenericChar( int x, int y, int number, rgba_t color )
 	width = rc->right - rc->left;
 	height = rc->bottom - rc->top;
 
-	if( clgame.ds.adjust_size )
-		Con_TextAdjustSize( &x, &y, &width, &height );
+	con.curFont->charHeight = height * con.scale;
+
+	height *= con.scale;
+	width *= con.scale;
+
+	//if( clgame.ds.adjust_size )
+	//	Con_TextAdjustSize( &x, &y, &width, &height );
 	R_DrawStretchPic( x, y, width, height, s1, t1, s2, t2, con.curFont->hFontTexture );		
 	pglColor4ub( 255, 255, 255, 255 ); // don't forget reset color
 
-	return con.curFont->charWidths[number];
+	return con.curFont->charWidths[number] * con.scale;
 }
 
 /*
@@ -836,7 +855,7 @@ void Con_DrawStringLen( const char *pText, int *length, int *height )
 
 	if( !con.curFont ) return;
 
-	if( height ) *height = con.curFont->charHeight;
+	if( height ) *height = con.curFont->charHeight * con.scale;
 	if( !length ) return;
 
 	*length = 0;
@@ -858,7 +877,7 @@ void Con_DrawStringLen( const char *pText, int *length, int *height )
 			continue;
 		}
 
-		curLength += con.curFont->charWidths[c];
+		curLength += con.curFont->charWidths[c] * con.scale;
 		pText++;
 
 		if( curLength > *length )
@@ -1895,7 +1914,7 @@ void Con_DrawInput( int lines )
 
 	y = lines - ( con.curFont->charHeight * 2 );
 	Con_DrawCharacter( 8, y, ']', g_color_table[7] );
-	Field_DrawInputLine( 16, y, &con.input );
+	Field_DrawInputLine( 16 * con.scale, y, &con.input );
 }
 
 /*

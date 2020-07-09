@@ -376,13 +376,17 @@ void CL_DrawParticles( double frametime )
 	if( !cl_active_particles )
 		return;	// nothing to draw?
 
-	pglEnable( GL_BLEND );
-	pglDisable( GL_ALPHA_TEST );
-	pglBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	pglEnable(GL_BLEND);
+	pglDisable(GL_ALPHA_TEST);
+	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	GL_Bind( GL_TEXTURE0, tr.particleTexture );
-	pglTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-	pglDepthMask( GL_FALSE );
+	if (gl_texture_nearest->value)
+		GL_Bind(GL_TEXTURE0, tr.particleTexture); //magic nipples - changed to the older particle because more beta
+	else
+		GL_Bind(GL_TEXTURE0, tr.particleTexture2); //magic nipples - diddo
+
+	pglTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	pglDepthMask(GL_FALSE);
 
 	pglBegin( GL_QUADS );
 
@@ -484,7 +488,8 @@ void CL_DrawParticles( double frametime )
 			p->vel[2] -= grav * 20.0f;
 			break;
 		case pt_slowgrav:
-			p->vel[2] -= grav;
+			//p->vel[2] -= grav;
+			p->vel[2] += grav * 0.2; //magic nipples - +grav raises impact particles
 			break;
 		case pt_vox_grav:
 			p->vel[2] -= grav * 8.0f;

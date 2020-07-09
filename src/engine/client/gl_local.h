@@ -180,6 +180,7 @@ typedef struct
 {
 	int		defaultTexture;   	// use for bad textures
 	int		particleTexture;
+	int		particleTexture2;	// magic nipples - unsmoothed particle texture
 	int		whiteTexture;
 	int		grayTexture;
 	int		blackTexture;

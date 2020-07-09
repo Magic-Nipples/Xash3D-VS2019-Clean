@@ -672,10 +672,10 @@ void Host_InitCommon( const char *hostname, qboolean bChangeGame )
 		COM_FileBase( szTemp, SI.exeName );
 
 	// HACKHACK: Quake console is always allowed
-	if( Sys_CheckParm( "-console" ) || !Q__stricmp( SI.exeName, "quake" ))
+	if( Sys_CheckParm( "-console" ) || !Q__stricmp( SI.exeName, "quake" ) || !Q__stricmp(SI.exeName, "console") || !Q__stricmp(SI.exeName, "developer")) //magic nipples - if console.exe allow console
 		host.allow_console = true;
 
-	if( Sys_CheckParm( "-dev" ))
+	if( Sys_CheckParm( "-dev" ) || !Q__stricmp(SI.exeName, "developer")) //magic nipples - if developer.exe allow dev stuff
 	{
 		host.allow_console = true;
 		developer = DEV_NORMAL;

@@ -797,12 +797,12 @@ qboolean Cmd_CheckMapsList_R( qboolean fRefresh, qboolean onlyingamedir )
 		return false;
 	}
 
-	// write generated maps.lst
-	if( FS_WriteFile( "maps.lst", buffer, Q_strlen( buffer )))
+	// write generated maps.lst //magic nipples - no more maps.lst
+	/*if( FS_WriteFile( "maps.lst", buffer, Q_strlen( buffer )))
 	{
           	if( buffer ) Mem_Free( buffer );
 		return true;
-	}
+	}*/
 	return false;
 }
 

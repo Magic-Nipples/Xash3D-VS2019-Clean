@@ -24,6 +24,32 @@ static gl_texture_t*	gl_texturesHashTable[TEXTURES_HASH_SIZE];
 static uint		gl_numTextures;
 
 #define IsLightMap( tex )	( FBitSet(( tex )->flags, TF_ATLAS_PAGE ))
+
+//magic nipples - this table creates the actual shape of the particle.
+static byte	r_particleTexture[8][8] =
+{
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0},
+	{0,0,1,1,1,1,0,0},
+	{0,0,1,1,1,1,0,0},
+	{0,0,1,1,1,1,0,0},
+	{0,0,1,1,1,1,0,0},
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0},
+};
+
+static byte	r_particleTexture2[8][8] =
+{
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,1,1,0,0,0},
+	{0,0,1,1,1,1,0,0},
+	{0,0,1,1,1,1,0,0},
+	{0,0,0,1,1,0,0,0},
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0},
+};
+
 /*
 =================
 R_GetTexture
@@ -1940,7 +1966,7 @@ GL_CreateInternalTextures
 */
 static void GL_CreateInternalTextures( void )
 {
-	int	dx2, dy, d;
+	//int	dx2, dy, d;
 	int	x, y;
 	rgbdata_t	*pic;
 
@@ -1960,7 +1986,7 @@ static void GL_CreateInternalTextures( void )
 	tr.defaultTexture = GL_LoadTextureInternal( "*default", pic, TF_COLORMAP );
 
 	// particle texture from quake1
-	pic = GL_FakeImage( 16, 16, 1, IMAGE_HAS_COLOR|IMAGE_HAS_ALPHA );
+	/*pic = GL_FakeImage( 16, 16, 1, IMAGE_HAS_COLOR|IMAGE_HAS_ALPHA );
 
 	for( x = 0; x < 16; x++ )
 	{
@@ -1973,9 +1999,28 @@ static void GL_CreateInternalTextures( void )
 			d = 255 - 35 * sqrt( dx2 + dy * dy );
 			pic->buffer[( y * 16 + x ) * 4 + 3] = bound( 0, d, 255 );
 		}
+	}*/
+	
+	//magic nipples - new code to load in custom quake particle... sigh....
+	pic = GL_FakeImage(8, 8, 1, IMAGE_HAS_COLOR | IMAGE_HAS_ALPHA);
+	for (x = 0; x < 8; x++)
+	{
+		for (y = 0; y < 8; y++)
+		{
+			pic->buffer[(y * 8 + x) * 4 + 3] = r_particleTexture[x][y] * 255;
+		}
 	}
+	tr.particleTexture = GL_LoadTextureInternal("*particle", pic, TF_CLAMP);
 
-	tr.particleTexture = GL_LoadTextureInternal( "*particle", pic, TF_CLAMP );
+	pic = GL_FakeImage(8, 8, 1, IMAGE_HAS_COLOR | IMAGE_HAS_ALPHA);
+	for (x = 0; x < 8; x++)
+	{
+		for (y = 0; y < 8; y++)
+		{
+			pic->buffer[(y * 8 + x) * 4 + 3] = r_particleTexture2[x][y] * 255;
+		}
+	}
+	tr.particleTexture2 = GL_LoadTextureInternal("*particle2", pic, TF_CLAMP);
 
 	// white texture
 	pic = GL_FakeImage( 4, 4, 1, IMAGE_HAS_COLOR );
