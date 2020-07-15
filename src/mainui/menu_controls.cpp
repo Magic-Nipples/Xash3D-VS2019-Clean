@@ -176,7 +176,9 @@ static void UI_Controls_ParseKeysList( void )
 			pfile = COM_ParseFile( pfile, token );
 			if( !pfile ) break;	// technically an error
 
-			sprintf( str, "^6%s^7", token );	// enable uiPromptTextColor
+			sprintf(str, "^2%s^7", token);
+			//sprintf( str, "^6%s^7", token );	// enable uiPromptTextColor
+
 			StringConcat( uiControls.keysDescription[i], str, strlen( str ) + 1 );
 			StringConcat( uiControls.keysDescription[i], uiEmptyString, 256 );	// empty
 			uiControls.keysDescriptionPtr[i] = uiControls.keysDescription[i];
@@ -210,7 +212,7 @@ static void UI_Controls_ParseKeysList( void )
 			// HACKHACK this color should be get from kb_keys.lst
 			if( !_strnicmp( uiControls.firstKey[i], "MOUSE", 5 ))
 				sprintf( str, "^5%s^7", uiControls.firstKey[i] );	// cyan
-			else sprintf( str, "^3%s^7", uiControls.firstKey[i] );	// yellow
+			else sprintf( str, "^7%s^7", uiControls.firstKey[i] );	// yellow "^3%s^7"
 			StringConcat( uiControls.keysDescription[i], str, KEY1_LENGTH );
 			StringConcat( uiControls.keysDescription[i], uiEmptyString, KEY1_LENGTH );
 

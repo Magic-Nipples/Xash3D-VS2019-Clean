@@ -870,8 +870,17 @@ int EXPORT Host_Main( const char *progname, int bChangeGame, pfnChangeGame func 
 		Cbuf_Execute();
 		if( !host.config_executed )
 		{
-			Cbuf_AddText( "exec config.cfg\n" );
-			Cbuf_Execute();
+			if (FS_FileExists(va("config.cfg"), false))
+			{
+				Cbuf_AddText("exec config.cfg\n");
+				Cbuf_Execute(); // magic nipples - where it loads config.cfg for menu use
+			}
+			else
+			{
+				Cbuf_AddText("exec default.cfg\n");
+				Cbuf_Execute();
+				Con_Printf("Loading default.cfg in place of missing config.cfg\n");
+			}
 		}
 		break;
 	case HOST_DEDICATED:

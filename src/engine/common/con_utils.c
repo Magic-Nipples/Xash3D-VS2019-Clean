@@ -930,12 +930,15 @@ void Host_WriteConfig( void )
 	{
 		Con_Reportf( "Host_WriteConfig()\n" );
 		FS_Printf( f, "//=======================================================================\n");
-		FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
+		//FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
 		FS_Printf( f, "//\t\t\tconfig.cfg - archive of cvars\n" );
 		FS_Printf( f, "//=======================================================================\n" );
+		FS_Printf(f, "\n");
+
 		Key_WriteBindings( f );
 		Cvar_WriteVariables( f, FCVAR_ARCHIVE );
 		Info_WriteVars( f );
+		//FS_Printf(f, "bind w \"+forward\" \n");
 
 		if( clgame.hInstance )
 		{
@@ -963,9 +966,9 @@ Host_WriteServerConfig
 save serverinfo variables into server.cfg (using for dedicated server too)
 ===============
 */
-void Host_WriteServerConfig( const char *name )
+void Host_WriteServerConfig( const char *name ) //magic nipples - no more game.cfg
 {
-	file_t	*f;
+	/* file_t	*f;
 
 	SV_InitGameProgs();	// collect user variables
 
@@ -975,14 +978,14 @@ void Host_WriteServerConfig( const char *name )
 	if(( f = FS_Open( name, "w", false )) != NULL )
 	{
 		FS_Printf( f, "//=======================================================================\n" );
-		FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
+		//FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
 		FS_Printf( f, "//\t\tgame.cfg - multiplayer server temporare config\n" );
 		FS_Printf( f, "//=======================================================================\n" );
 		Cvar_WriteVariables( f, FCVAR_SERVER );
 		CSCR_WriteGameCVars( f, "settings.scr" );
 		FS_Close( f );
 	}
-	else Con_DPrintf( S_ERROR "Couldn't write %s.\n", name );
+	else Con_DPrintf( S_ERROR "Couldn't write %s.\n", name );*/
 
 	SV_FreeGameProgs();	// release progs with all variables
 }
@@ -1004,7 +1007,7 @@ void Host_WriteOpenGLConfig( void )
 	{
 		Con_Reportf( "Host_WriteGLConfig()\n" );
 		FS_Printf( f, "//=======================================================================\n" );
-		FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
+		//FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
 		FS_Printf( f, "//\t\t    opengl.cfg - archive of opengl extension cvars\n");
 		FS_Printf( f, "//=======================================================================\n" );
 		FS_Printf( f, "\n" );
@@ -1030,9 +1033,10 @@ void Host_WriteVideoConfig( void )
 	{
 		Con_Reportf( "Host_WriteVideoConfig()\n" );
 		FS_Printf( f, "//=======================================================================\n" );
-		FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
+		//FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
 		FS_Printf( f, "//\t\tvideo.cfg - archive of renderer variables\n");
 		FS_Printf( f, "//=======================================================================\n" );
+		FS_Printf(f, "\n");
 		Cvar_WriteVariables( f, FCVAR_RENDERINFO );
 		FS_Close( f );	
 	}                                                
@@ -1055,7 +1059,7 @@ void Key_EnumCmds_f( void )
 	if( f )
 	{
 		FS_Printf( f, "//=======================================================================\n");
-		FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
+		//FS_Printf( f, "//\t\t\tCopyright XashXT Group %s ©\n", Q_timestamp( TIME_YEAR_ONLY ));
 		FS_Printf( f, "//\t\thelp.txt - xash commands and console variables\n");
 		FS_Printf( f, "//=======================================================================\n");
 

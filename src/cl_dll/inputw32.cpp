@@ -135,6 +135,8 @@ cvar_t	*joy_yawsensitivity;
 cvar_t	*joy_wwhack1;
 cvar_t	*joy_wwhack2;
 
+cvar_t* joy_rstickfix;
+
 int			joy_avail, joy_advancedinit, joy_haspov;
 DWORD		joy_oldbuttonstate, joy_oldpovstate;
 
@@ -304,10 +306,10 @@ void IN_MouseMove ( float frametime, usercmd_t *cmd)
 
 	gEngfuncs.GetViewAngles( (float *)viewangles );
 
-	if ( in_mlook.state & 1)
-	{
+	//if ( in_mlook.state & 1) //magic nipples - commented this out
+	//{
 		V_StopPitchDrift ();
-	}
+	//}
 
 	//jjb - this disbles normal mouse control if the user is trying to 
 	//      move the camera, or if the mouse cursor is visible or if we're in intermission
@@ -347,12 +349,12 @@ void IN_MouseMove ( float frametime, usercmd_t *cmd)
 		}
 
 		// add mouse X/Y movement to cmd
-		if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
-			cmd->sidemove += m_side->value * mouse_x;
-		else
+		//if ( (in_strafe.state & 1) || (lookstrafe->value && (in_mlook.state & 1) ))
+		//	cmd->sidemove += m_side->value * mouse_x;
+		//else
 			viewangles[YAW] -= m_yaw->value * mouse_x;
 
-		if ( (in_mlook.state & 1) && !(in_strafe.state & 1))
+		/*if ( (in_mlook.state & 1) && !(in_strafe.state & 1))
 		{
 			viewangles[PITCH] += m_pitch->value * mouse_y;
 			if (viewangles[PITCH] > cl_pitchdown->value)
@@ -370,7 +372,13 @@ void IN_MouseMove ( float frametime, usercmd_t *cmd)
 			{
 				cmd->forwardmove -= m_forward->value * mouse_y;
 			}
-		}
+		}*/
+
+			viewangles[PITCH] += m_pitch->value * mouse_y;
+			if (viewangles[PITCH] > cl_pitchdown->value)
+				viewangles[PITCH] = cl_pitchdown->value;
+			if (viewangles[PITCH] < -cl_pitchup->value)
+				viewangles[PITCH] = -cl_pitchup->value;
 
 		// if the mouse has moved, force it to the center, so there's room to move
 		if ( mx || my )
@@ -712,9 +720,11 @@ IN_JoyMove
 void IN_JoyMove ( float frametime, usercmd_t *cmd )
 {
 	float	speed, aspeed;
-	float	fAxisValue, fTemp;
+	//float	fAxisValue, fTemp;
 	int		i;
 	vec3_t viewangles;
+
+	float testR, testU, testV, testX, testY, testZ;
 
 	gEngfuncs.GetViewAngles( (float *)viewangles );
 
@@ -740,147 +750,88 @@ void IN_JoyMove ( float frametime, usercmd_t *cmd )
 	}
 
 	if (in_speed.state & 1)
-		speed = cl_movespeedkey->value;
-	else
 		speed = 1;
+	else
+		speed = cl_movespeedkey->value;
+		
 
 	aspeed = speed * frametime;
 
 	// loop through the axes
 	for (i = 0; i < JOY_MAX_AXES; i++)
 	{
-		// get the floating point zero-centered, potentially-inverted data for the current axis
-		fAxisValue = (float) *pdwRawValue[i];
-		// move centerpoint to zero
-		fAxisValue -= 32768.0;
+		testX = (float)* pdwRawValue[0];
+		testY = (float)* pdwRawValue[1];
+		testZ = (float)* pdwRawValue[2];
 
-		if (joy_wwhack2->value != 0.0)
+		testR = (float)* pdwRawValue[3];
+		testU = (float)* pdwRawValue[4];
+		testV = (float)* pdwRawValue[5];
+
+		//gEngfuncs.Con_DPrintf ("%f %f %f | %f %f %f\n", testX, testY, testZ, testR, testU, testV);
+
+		testX -= 32768.0;
+		testY -= 32768.0;
+		testZ -= 32768.0;
+
+		testR -= 32768.0;
+		testU -= 32768.0;
+		testV -= 32768.0;
+
+		testX /= 32768.0;
+		testY /= 32768.0;
+		testZ /= 32768.0;
+
+		testR /= 32768.0;
+		testU /= 32768.0;
+		testV /= 32768.0;
+
+
+		if (fabs(testR) > joy_yawthreshold->value)//joy_pitchthreshold->value)
 		{
-			if (dwAxisMap[i] == AxisTurn)
+			if (m_pitch->value < 0.0)
 			{
-				// this is a special formula for the Logitech WingMan Warrior
-				// y=ax^b; where a = 300 and b = 1.3
-				// also x values are in increments of 800 (so this is factored out)
-				// then bounds check result to level out excessively high spin rates
-				fTemp = 300.0 * pow(fabs(fAxisValue) / 800.0, 1.3);
-				if (fTemp > 14000.0)
-					fTemp = 14000.0;
-				// restore direction information
-				fAxisValue = (fAxisValue > 0.0) ? fTemp : -fTemp;
+				//viewangles[PITCH] -= (testR * joy_pitchsensitivity->value) * aspeed * cl_pitchspeed->value;
+				viewangles[PITCH] -= (testR * joy_yawsensitivity->value) * aspeed * cl_pitchspeed->value;
+			}
+			else
+			{
+				//viewangles[PITCH] += (testR * joy_pitchsensitivity->value) * aspeed * cl_pitchspeed->value;
+				viewangles[PITCH] += (testR * joy_yawsensitivity->value) * aspeed * cl_pitchspeed->value;
+			}
+			V_StopPitchDrift();
+		}
+
+		if (joy_rstickfix->value)
+		{
+			if (fabs(testZ) > joy_yawthreshold->value)
+			{
+				if (dwControlMap[i] == JOY_ABSOLUTE_AXIS)
+					viewangles[YAW] += (testZ * (joy_yawsensitivity->value * -1)) * aspeed * cl_yawspeed->value;
+				else
+					viewangles[YAW] += (testZ * (joy_yawsensitivity->value * -1)) * speed * 180.0;
+			}
+		}
+		else
+		{
+			if (fabs(testU) > joy_yawthreshold->value)
+			{
+				if (dwControlMap[i] == JOY_ABSOLUTE_AXIS)
+					viewangles[YAW] += (testU * (joy_yawsensitivity->value * -1)) * aspeed * cl_yawspeed->value;
+				else
+					viewangles[YAW] += (testU * (joy_yawsensitivity->value * -1)) * speed * 180.0;
 			}
 		}
 
-		// convert range from -32768..32767 to -1..1 
-		fAxisValue /= 32768.0;
-
-		switch (dwAxisMap[i])
+		if (fabs(testX) > joy_forwardthreshold->value) //joy_sidethreshold->value)
 		{
-		case AxisForward:
-			if ((joy_advanced->value == 0.0) && (in_jlook.state & 1))
-			{
-				// user wants forward control to become look control
-				if (fabs(fAxisValue) > joy_pitchthreshold->value)
-				{		
-					// if mouse invert is on, invert the joystick pitch value
-					// only absolute control support here (joy_advanced is 0)
-					if (m_pitch->value < 0.0)
-					{
-						viewangles[PITCH] -= (fAxisValue * joy_pitchsensitivity->value) * aspeed * cl_pitchspeed->value;
-					}
-					else
-					{
-						viewangles[PITCH] += (fAxisValue * joy_pitchsensitivity->value) * aspeed * cl_pitchspeed->value;
-					}
-					V_StopPitchDrift();
-				}
-				else
-				{
-					// no pitch movement
-					// disable pitch return-to-center unless requested by user
-					// *** this code can be removed when the lookspring bug is fixed
-					// *** the bug always has the lookspring feature on
-					if(lookspring->value == 0.0)
-					{
-						V_StopPitchDrift();
-					}
-				}
-			}
-			else
-			{
-				// user wants forward control to be forward control
-				if (fabs(fAxisValue) > joy_forwardthreshold->value)
-				{
-					cmd->forwardmove += (fAxisValue * joy_forwardsensitivity->value) * speed * cl_forwardspeed->value;
-				}
-			}
-			break;
+			cmd->sidemove -= (testX * joy_forwardsensitivity->value * -1) * speed * cl_sidespeed->value;
+			//cmd->sidemove -= (testX * joy_sidesensitivity->value * -1) * speed * cl_sidespeed->value;
+		}
 
-		case AxisSide:
-			if (fabs(fAxisValue) > joy_sidethreshold->value)
-			{
-				cmd->sidemove += (fAxisValue * joy_sidesensitivity->value) * speed * cl_sidespeed->value;
-			}
-			break;
-
-		case AxisTurn:
-			if ((in_strafe.state & 1) || (lookstrafe->value && (in_jlook.state & 1)))
-			{
-				// user wants turn control to become side control
-				if (fabs(fAxisValue) > joy_sidethreshold->value)
-				{
-					cmd->sidemove -= (fAxisValue * joy_sidesensitivity->value) * speed * cl_sidespeed->value;
-				}
-			}
-			else
-			{
-				// user wants turn control to be turn control
-				if (fabs(fAxisValue) > joy_yawthreshold->value)
-				{
-					if(dwControlMap[i] == JOY_ABSOLUTE_AXIS)
-					{
-						viewangles[YAW] += (fAxisValue * joy_yawsensitivity->value) * aspeed * cl_yawspeed->value;
-					}
-					else
-					{
-						viewangles[YAW] += (fAxisValue * joy_yawsensitivity->value) * speed * 180.0;
-					}
-
-				}
-			}
-			break;
-
-		case AxisLook:
-			if (in_jlook.state & 1)
-			{
-				if (fabs(fAxisValue) > joy_pitchthreshold->value)
-				{
-					// pitch movement detected and pitch movement desired by user
-					if(dwControlMap[i] == JOY_ABSOLUTE_AXIS)
-					{
-						viewangles[PITCH] += (fAxisValue * joy_pitchsensitivity->value) * aspeed * cl_pitchspeed->value;
-					}
-					else
-					{
-						viewangles[PITCH] += (fAxisValue * joy_pitchsensitivity->value) * speed * 180.0;
-					}
-					V_StopPitchDrift();
-				}
-				else
-				{
-					// no pitch movement
-					// disable pitch return-to-center unless requested by user
-					// *** this code can be removed when the lookspring bug is fixed
-					// *** the bug always has the lookspring feature on
-					if( lookspring->value == 0.0 )
-					{
-						V_StopPitchDrift();
-					}
-				}
-			}
-			break;
-
-		default:
-			break;
+		if (fabs(testY) > joy_forwardthreshold->value)
+		{
+			cmd->forwardmove += (testY * joy_forwardsensitivity->value * -1) * speed * cl_forwardspeed->value;
 		}
 	}
 
@@ -919,7 +870,6 @@ void IN_Init (void)
 	m_filter				= gEngfuncs.pfnRegisterVariable ( "m_filter","0", FCVAR_ARCHIVE );
 	sensitivity				= gEngfuncs.pfnRegisterVariable ( "sensitivity","3", FCVAR_ARCHIVE ); // user mouse sensitivity setting.
 
-	in_joystick				= gEngfuncs.pfnRegisterVariable ( "joystick","0", FCVAR_ARCHIVE );
 	joy_name				= gEngfuncs.pfnRegisterVariable ( "joyname", "joystick", 0 );
 	joy_advanced			= gEngfuncs.pfnRegisterVariable ( "joyadvanced", "0", 0 );
 	joy_advaxisx			= gEngfuncs.pfnRegisterVariable ( "joyadvaxisx", "0", 0 );
@@ -928,16 +878,24 @@ void IN_Init (void)
 	joy_advaxisr			= gEngfuncs.pfnRegisterVariable ( "joyadvaxisr", "0", 0 );
 	joy_advaxisu			= gEngfuncs.pfnRegisterVariable ( "joyadvaxisu", "0", 0 );
 	joy_advaxisv			= gEngfuncs.pfnRegisterVariable ( "joyadvaxisv", "0", 0 );
-	joy_forwardthreshold	= gEngfuncs.pfnRegisterVariable ( "joyforwardthreshold", "0.15", 0 );
-	joy_sidethreshold		= gEngfuncs.pfnRegisterVariable ( "joysidethreshold", "0.15", 0 );
-	joy_pitchthreshold		= gEngfuncs.pfnRegisterVariable ( "joypitchthreshold", "0.15", 0 );
-	joy_yawthreshold		= gEngfuncs.pfnRegisterVariable ( "joyyawthreshold", "0.15", 0 );
-	joy_forwardsensitivity	= gEngfuncs.pfnRegisterVariable ( "joyforwardsensitivity", "-1.0", 0 );
-	joy_sidesensitivity		= gEngfuncs.pfnRegisterVariable ( "joysidesensitivity", "-1.0", 0 );
-	joy_pitchsensitivity	= gEngfuncs.pfnRegisterVariable ( "joypitchsensitivity", "1.0", 0 );
-	joy_yawsensitivity		= gEngfuncs.pfnRegisterVariable ( "joyyawsensitivity", "-1.0", 0 );
 	joy_wwhack1				= gEngfuncs.pfnRegisterVariable ( "joywwhack1", "0.0", 0 );
 	joy_wwhack2				= gEngfuncs.pfnRegisterVariable ( "joywwhack2", "0.0", 0 );
+
+	in_joystick = gEngfuncs.pfnRegisterVariable("joystick", "1", FCVAR_ARCHIVE);
+
+	joy_forwardthreshold = gEngfuncs.pfnRegisterVariable("joyforwardthreshold", "0.11", 0);
+	joy_forwardsensitivity = gEngfuncs.pfnRegisterVariable("joyforwardsensitivity", "0.5", 0);
+
+	joy_sidethreshold = gEngfuncs.pfnRegisterVariable("joysidethreshold", "0.11", 0);
+	joy_sidesensitivity = gEngfuncs.pfnRegisterVariable("joysidesensitivity", "0.5", 0);
+
+	joy_pitchthreshold = gEngfuncs.pfnRegisterVariable("joypitchthreshold", "0.11", 0);
+	joy_pitchsensitivity = gEngfuncs.pfnRegisterVariable("joypitchsensitivity", "0.5", 0);
+
+	joy_yawthreshold = gEngfuncs.pfnRegisterVariable("joyyawthreshold", "0.11", 0);
+	joy_yawsensitivity = gEngfuncs.pfnRegisterVariable("joyyawsensitivity", "0.5", 0);
+
+	joy_rstickfix = gEngfuncs.pfnRegisterVariable("joy_rstick_fix", "0.0", FCVAR_ARCHIVE);
 
 	gEngfuncs.pfnAddCommand ("force_centerview", Force_CenterView_f);
 	gEngfuncs.pfnAddCommand ("joyadvancedupdate", Joy_AdvancedUpdate_f);

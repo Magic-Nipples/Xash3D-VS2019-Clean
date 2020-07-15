@@ -70,7 +70,7 @@ int g_iColorTable[8] =
 0xFF0000FF, // blue
 0xFF00FFFF, // cyan
 0xFFF0B418, // INPUT_TEXT_COLOR
-0xFFFFFFFF, // white
+0xFF00FFAA, // custom turquoise-ish magic nipples | 0xFFFFFFFF, // white
 };
 
 /*
@@ -256,7 +256,7 @@ void UI_DrawString( int x, int y, int w, int h, const char *string, const int co
 			{
 				int colorNum = ColorIndex( *(l+1) );
 
-				if( colorNum == 7 && color != 0 )
+				if( colorNum == 9 && color != 0 ) //magic nipples - first number is the amount of numbers in the g_iColorTable + 1...
 				{
 					modulate = color;
 				}
