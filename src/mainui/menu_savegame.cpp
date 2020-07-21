@@ -299,10 +299,10 @@ static void UI_SaveGame_Ownerdraw( void *self )
 			sprintf( saveshot, "save/%s.bmp", uiSaveGame.saveName[uiSaveGame.savesList.curItem] );
 
 			if( !g_engfuncs.pfnFileExists( saveshot, TRUE ))
-				UI_DrawPicAdditive( x, y, w, h, uiColorWhite, EMPTY_SAVE_PIC );
+				UI_DrawPic(x, y, w, h, uiColorWhite, EMPTY_SAVE_PIC); //UI_DrawPicAdditive( x, y, w, h, uiColorWhite, EMPTY_SAVE_PIC );
 			else UI_DrawPic( x, y, w, h, uiColorWhite, saveshot );
 		}
-		else UI_DrawPicAdditive( x, y, w, h, uiColorWhite, EMPTY_SAVE_PIC );
+		else UI_DrawPic(x, y, w, h, uiColorWhite, EMPTY_SAVE_PIC); //UI_DrawPicAdditive( x, y, w, h, uiColorWhite, EMPTY_SAVE_PIC );
 
 		// draw the rectangle
 		UI_DrawRectangle( item->x, item->y, item->width, item->height, uiInputFgColor );

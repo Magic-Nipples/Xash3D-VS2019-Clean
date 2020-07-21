@@ -3,11 +3,11 @@
 #include "utils.h"
 #include "ui_title_anim.h"
 
-#define BANNER_X_FIX	-16
-#define BANNER_Y_FIX	-20
+//#define BANNER_X_FIX	-16 //magic nipples - banners offsets no longer needed with proper fix
+//#define BANNER_Y_FIX	-20
 
 // Title Transition Time period
-#define TTT_PERIOD		200.0f
+#define TTT_PERIOD		200.0f //magic nipples - how fast a header moves to position | default = 200.0f
 
 quad_t TitleLerpQuads[2];
 int transition_initial_time;
@@ -61,10 +61,41 @@ void LerpQuad( quad_t a, quad_t b, float frac, quad_t *c )
 
 void UI_SetupTitleQuad()
 {
-	TitleLerpQuads[1].x = UI_BANNER_POSX + BANNER_X_FIX;
+	if (ScreenWidth < 1024)
+	{
+		TitleLerpQuads[1].x = UI_BANNER_POSX / (1024.0f / ScreenWidth);
+		TitleLerpQuads[1].lx = UI_BANNER_WIDTH / (1024.0f / ScreenWidth);
+	}
+	else if (ScreenWidth > 1024)
+	{
+		TitleLerpQuads[1].x = UI_BANNER_POSX * (ScreenWidth / 1024.0f);
+		TitleLerpQuads[1].lx = UI_BANNER_WIDTH * (ScreenWidth / 1024.0f);
+	}
+	else //(ScreenWidth == 1024)
+	{
+		TitleLerpQuads[1].x = UI_BANNER_POSX;
+		TitleLerpQuads[1].lx = UI_BANNER_WIDTH;
+	}
+
+	if (ScreenHeight < 768)
+	{
+		TitleLerpQuads[1].y = UI_BANNER_POSY / (768.0f / ScreenHeight);
+		TitleLerpQuads[1].ly = UI_BANNER_HEIGHT / (768.0f / ScreenHeight);
+	}
+	else if (ScreenHeight > 768)
+	{
+		TitleLerpQuads[1].y = UI_BANNER_POSY * (ScreenHeight / 768.0f);
+		TitleLerpQuads[1].ly = UI_BANNER_HEIGHT * (ScreenHeight / 768.0f);
+	}
+	else //(ScreenHeight == 768)
+	{
+		TitleLerpQuads[1].y = UI_BANNER_POSY;
+		TitleLerpQuads[1].ly = UI_BANNER_HEIGHT;
+	}
+	/*TitleLerpQuads[1].x = UI_BANNER_POSX + BANNER_X_FIX;
 	TitleLerpQuads[1].y = UI_BANNER_POSY + BANNER_Y_FIX;
 	TitleLerpQuads[1].lx = UI_BANNER_WIDTH - 125;
-	TitleLerpQuads[1].ly = UI_BANNER_HEIGHT - 40;
+	TitleLerpQuads[1].ly = UI_BANNER_HEIGHT - 40;*/
 }
 
 void UI_DrawTitleAnim()

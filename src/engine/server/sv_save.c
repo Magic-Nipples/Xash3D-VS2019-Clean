@@ -2115,8 +2115,8 @@ void SV_SaveGame( const char *pName )
 	SaveBuildComment( comment, sizeof( comment ));
 	result = SaveGameSlot( savename, comment );
 
-	if( result && !FBitSet( host.features, ENGINE_QUAKE_COMPATIBLE ))
-		CL_HudMessage( "GAMESAVED" ); // defined in titles.txt
+	//if( result && !FBitSet( host.features, ENGINE_QUAKE_COMPATIBLE )) //magic nipples - no save message when autosaves
+	//	CL_HudMessage( "GAMESAVED" ); // defined in titles.txt
 }
 
 /* 

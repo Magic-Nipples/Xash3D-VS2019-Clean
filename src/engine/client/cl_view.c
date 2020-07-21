@@ -387,7 +387,7 @@ void V_PostRender( void )
 		R_ShowTree();
 		Con_DrawConsole();
 		UI_UpdateMenu( host.realtime );
-		Con_DrawVersion();
+		//Con_DrawVersion(); //magic nipples - no version in menu and or screenshots
 		Con_DrawDebug(); // must be last
 
 		S_ExtraUpdate();

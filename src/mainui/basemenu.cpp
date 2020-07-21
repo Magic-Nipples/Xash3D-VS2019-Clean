@@ -448,11 +448,12 @@ UI_LoadBackgroundImage
 */
 void UI_LoadBackgroundImage( void )
 {
-	if( UI_LoadSteamBackground( ))
+	//magic nipples - no loading of the Steam resource backgrounds!
+	/* if( UI_LoadSteamBackground( ))
 	{
 		uiStatic.m_fHaveSteamBackground = TRUE;
 	}
-	else
+	else */
 	{
 		uiStatic.m_fHaveSteamBackground = FALSE;
 
