@@ -895,10 +895,10 @@ void FS_CreateDefaultGameInfo( const char *filename )
 	memset( &defGI, 0, sizeof( defGI ));
 
 	// setup default values
-	defGI.max_edicts = 900;	// default value if not specified
-	defGI.max_tents = 500;
-	defGI.max_beams = 128;
-	defGI.max_particles = 4096;
+	defGI.max_edicts = 4096;	// default value if not specified
+	defGI.max_tents = 2048;
+	defGI.max_beams = 512;
+	defGI.max_particles = 32768;
 	defGI.version = 1.0;
 	defGI.falldir[0] = '\0';
 
@@ -931,10 +931,10 @@ static qboolean FS_ParseLiblistGam( const char *filename, const char *gamedir, g
 	if( !afile ) return false;
 
 	// setup default values
-	GameInfo->max_edicts = 900;	// default value if not specified
-	GameInfo->max_tents = 500;
-	GameInfo->max_beams = 128;
-	GameInfo->max_particles = 4096;
+	GameInfo->max_edicts = 4096;	// default value if not specified
+	GameInfo->max_tents = 2048;
+	GameInfo->max_beams = 512;
+	GameInfo->max_particles = 32768;
 	GameInfo->version = 1.0f;
 	GameInfo->falldir[0] = '\0';
 	
@@ -1094,10 +1094,10 @@ static qboolean FS_ReadGameInfo( const char *filepath, const char *gamedir, game
 
 	// setup default values
 	Q_strncpy( GameInfo->gamefolder, gamedir, sizeof( GameInfo->gamefolder ));
-	GameInfo->max_edicts = 900;	// default value if not specified
-	GameInfo->max_tents = 500;
-	GameInfo->max_beams = 128;
-	GameInfo->max_particles = 4096;
+	GameInfo->max_edicts = 4096;	// default value if not specified
+	GameInfo->max_tents = 2048;
+	GameInfo->max_beams = 512;
+	GameInfo->max_particles = 32768;
 	GameInfo->version = 1.0f;
 	GameInfo->falldir[0] = '\0';
 	
