@@ -1932,6 +1932,8 @@ LINK_ENTITY_TO_CLASS( env_fade, CFade );
 #define SF_FADE_IN				0x0001		// Fade in, not out
 #define SF_FADE_MODULATE		0x0002		// Modulate, don't blend
 #define SF_FADE_ONLYONE			0x0004
+#define SF_FFADE_STAYOUT		0x0008		// ignores the duration, stays faded out until new ScreenFade message received
+#define SF_FFADE_LONGFADE		0x0016		// used to indicate the fade can be longer than 16 seconds (added for czero)
 
 void CFade::Spawn( void )
 {
@@ -1968,6 +1970,12 @@ void CFade::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType
 
 	if ( pev->spawnflags & SF_FADE_MODULATE )
 		fadeFlags |= FFADE_MODULATE;
+
+	if (pev->spawnflags & SF_FFADE_STAYOUT)
+		fadeFlags |= FFADE_STAYOUT;
+
+	if (pev->spawnflags & SF_FFADE_LONGFADE)
+		fadeFlags |= FFADE_LONGFADE;
 
 	if ( pev->spawnflags & SF_FADE_ONLYONE )
 	{
