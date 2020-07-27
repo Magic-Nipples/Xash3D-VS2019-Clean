@@ -1,9 +1,11 @@
 # Xash3D [Build 4483] for Visual Studio 2019
 
 ***
-**Credits:**\
-[Uncle Mike](https://hlfx.ru/forum/index.php) - Original creator of Xash3D.\
-[Magic_Nipples](https://twitter.com/Magic_Nipples) - Conversion to VS2019.
+**Links:**\
+[Discord](https://discordapp.com/invite/RfzyAj7) \
+[Twitter](https://twitter.com/Magic_Nipples) \
+[YouTube](https://www.youtube.com/user/amd889) \
+[Mod DB](https://www.moddb.com/members/amd889) 
 
 **Donations:**\
 [Patreon](https://www.patreon.com/magicnipples) \
@@ -11,7 +13,8 @@
 
 
 ***
-**Original credits:**\
+**Credits:**\
+[Uncle Mike](https://hlfx.ru/forum/index.php) - Original creator of Xash3D\
 id Software\
 Valve LLC\
 XaeroX - for hosting, technical advice and moral support\
