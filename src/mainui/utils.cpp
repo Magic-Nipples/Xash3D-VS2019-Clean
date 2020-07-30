@@ -1096,7 +1096,7 @@ void UI_Slider_Init( menuSlider_s *sl )
 	sl->generic.y2 -= uiStatic.sliderWidth;
 
 	sl->drawStep = (sl->generic.width - sl->generic.width2) / ((sl->maxValue - sl->minValue) / sl->range);
-	sl->numSteps = ((sl->maxValue - sl->minValue) / sl->range) + 1;
+	sl->numSteps = ((sl->maxValue - sl->minValue) / sl->range);// +1; magic nipples - why in the ass is this here?
 }
 
 /*

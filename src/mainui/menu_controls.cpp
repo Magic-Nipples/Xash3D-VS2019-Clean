@@ -219,7 +219,7 @@ static void UI_Controls_ParseKeysList( void )
 			// HACKHACK this color should be get from kb_keys.lst
 			if( !_strnicmp( uiControls.secondKey[i], "MOUSE", 5 ))
 				sprintf( str, "^5%s^7", uiControls.secondKey[i] );// cyan
-			else sprintf( str, "^3%s^7", uiControls.secondKey[i] );	// yellow
+			else sprintf( str, "^7%s^7", uiControls.secondKey[i] );	// yellow "^3%s^7"
 
 			StringConcat( uiControls.keysDescription[i], str, KEY2_LENGTH );
 			StringConcat( uiControls.keysDescription[i], uiEmptyString, KEY2_LENGTH );
