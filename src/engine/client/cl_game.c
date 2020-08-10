@@ -501,10 +501,20 @@ static void SPR_DrawGeneric( int frame, float x, float y, float width, float hei
 		if( rc.bottom <= 0 || rc.bottom > height ) rc.bottom = height;
 
 		// calc user-defined rectangle
-		s1 = (float)rc.left / width;
-		t1 = (float)rc.top / height;
-		s2 = (float)rc.right / width;
-		t2 = (float)rc.bottom / height;
+		if (Cvar_VariableInteger("hud_scale")) //magic nipples - slightly clip the boundaries on the rects so you don't see clipping from scaling.
+		{
+			s1 = ((float)rc.left + 0.33) / width;
+			t1 = ((float)rc.top + 0.33) / height;
+			s2 = ((float)rc.right - 0.33) / width;
+			t2 = ((float)rc.bottom - 0.33) / height;
+		}
+		else
+		{
+			s1 = (float)rc.left / width;
+			t1 = (float)rc.top / height;
+			s2 = (float)rc.right / width;
+			t2 = (float)rc.bottom / height;
+		}
 		width = rc.right - rc.left;
 		height = rc.bottom - rc.top;
 	}
@@ -902,8 +912,20 @@ void CL_DrawCrosshair( void )
 	width = clgame.ds.rcCrosshair.right - clgame.ds.rcCrosshair.left;
 	height = clgame.ds.rcCrosshair.bottom - clgame.ds.rcCrosshair.top;
 
-	x = clgame.viewport[0] + ( clgame.viewport[2] >> 1 ); 
-	y = clgame.viewport[1] + ( clgame.viewport[3] >> 1 );
+	float scale;
+	if (Cvar_VariableInteger("hud_scale"))
+	{
+		if (glState.height < 700)
+			scale = 1;
+		else if (glState.height < 1000)
+			scale = 0.75;
+		else
+			scale = 0.5;
+	}
+	else { scale = 1; }
+
+	x = clgame.viewport[0] + ( clgame.viewport[2] >> 1 ) * scale;
+	y = clgame.viewport[1] + ( clgame.viewport[3] >> 1 ) * scale;
 
 	// g-cont - cl.crosshairangle is the autoaim angle.
 	// if we're not using autoaim, just draw in the middle of the screen
@@ -1928,6 +1950,12 @@ void pfnDrawConsoleStringLen( const char *pText, int *length, int *height )
 	Con_RestoreFont();
 }
 
+void pfnDrawSecStringLen(const char* pText, int* length, int* height)
+{
+	Con_SetSecFont(con_fontsize->value);
+	Con_DrawSecLen(pText, length, height);
+	Con_RestoreSecFont();
+}
 /*
 =============
 pfnConsolePrint

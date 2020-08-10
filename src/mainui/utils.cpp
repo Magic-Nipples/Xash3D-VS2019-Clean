@@ -1076,6 +1076,7 @@ void UI_Slider_Init( menuSlider_s *sl )
 		if( sl->generic.charWidth < 1 ) sl->generic.charWidth = 12;
 		if( sl->generic.charHeight < 1 ) sl->generic.charHeight = 24;
 	}
+	sl->generic.charHeight = UI_SMALL_CHAR_HEIGHT;
 
 	UI_ScaleCoords( NULL, NULL, &sl->generic.charWidth, &sl->generic.charHeight );
 
@@ -1193,7 +1194,8 @@ void UI_Slider_Draw( menuSlider_s *sl )
 	UI_DrawPic( sliderX, sl->generic.y2, sl->generic.width2, sl->generic.height, uiColorWhite, UI_SLIDER_MAIN );
 
 	textHeight = sl->generic.y - (sl->generic.charHeight * 1.5f);
-	UI_DrawString( sl->generic.x, textHeight, sl->generic.width, sl->generic.charHeight, sl->generic.name, uiColorHelp, true, sl->generic.charWidth, sl->generic.charHeight, justify, shadow );
+	//UI_DrawString( sl->generic.x, textHeight, sl->generic.width, sl->generic.charHeight, sl->generic.name, uiColorHelp, true, sl->generic.charWidth, sl->generic.charHeight, justify, shadow );
+	DrawBoldString(sl->generic.x, textHeight, sl->generic.name);
 }
 
 /*
@@ -1315,7 +1317,10 @@ void UI_CheckBox_Draw( menuCheckBox_s *cb )
 
 	y = cb->generic.y + (cb->generic.height>>2);
 	textOffset = cb->generic.x + (cb->generic.width * 1.7f);
-	UI_DrawString( textOffset, y, strlen( cb->generic.name ) * cb->generic.charWidth, cb->generic.charHeight, cb->generic.name, uiColorHelp, true, cb->generic.charWidth, cb->generic.charHeight, justify, shadow );
+	//UI_DrawString( textOffset, y, strlen( cb->generic.name ) * cb->generic.charWidth, cb->generic.charHeight, cb->generic.name, uiColorHelp, true, cb->generic.charWidth, cb->generic.charHeight, justify, shadow );
+	//DrawBoldString(textOffset, y, cb->generic.name);
+	DrawConsoleString(textOffset, y, cb->generic.name);
+
 
 	if( cb->generic.statusText && cb->generic.flags & QMF_NOTIFY )
 	{
@@ -2175,22 +2180,25 @@ void UI_PicButton_Draw( menuPicButton_s *item )
 	{
 		int	charW, charH;
 		int	x, w;
+		float newheight;
 		
 		charW = UI_SMALL_CHAR_WIDTH;
 		charH = UI_SMALL_CHAR_HEIGHT;
 		
 		UI_ScaleCoords( NULL, NULL, &charW, &charH );
 		
-		x = 290;
+		x = 270; //290
 		w = UI_SMALL_CHAR_WIDTH * strlen( item->generic.statusText );
 		UI_ScaleCoords( &x, NULL, &w, NULL );
 		x += item->generic.x;
 		
-		int	r, g, b;
-		
-		UnpackRGB( r, g, b, uiColorHelp );
-		TextMessageSetColor( r, g, b );
-		DrawConsoleString( x, item->generic.y, item->generic.statusText );
+		if(ScreenHeight >= 1080) 
+			newheight = item->generic.y + (ScreenHeight / 65);
+		else
+			newheight = item->generic.y + (ScreenHeight / 75); //magic nipples - new code to keep description text aligned better.
+
+		TextMessageSetColor( 192, 192, 192 );
+		DrawConsoleString( x, /*item->generic.y*/ (int)newheight, item->generic.statusText );
 	}
 
 	if( item->pic )

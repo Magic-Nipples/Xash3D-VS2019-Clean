@@ -306,7 +306,7 @@ static void UI_InternetGames_Init( void )
 	uiInternetGames.joinGame.generic.id = ID_JOINGAME;
 	uiInternetGames.joinGame.generic.type = QMTYPE_BM_BUTTON;
 	uiInternetGames.joinGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_GRAYED;
-	uiInternetGames.joinGame.generic.x = 72;
+	uiInternetGames.joinGame.generic.x = UI_SELECTION_POSX;
 	uiInternetGames.joinGame.generic.y = 230;
 	uiInternetGames.joinGame.generic.name = "Join game";
 	uiInternetGames.joinGame.generic.statusText = "Join to selected game";
@@ -317,7 +317,7 @@ static void UI_InternetGames_Init( void )
 	uiInternetGames.createGame.generic.id = ID_CREATEGAME;
 	uiInternetGames.createGame.generic.type = QMTYPE_BM_BUTTON;
 	uiInternetGames.createGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiInternetGames.createGame.generic.x = 72;
+	uiInternetGames.createGame.generic.x = UI_SELECTION_POSX;
 	uiInternetGames.createGame.generic.y = 280;
 	uiInternetGames.createGame.generic.name = "Create game";
 	uiInternetGames.createGame.generic.statusText = "Create new Internet game";
@@ -328,7 +328,7 @@ static void UI_InternetGames_Init( void )
 	uiInternetGames.gameInfo.generic.id = ID_GAMEINFO;
 	uiInternetGames.gameInfo.generic.type = QMTYPE_BM_BUTTON;
 	uiInternetGames.gameInfo.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_GRAYED;
-	uiInternetGames.gameInfo.generic.x = 72;
+	uiInternetGames.gameInfo.generic.x = UI_SELECTION_POSX;
 	uiInternetGames.gameInfo.generic.y = 330;
 	uiInternetGames.gameInfo.generic.name = "View game info";
 	uiInternetGames.gameInfo.generic.statusText = "Get detail game info";
@@ -339,7 +339,7 @@ static void UI_InternetGames_Init( void )
 	uiInternetGames.refresh.generic.id = ID_REFRESH;
 	uiInternetGames.refresh.generic.type = QMTYPE_BM_BUTTON;
 	uiInternetGames.refresh.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiInternetGames.refresh.generic.x = 72;
+	uiInternetGames.refresh.generic.x = UI_SELECTION_POSX;
 	uiInternetGames.refresh.generic.y = 380;
 	uiInternetGames.refresh.generic.name = "Refresh";
 	uiInternetGames.refresh.generic.statusText = "Refresh servers list";
@@ -350,7 +350,7 @@ static void UI_InternetGames_Init( void )
 	uiInternetGames.done.generic.id = ID_DONE;
 	uiInternetGames.done.generic.type = QMTYPE_BM_BUTTON;
 	uiInternetGames.done.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiInternetGames.done.generic.x = 72;
+	uiInternetGames.done.generic.x = UI_SELECTION_POSX;
 	uiInternetGames.done.generic.y = 430;
 	uiInternetGames.done.generic.name = "Done";
 	uiInternetGames.done.generic.statusText = "Return to main menu";

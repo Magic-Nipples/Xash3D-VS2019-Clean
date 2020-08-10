@@ -178,7 +178,9 @@ inline void TextMessageSetColor( int r, int g, int b, int alpha = 255 )
 
 #define TextMessageDrawChar	(*g_engfuncs.pfnDrawCharacter)
 #define DrawConsoleString	(*g_engfuncs.pfnDrawConsoleString)
+#define DrawBoldString	(*g_engfuncs.pfnDrawBoldString)
 #define GetConsoleStringSize	(*g_engfuncs.pfnDrawConsoleStringLen)
+#define GetSecondaryStringSize (*g_engfuncs.pfnDrawSecStringLen)
 #define ConsoleSetColor	(*g_engfuncs.pfnSetConsoleDefaultColor)
 
 #define RANDOM_LONG		(*g_engfuncs.pfnRandomLong)

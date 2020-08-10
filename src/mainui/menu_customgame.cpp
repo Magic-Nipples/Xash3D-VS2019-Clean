@@ -263,7 +263,7 @@ static void UI_CustomGame_Init( void )
 	uiCustomGame.load.generic.id = ID_ACTIVATE;
 	uiCustomGame.load.generic.type = QMTYPE_BM_BUTTON;
 	uiCustomGame.load.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiCustomGame.load.generic.x = 72;
+	uiCustomGame.load.generic.x = UI_SELECTION_POSX;
 	uiCustomGame.load.generic.y = 230;
 	uiCustomGame.load.generic.name = "Activate";
 	uiCustomGame.load.generic.statusText = "Activate selected custom game";
@@ -274,7 +274,7 @@ static void UI_CustomGame_Init( void )
 	uiCustomGame.go2url.generic.id = ID_GOTOSITE;
 	uiCustomGame.go2url.generic.type = QMTYPE_BM_BUTTON;
 	uiCustomGame.go2url.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiCustomGame.go2url.generic.x = 72;
+	uiCustomGame.go2url.generic.x = UI_SELECTION_POSX;
 	uiCustomGame.go2url.generic.y = 280;
 	uiCustomGame.go2url.generic.name = "Visit web site";
 	uiCustomGame.go2url.generic.statusText = "Visit the web site of game developrs";
@@ -285,7 +285,7 @@ static void UI_CustomGame_Init( void )
 	uiCustomGame.done.generic.id = ID_DONE;
 	uiCustomGame.done.generic.type = QMTYPE_BM_BUTTON;
 	uiCustomGame.done.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiCustomGame.done.generic.x = 72;
+	uiCustomGame.done.generic.x = UI_SELECTION_POSX;
 	uiCustomGame.done.generic.y = 330;
 	uiCustomGame.done.generic.name = "Done";
 	uiCustomGame.done.generic.statusText = "Return to main menu";

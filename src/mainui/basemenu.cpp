@@ -278,7 +278,7 @@ void UI_DrawString( int x, int y, int w, int h, const char *string, const int co
 
 			if( ch != ' ' )
 			{
-				if( shadow ) TextMessageDrawChar( xx + ofsX, yy + ofsY, charW, charH, ch, shadowModulate, uiStatic.hFont );
+				//if( shadow ) TextMessageDrawChar( xx + ofsX, yy + ofsY, charW, charH, ch, shadowModulate, uiStatic.hFont );
 				TextMessageDrawChar( xx, yy, charW, charH, ch, modulate, uiStatic.hFont );
 			}
 			xx += charW;
@@ -726,7 +726,7 @@ void UI_DrawMenu( menuFramework_s *menu )
 		int alpha = bound( 0, ((( uiStatic.realTime - statusFadeTime ) - 1000 ) * 0.001f ) * 255, 255 );
 		int r, g, b, x, len;
 
-		GetConsoleStringSize( item->statusText, &len, NULL );
+		GetSecondaryStringSize( item->statusText, &len, NULL );
 
 		UnpackRGB( r, g, b, uiColorHelp );
 		TextMessageSetColor( r, g, b, alpha );
@@ -1546,7 +1546,8 @@ int UI_VidInit( void )
 	UI_LoadBackgroundMapList ();
 
 	// register menu font
-	uiStatic.hFont = PIC_Load( "#XASH_SYSTEMFONT_001.bmp", menufont_bmp, sizeof( menufont_bmp ));
+	//uiStatic.hFont = PIC_Load("gfx/shell/menufont"); //magic nipples - load external menu font
+	uiStatic.hFont = PIC_Load("#XASH_SYSTEMFONT_001.bmp", menufont_bmp, sizeof(menufont_bmp));
 
 	UI_LoadBackgroundImage ();
 #if 0

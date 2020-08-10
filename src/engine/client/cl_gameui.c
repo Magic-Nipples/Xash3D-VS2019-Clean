@@ -633,8 +633,19 @@ static int UI_DrawConsoleString( int x, int y, const char *string )
 	int	drawLen;
 
 	if( !string || !*string ) return 0; // silent ignore
-	drawLen = Con_DrawString( x, y, string, gameui.ds.textColor );
+	drawLen = Con_DrawSecString( x, y, string, gameui.ds.textColor );
 	MakeRGBA( gameui.ds.textColor, 255, 255, 255, 255 );
+
+	return (x + drawLen); // exclude color prexfixes
+}
+
+static int UI_DrawBoldString(int x, int y, const char* string)
+{
+	int	drawLen;
+
+	if (!string || !*string) return 0; // silent ignore
+	drawLen = Con_DrawBoldString(x, y, string, gameui.ds.textColor);
+	MakeRGBA(gameui.ds.textColor, 255, 255, 255, 255);
 
 	return (x + drawLen); // exclude color prexfixes
 }
@@ -957,8 +968,10 @@ static ui_enginefuncs_t gEngfuncs =
 	UI_GetLogoLength,
 	pfnDrawCharacter,
 	UI_DrawConsoleString,
+	UI_DrawBoldString,
 	UI_DrawSetTextColor,
 	Con_DrawStringLen,
+	Con_DrawSecLen,
 	Con_DefaultColor,
 	pfnGetPlayerModel,
 	pfnSetPlayerModel,

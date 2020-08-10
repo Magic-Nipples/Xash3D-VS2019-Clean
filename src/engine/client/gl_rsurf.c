@@ -214,11 +214,11 @@ void GL_SetupFogColorForSurfaces( void )
 	}
 
 	//div = (r_detailtextures->value) ? 2.0f : 1.0f;
-	div = (r_overbright->value) ? 2.0f : 1.0f;
+	div = (r_overbright->value) ? 4.0f : 2.0f; //magic nipples - adjusting values because fog for textures was too bright
 
 	factor = (r_detailtextures->value) ? 3.0f : 2.0f;
 	fogColor[0] = pow( RI.fogColor[0] / div, ( 1.0f / factor ));
-	fogColor[1] = pow( RI.fogColor[1] / div, ( 1.0f / factor )); //magic nipples - fog color for water
+	fogColor[1] = pow( RI.fogColor[1] / div, ( 1.0f / factor ));
 	fogColor[2] = pow( RI.fogColor[2] / div, ( 1.0f / factor ));
 	pglFogfv( GL_FOG_COLOR, fogColor );
 }

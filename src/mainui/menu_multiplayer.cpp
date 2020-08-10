@@ -119,7 +119,7 @@ static void UI_MultiPlayer_Init( void )
 	uiMultiPlayer.internetGames.generic.id = ID_INTERNETGAMES;
 	uiMultiPlayer.internetGames.generic.type = QMTYPE_BM_BUTTON;
 	uiMultiPlayer.internetGames.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMultiPlayer.internetGames.generic.x = 72;
+	uiMultiPlayer.internetGames.generic.x = UI_SELECTION_POSX;
 	uiMultiPlayer.internetGames.generic.y = 230;
 	uiMultiPlayer.internetGames.generic.name = "Internet games";
 	uiMultiPlayer.internetGames.generic.statusText = "View list of a game internet servers and join the one of your choise";
@@ -130,7 +130,7 @@ static void UI_MultiPlayer_Init( void )
 	uiMultiPlayer.spectateGames.generic.id = ID_SPECTATEGAMES;
 	uiMultiPlayer.spectateGames.generic.type = QMTYPE_BM_BUTTON;
 	uiMultiPlayer.spectateGames.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY|QMF_GRAYED;
-	uiMultiPlayer.spectateGames.generic.x = 72;
+	uiMultiPlayer.spectateGames.generic.x = UI_SELECTION_POSX;
 	uiMultiPlayer.spectateGames.generic.y = 280;
 	uiMultiPlayer.spectateGames.generic.name = "Spectate games";
 	uiMultiPlayer.spectateGames.generic.statusText = "Spectate internet games";
@@ -141,7 +141,7 @@ static void UI_MultiPlayer_Init( void )
 	uiMultiPlayer.LANGame.generic.id = ID_LANGAME;
 	uiMultiPlayer.LANGame.generic.type = QMTYPE_BM_BUTTON;
 	uiMultiPlayer.LANGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMultiPlayer.LANGame.generic.x = 72;
+	uiMultiPlayer.LANGame.generic.x = UI_SELECTION_POSX;
 	uiMultiPlayer.LANGame.generic.y = 330;
 	uiMultiPlayer.LANGame.generic.name = "LAN game";
 	uiMultiPlayer.LANGame.generic.statusText = "Set up the game on the local area network";
@@ -152,7 +152,7 @@ static void UI_MultiPlayer_Init( void )
 	uiMultiPlayer.Customize.generic.id = ID_CUSTOMIZE;
 	uiMultiPlayer.Customize.generic.type = QMTYPE_BM_BUTTON;
 	uiMultiPlayer.Customize.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMultiPlayer.Customize.generic.x = 72;
+	uiMultiPlayer.Customize.generic.x = UI_SELECTION_POSX;
 	uiMultiPlayer.Customize.generic.y = 380;
 	uiMultiPlayer.Customize.generic.name = "Customize";
 	uiMultiPlayer.Customize.generic.statusText = "Choose your player name, and select visual options for your character";
@@ -163,7 +163,7 @@ static void UI_MultiPlayer_Init( void )
 	uiMultiPlayer.Controls.generic.id = ID_CONTROLS;
 	uiMultiPlayer.Controls.generic.type = QMTYPE_BM_BUTTON;
 	uiMultiPlayer.Controls.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMultiPlayer.Controls.generic.x = 72;
+	uiMultiPlayer.Controls.generic.x = UI_SELECTION_POSX;
 	uiMultiPlayer.Controls.generic.y = 430;
 	uiMultiPlayer.Controls.generic.name = "Controls";
 	uiMultiPlayer.Controls.generic.statusText = "Change keyboard and mouse settings";
@@ -174,7 +174,7 @@ static void UI_MultiPlayer_Init( void )
 	uiMultiPlayer.done.generic.id = ID_DONE;
 	uiMultiPlayer.done.generic.type = QMTYPE_BM_BUTTON;
 	uiMultiPlayer.done.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMultiPlayer.done.generic.x = 72;
+	uiMultiPlayer.done.generic.x = UI_SELECTION_POSX;
 	uiMultiPlayer.done.generic.y = 480;
 	uiMultiPlayer.done.generic.name = "Done";
 	uiMultiPlayer.done.generic.statusText = "Go back to the Main Menu";

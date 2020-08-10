@@ -201,7 +201,7 @@ static void UI_VidOptions_Init( void )
 	uiVidOptions.done.generic.id = ID_DONE;
 	uiVidOptions.done.generic.type = QMTYPE_BM_BUTTON;
 	uiVidOptions.done.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiVidOptions.done.generic.x = 72;
+	uiVidOptions.done.generic.x = UI_SELECTION_POSX;
 	uiVidOptions.done.generic.y = 435;
 	uiVidOptions.done.generic.name = "Done";
 	uiVidOptions.done.generic.statusText = "Go back to the Video Menu";
@@ -213,7 +213,7 @@ static void UI_VidOptions_Init( void )
 	uiVidOptions.screenSize.generic.type = QMTYPE_SLIDER;
 	uiVidOptions.screenSize.generic.flags = QMF_PULSEIFFOCUS|QMF_DROPSHADOW;
 	uiVidOptions.screenSize.generic.name = "Screen size";
-	uiVidOptions.screenSize.generic.x = 72;
+	uiVidOptions.screenSize.generic.x = UI_SELECTION_POSX;
 	uiVidOptions.screenSize.generic.y = 280;
 	uiVidOptions.screenSize.generic.callback = UI_VidOptions_Callback;
 	uiVidOptions.screenSize.generic.statusText = "Set the screen size";
@@ -225,7 +225,7 @@ static void UI_VidOptions_Init( void )
 	uiVidOptions.gammaIntensity.generic.type = QMTYPE_SLIDER;
 	uiVidOptions.gammaIntensity.generic.flags = QMF_PULSEIFFOCUS|QMF_DROPSHADOW;
 	uiVidOptions.gammaIntensity.generic.name = "Gamma";
-	uiVidOptions.gammaIntensity.generic.x = 72;
+	uiVidOptions.gammaIntensity.generic.x = UI_SELECTION_POSX;
 	uiVidOptions.gammaIntensity.generic.y = 340;
 	uiVidOptions.gammaIntensity.generic.callback = UI_VidOptions_Callback;
 	uiVidOptions.gammaIntensity.generic.statusText = "Set gamma value (1.8 - 3.0)";
@@ -237,7 +237,7 @@ static void UI_VidOptions_Init( void )
 	uiVidOptions.glareReduction.generic.type = QMTYPE_SLIDER;
 	uiVidOptions.glareReduction.generic.flags = QMF_PULSEIFFOCUS|QMF_DROPSHADOW;
 	uiVidOptions.glareReduction.generic.name = "Glare reduction";
-	uiVidOptions.glareReduction.generic.x = 72;
+	uiVidOptions.glareReduction.generic.x = UI_SELECTION_POSX;
 	uiVidOptions.glareReduction.generic.y = 400;
 	uiVidOptions.glareReduction.generic.callback = UI_VidOptions_Callback;
 	uiVidOptions.glareReduction.generic.statusText = "Set glare reduction level";

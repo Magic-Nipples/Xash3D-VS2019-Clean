@@ -89,6 +89,7 @@ qboolean Image_LoadBMP( const char *name, const byte *buffer, size_t filesize )
 
 	// special case for loading qfont (menu font)
 	if( !Q_strncmp( name, "#XASH_SYSTEMFONT_001", 20 ))
+	//if (!Q_strncmp(name, "gfx/shell/menufont", 18))	/magic nipples - load external menu font
 	{
 		// NOTE: same as system font we can use 4-bit bmps only
 		// step1: move main layer into alpha-channel (give grayscale from RED channel)

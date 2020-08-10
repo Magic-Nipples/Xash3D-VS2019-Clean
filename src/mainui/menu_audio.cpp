@@ -181,7 +181,7 @@ static void UI_Audio_Init( void )
 	uiAudio.done.generic.id = ID_DONE;
 	uiAudio.done.generic.type = QMTYPE_BM_BUTTON;
 	uiAudio.done.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiAudio.done.generic.x = 72;
+	uiAudio.done.generic.x = UI_SELECTION_POSX;
 	uiAudio.done.generic.y = 230;
 	uiAudio.done.generic.name = "Done";
 	uiAudio.done.generic.statusText = "Go back to the Configuration Menu";

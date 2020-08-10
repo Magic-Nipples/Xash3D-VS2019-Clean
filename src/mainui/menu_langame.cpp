@@ -306,7 +306,7 @@ static void UI_LanGame_Init( void )
 	uiLanGame.joinGame.generic.id = ID_JOINGAME;
 	uiLanGame.joinGame.generic.type = QMTYPE_BM_BUTTON;
 	uiLanGame.joinGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_GRAYED;
-	uiLanGame.joinGame.generic.x = 72;
+	uiLanGame.joinGame.generic.x = UI_SELECTION_POSX;
 	uiLanGame.joinGame.generic.y = 230;
 	uiLanGame.joinGame.generic.name = "Join game";
 	uiLanGame.joinGame.generic.statusText = "Join to selected game";
@@ -317,7 +317,7 @@ static void UI_LanGame_Init( void )
 	uiLanGame.createGame.generic.id = ID_CREATEGAME;
 	uiLanGame.createGame.generic.type = QMTYPE_BM_BUTTON;
 	uiLanGame.createGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiLanGame.createGame.generic.x = 72;
+	uiLanGame.createGame.generic.x = UI_SELECTION_POSX;
 	uiLanGame.createGame.generic.y = 280;
 	uiLanGame.createGame.generic.name = "Create game";
 	uiLanGame.createGame.generic.statusText = "Create new LAN game";
@@ -328,7 +328,7 @@ static void UI_LanGame_Init( void )
 	uiLanGame.gameInfo.generic.id = ID_GAMEINFO;
 	uiLanGame.gameInfo.generic.type = QMTYPE_BM_BUTTON;
 	uiLanGame.gameInfo.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_GRAYED;
-	uiLanGame.gameInfo.generic.x = 72;
+	uiLanGame.gameInfo.generic.x = UI_SELECTION_POSX;
 	uiLanGame.gameInfo.generic.y = 330;
 	uiLanGame.gameInfo.generic.name = "View game info";
 	uiLanGame.gameInfo.generic.statusText = "Get detail game info";
@@ -339,7 +339,7 @@ static void UI_LanGame_Init( void )
 	uiLanGame.refresh.generic.id = ID_REFRESH;
 	uiLanGame.refresh.generic.type = QMTYPE_BM_BUTTON;
 	uiLanGame.refresh.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiLanGame.refresh.generic.x = 72;
+	uiLanGame.refresh.generic.x = UI_SELECTION_POSX;
 	uiLanGame.refresh.generic.y = 380;
 	uiLanGame.refresh.generic.name = "Refresh";
 	uiLanGame.refresh.generic.statusText = "Refresh servers list";
@@ -350,7 +350,7 @@ static void UI_LanGame_Init( void )
 	uiLanGame.done.generic.id = ID_DONE;
 	uiLanGame.done.generic.type = QMTYPE_BM_BUTTON;
 	uiLanGame.done.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiLanGame.done.generic.x = 72;
+	uiLanGame.done.generic.x = UI_SELECTION_POSX;
 	uiLanGame.done.generic.y = 430;
 	uiLanGame.done.generic.name = "Done";
 	uiLanGame.done.generic.statusText = "Return to main menu";

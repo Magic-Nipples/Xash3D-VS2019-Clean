@@ -104,9 +104,15 @@ typedef struct
 
 	// console fonts
 	cl_font_t		chars[CON_NUMFONTS];// fonts.wad/font1.fnt
+	cl_font_t		secchars[CON_NUMFONTS];
+	cl_font_t		boldchars[CON_NUMFONTS];
 	cl_font_t		*curFont, *lastUsedFont;
+	cl_font_t		*secFont, *seclastUsedFont;
+	cl_font_t		*boldFont, *lastBoldFont;
 
 	int			scale;
+	float		scale2;
+	float		scale3;
 	
 	// console input
 	field_t		input;
@@ -629,6 +635,96 @@ static qboolean Con_LoadVariableWidthFont( const char *fontname, cl_font_t *font
 	return true;
 }
 
+static qboolean Con_LoadSecondaryFont(const char* fontname, cl_font_t* font)
+{
+	int	i, fontWidth;
+	byte* buffer;
+	size_t	length;
+	qfont_t* src;
+
+	if (font->valid)
+		return true; // already loaded
+
+	if (!FS_FileExists(fontname, false))
+		return false;
+
+	font->secFontTexture = GL_LoadTexture(fontname, NULL, 0, TF_FONT);
+	R_GetTextureParms(&fontWidth, NULL, font->secFontTexture);
+
+	// setup consolefont
+	if (font->secFontTexture && fontWidth != 0)
+	{
+		// half-life font with variable chars witdh
+		buffer = FS_LoadFile(fontname, &length, false);
+
+		if (buffer && length >= sizeof(qfont_t))
+		{
+			src = (qfont_t*)buffer;
+			font->charHeight = src->rowheight;
+			font->type = FONT_VARIABLE;
+
+			// build rectangles
+			for (i = 0; i < 256; i++)
+			{
+				font->fontRc[i].left = (word)src->fontinfo[i].startoffset % fontWidth;
+				font->fontRc[i].right = font->fontRc[i].left + src->fontinfo[i].charwidth;
+				font->fontRc[i].top = (word)src->fontinfo[i].startoffset / fontWidth;
+				font->fontRc[i].bottom = font->fontRc[i].top + src->rowheight;
+				font->charWidths[i] = src->fontinfo[i].charwidth;
+			}
+			font->valid = true;
+		}
+		if (buffer) Mem_Free(buffer);
+	}
+
+	return true;
+}
+
+static qboolean Con_LoadBolderFont(const char* fontname, cl_font_t* font)
+{
+	int	i, fontWidth;
+	byte* buffer;
+	size_t	length;
+	qfont_t* src;
+
+	if (font->valid)
+		return true; // already loaded
+
+	if (!FS_FileExists(fontname, false))
+		return false;
+
+	font->boldFontTexture = GL_LoadTexture(fontname, NULL, 0, TF_FONT);
+	R_GetTextureParms(&fontWidth, NULL, font->boldFontTexture);
+
+	// setup consolefont
+	if (font->boldFontTexture && fontWidth != 0)
+	{
+		// half-life font with variable chars witdh
+		buffer = FS_LoadFile(fontname, &length, false);
+
+		if (buffer && length >= sizeof(qfont_t))
+		{
+			src = (qfont_t*)buffer;
+			font->charHeight = src->rowheight;
+			font->type = FONT_VARIABLE;
+
+			// build rectangles
+			for (i = 0; i < 256; i++)
+			{
+				font->fontRc[i].left = (word)src->fontinfo[i].startoffset % fontWidth;
+				font->fontRc[i].right = font->fontRc[i].left + src->fontinfo[i].charwidth;
+				font->fontRc[i].top = (word)src->fontinfo[i].startoffset / fontWidth;
+				font->fontRc[i].bottom = font->fontRc[i].top + src->rowheight;
+				font->charWidths[i] = src->fontinfo[i].charwidth;
+			}
+			font->valid = true;
+		}
+		if (buffer) Mem_Free(buffer);
+	}
+
+	return true;
+}
+
 /*
 ================
 Con_LoadConsoleFont
@@ -647,6 +743,24 @@ static void Con_LoadConsoleFont( int fontNumber, cl_font_t *font )
 
 	// quake fixed font as fallback
 	if( !font->valid ) Con_LoadFixedWidthFont( "gfx/conchars", font );
+}
+
+static void Con_LoadSecFont(int fontNumber, cl_font_t* font)
+{
+	if (font->valid) return; // already loaded
+
+	Con_LoadSecondaryFont( va( "fonts.wad/font%i", fontNumber ), font );
+
+	if (!font->valid) Con_LoadSecondaryFont("gfx.wad/conchars.fnt", font);
+}
+
+static void Con_LoadBoldFont(int fontNumber, cl_font_t* font)
+{
+	if (font->valid) return; // already loaded
+
+	Con_LoadBolderFont(va("fonts_bold.wad/font%i", fontNumber), font);
+
+	if (!font->valid) Con_LoadBolderFont("gfx.wad/conchars.fnt", font);
 }
 
 /*
@@ -683,6 +797,88 @@ static void Con_LoadConchars( void )
 	// sets the current font
 	con.lastUsedFont = con.curFont = &con.chars[fontSize];
 	
+}
+
+static void Con_LoadSecConchars(void)
+{
+	int	i, fontSize;
+
+	// load all the console fonts
+	for (i = 0; i < 3; i++)
+		Con_LoadSecFont(i, con.secchars + i);
+
+	if (glState.height < 720)			//480
+		fontSize = 0;
+	else if (glState.height <= 1080)	//720
+		fontSize = 1;
+	else								//1080
+		fontSize = 2;
+
+	if (fontSize == 0)
+	{
+		if (glState.height > 480)
+			con.scale2 = (float)glState.height / 480;
+		else
+			con.scale2 = 1;
+	}
+	else if (fontSize == 1)
+	{
+		if (glState.height > 720)
+			con.scale2 = (float)glState.height / 720;
+		else
+			con.scale2 = 1;
+	}
+	else
+	{
+		if (glState.height > 1080)
+			con.scale2 = (float)glState.height / 1080;
+		else
+			con.scale2 = 1;
+	}
+
+	// sets the current font
+	con.seclastUsedFont = con.secFont = &con.secchars[fontSize];
+}
+
+static void Con_LoadBoldConchars(void)
+{
+	int	i, fontSize;
+
+	// load all the console fonts
+	for (i = 0; i < 3; i++)
+		Con_LoadBoldFont(i, con.boldchars + i);
+
+	if (glState.height < 720)			//480
+		fontSize = 0;
+	else if (glState.height <= 1080)	//720
+		fontSize = 1;
+	else								//1080
+		fontSize = 2;
+
+	if (fontSize == 0)
+	{
+		if (glState.height > 480)
+			con.scale3 = (float)glState.height / 480;
+		else
+			con.scale3 = 1;
+	}
+	else if (fontSize == 1)
+	{
+		if (glState.height > 720)
+			con.scale3 = (float)glState.height / 720;
+		else
+			con.scale3 = 1;
+	}
+	else
+	{
+		if (glState.height > 1080)
+			con.scale3 = (float)glState.height / 1080;
+		else
+			con.scale3 = 1;
+	}
+
+	// sets the current font
+	con.lastBoldFont = con.boldFont = &con.boldchars[fontSize];
 }
 
 static void Con_DrawCharToConback( int num, byte *conchars, byte *dest )
@@ -790,6 +986,108 @@ static int Con_DrawGenericChar( int x, int y, int number, rgba_t color )
 	return con.curFont->charWidths[number] * con.scale;
 }
 
+static int Con_DrawGenericSecChar(int x, int y, int number, rgba_t color)
+{
+	int		width, height;
+	float		s1, t1, s2, t2;
+	gl_texture_t* glt;
+	wrect_t* rc;
+
+	number &= 255;
+
+	if (!con.secFont || !con.secFont->valid)
+		return 0;
+
+	if (y < -con.secFont->charHeight)
+		return 0;
+
+	rc = &con.secFont->fontRc[number];
+	glt = R_GetTexture(con.secFont->secFontTexture);
+	width = glt->srcWidth;
+	height = glt->srcHeight;
+
+	if (!width || !height)
+		return con.secFont->charWidths[number];
+
+	// don't apply color to fixed fonts it's already colored
+	//if( con.secFont->type != FONT_FIXED || glt->format == GL_LUMINANCE8_ALPHA8 )
+		pglColor4ubv( color );
+	//else pglColor4ub( 255, 255, 255, color[3] );
+	//pglColor4ub(155, 155, 155, color[3]); //magic nipples - just solid white please
+	R_GetTextureParms(&width, &height, con.secFont->secFontTexture);
+
+	// calc rectangle
+	s1 = (float)rc->left / width;
+	t1 = (float)rc->top / height;
+	s2 = (float)rc->right / width;
+	t2 = (float)rc->bottom / height;
+	width = rc->right - rc->left;
+	height = rc->bottom - rc->top;
+
+	con.secFont->charHeight = height;// *con.scale2;
+
+	height *= con.scale2;
+	width *= con.scale2;
+
+	//if( clgame.ds.adjust_size )
+	//	Con_TextAdjustSize( &x, &y, &width, &height );
+	R_DrawStretchPic(x, y, width, height, s1, t1, s2, t2, con.secFont->secFontTexture);
+	pglColor4ub(255, 255, 255, 255); // don't forget reset color
+
+	return con.secFont->charWidths[number] * con.scale2;
+}
+
+static int Con_DrawGenericBoldChar(int x, int y, int number, rgba_t color)
+{
+	int		width, height;
+	float		s1, t1, s2, t2;
+	gl_texture_t* glt;
+	wrect_t* rc;
+
+	number &= 255;
+
+	if (!con.boldFont || !con.boldFont->valid)
+		return 0;
+
+	if (y < -con.boldFont->charHeight)
+		return 0;
+
+	rc = &con.boldFont->fontRc[number];
+	glt = R_GetTexture(con.boldFont->boldFontTexture);
+	width = glt->srcWidth;
+	height = glt->srcHeight;
+
+	if (!width || !height)
+		return con.boldFont->charWidths[number];
+
+	// don't apply color to fixed fonts it's already colored
+	//if( con.secFont->type != FONT_FIXED || glt->format == GL_LUMINANCE8_ALPHA8 )
+	pglColor4ubv(color);
+	//else pglColor4ub( 255, 255, 255, color[3] );
+	//pglColor4ub(155, 155, 155, color[3]); //magic nipples - just solid white please
+	R_GetTextureParms(&width, &height, con.boldFont->boldFontTexture);
+
+	// calc rectangle
+	s1 = (float)rc->left / width;
+	t1 = (float)rc->top / height;
+	s2 = (float)rc->right / width;
+	t2 = (float)rc->bottom / height;
+	width = rc->right - rc->left;
+	height = rc->bottom - rc->top;
+
+	con.boldFont->charHeight = height;// *con.scale2;
+
+	height *= con.scale3;
+	width *= con.scale3;
+
+	//if( clgame.ds.adjust_size )
+	//	Con_TextAdjustSize( &x, &y, &width, &height );
+	R_DrawStretchPic(x, y, width, height, s1, t1, s2, t2, con.boldFont->boldFontTexture);
+	pglColor4ub(255, 255, 255, 255); // don't forget reset color
+
+	return con.boldFont->charWidths[number] * con.scale3;
+}
+
 /*
 ====================
 Con_SetFont
@@ -801,6 +1099,18 @@ void Con_SetFont( int fontNum )
 {
 	fontNum = bound( 0, fontNum, 2 ); 
 	con.curFont = &con.chars[fontNum];
+}
+
+void Con_SetSecFont(int fontNum)
+{
+	fontNum = bound(0, fontNum, 2);
+	con.secFont = &con.secchars[fontNum];
+}
+
+void Con_SetBoldFont(int fontNum)
+{
+	fontNum = bound(0, fontNum, 2);
+	con.boldFont = &con.boldchars[fontNum];
 }
 
 /*
@@ -816,6 +1126,16 @@ void Con_RestoreFont( void )
 	con.curFont = con.lastUsedFont;
 }
 
+void Con_RestoreSecFont(void)
+{
+	con.secFont = con.seclastUsedFont;
+}
+
+void Con_RestoreBoldFont(void)
+{
+	con.boldFont = con.lastBoldFont;
+}
+
 /*
 ====================
 Con_DrawCharacter
@@ -827,6 +1147,18 @@ int Con_DrawCharacter( int x, int y, int number, rgba_t color )
 {
 	GL_SetRenderMode( kRenderTransTexture );
 	return Con_DrawGenericChar( x, y, number, color );
+}
+
+int Con_DrawSecCharacter(int x, int y, int number, rgba_t color)
+{
+	GL_SetRenderMode(kRenderTransTexture);
+	return Con_DrawGenericSecChar(x, y, number, color);
+}
+
+int Con_DrawBoldCharacter(int x, int y, int number, rgba_t color)
+{
+	GL_SetRenderMode(kRenderTransTexture);
+	return Con_DrawGenericBoldChar(x, y, number, color);
 }
 
 /*
@@ -882,6 +1214,42 @@ void Con_DrawStringLen( const char *pText, int *length, int *height )
 
 		if( curLength > *length )
 			*length = curLength;
+	}
+}
+
+void Con_DrawSecLen(const char* pText, int* length, int* height)
+{
+	int	curLength = 0;
+
+	if (!con.secFont) return;
+
+	if (height)* height = con.secFont->charHeight * con.scale2;
+	if (!length) return;
+
+	*length = 0;
+
+	while (*pText)
+	{
+		byte	c = *pText;
+
+		if (*pText == '\n')
+		{
+			pText++;
+			curLength = 0;
+		}
+
+		// skip color strings they are not drawing
+		if (IsColorString(pText))
+		{
+			pText += 2;
+			continue;
+		}
+
+		curLength += con.secFont->charWidths[c] * con.scale2;
+		pText++;
+
+		if (curLength > * length)
+			* length = curLength;
 	}
 }
 
@@ -942,6 +1310,104 @@ int Con_DrawGenericString( int x, int y, const char *string, rgba_t setColor, qb
 	return drawLen;
 }
 
+int Con_DrawGenericSecString(int x, int y, const char* string, rgba_t setColor, qboolean forceColor, int hideChar)
+{
+	rgba_t		color;
+	int		drawLen = 0;
+	int		numDraws = 0;
+	const char* s;
+
+	if (!con.secFont) return 0; // no font set
+
+	// draw the colored text
+	*(uint*)color = *(uint*)setColor;
+	s = string;
+
+	while (*s)
+	{
+		if (*s == '\n')
+		{
+			s++;
+			if (!*s) break; // at end the string
+			drawLen = 0; // begin new row
+			y += con.secFont->charHeight;
+		}
+
+		if (IsColorString(s))
+		{
+			if (!forceColor)
+			{
+				memcpy(color, g_color_table[ColorIndex(*(s + 1))], sizeof(color));
+				color[3] = setColor[3];
+			}
+
+			s += 2;
+			numDraws++;
+			continue;
+		}
+
+		// hide char for overstrike mode
+		if (hideChar == numDraws)
+			drawLen += con.secFont->charWidths[*s];
+		else drawLen += Con_DrawSecCharacter(x + drawLen, y, *s, color);
+
+		numDraws++;
+		s++;
+	}
+
+	pglColor4ub(255, 255, 255, 255);
+	return drawLen;
+}
+
+int Con_DrawGenericboldString(int x, int y, const char* string, rgba_t setColor, qboolean forceColor, int hideChar)
+{
+	rgba_t		color;
+	int		drawLen = 0;
+	int		numDraws = 0;
+	const char* s;
+
+	if (!con.boldFont) return 0; // no font set
+
+	// draw the colored text
+	*(uint*)color = *(uint*)setColor;
+	s = string;
+
+	while (*s)
+	{
+		if (*s == '\n')
+		{
+			s++;
+			if (!*s) break; // at end the string
+			drawLen = 0; // begin new row
+			y += con.boldFont->charHeight;
+		}
+
+		if (IsColorString(s))
+		{
+			if (!forceColor)
+			{
+				memcpy(color, g_color_table[ColorIndex(*(s + 1))], sizeof(color));
+				color[3] = setColor[3];
+			}
+
+			s += 2;
+			numDraws++;
+			continue;
+		}
+
+		// hide char for overstrike mode
+		if (hideChar == numDraws)
+			drawLen += con.boldFont->charWidths[*s];
+		else drawLen += Con_DrawBoldCharacter(x + drawLen, y, *s, color);
+
+		numDraws++;
+		s++;
+	}
+
+	pglColor4ub(255, 255, 255, 255);
+	return drawLen;
+}
+
 /*
 ====================
 Con_DrawString
@@ -952,6 +1418,16 @@ client version of routine
 int Con_DrawString( int x, int y, const char *string, rgba_t setColor )
 {
 	return Con_DrawGenericString( x, y, string, setColor, false, -1 );
+}
+
+int Con_DrawSecString(int x, int y, const char* string, rgba_t setColor)
+{
+	return Con_DrawGenericSecString(x, y, string, setColor, false, -1);
+}
+
+int Con_DrawBoldString(int x, int y, const char* string, rgba_t setColor)
+{
+	return Con_DrawGenericboldString(x, y, string, setColor, false, -1);
 }
 
 /*
@@ -2307,7 +2783,7 @@ void Con_RunConsole( void )
 	}
 	else con.showlines = 0; // none visible
 
-	lines_per_frame = fabs( scr_conspeed->value ) * host.realframetime;
+	lines_per_frame = fabs( scr_conspeed->value ) * (glState.height * host.realframetime * 0.0024); //magic nipples - speed fix for console at higher resolutions
 
 	if( con.showlines < con.vislines )
 	{
@@ -2362,6 +2838,8 @@ void Con_VidInit( void )
 	Con_CheckResize();
 
 	Con_LoadConchars();
+	Con_LoadSecConchars();
+	Con_LoadBoldConchars();
 
 	// loading console image
 	if( host.allow_console )

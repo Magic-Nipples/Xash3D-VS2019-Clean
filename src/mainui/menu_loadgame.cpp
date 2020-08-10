@@ -329,7 +329,7 @@ static void UI_LoadGame_Init( void )
 	uiLoadGame.load.generic.id = ID_LOAD;
 	uiLoadGame.load.generic.type = QMTYPE_BM_BUTTON;
 	uiLoadGame.load.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiLoadGame.load.generic.x = 72;
+	uiLoadGame.load.generic.x = UI_SELECTION_POSX;
 	uiLoadGame.load.generic.y = 230;
 	uiLoadGame.load.generic.name = "Load";
 	uiLoadGame.load.generic.statusText = "Load saved game";
@@ -340,7 +340,7 @@ static void UI_LoadGame_Init( void )
 	uiLoadGame.remove.generic.id = ID_DELETE;
 	uiLoadGame.remove.generic.type = QMTYPE_BM_BUTTON;
 	uiLoadGame.remove.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiLoadGame.remove.generic.x = 72;
+	uiLoadGame.remove.generic.x = UI_SELECTION_POSX;
 	uiLoadGame.remove.generic.y = 280;
 	uiLoadGame.remove.generic.name = "Delete";
 	uiLoadGame.remove.generic.statusText = "Delete saved game";
@@ -351,7 +351,7 @@ static void UI_LoadGame_Init( void )
 	uiLoadGame.cancel.generic.id = ID_CANCEL;
 	uiLoadGame.cancel.generic.type = QMTYPE_BM_BUTTON;
 	uiLoadGame.cancel.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiLoadGame.cancel.generic.x = 72;
+	uiLoadGame.cancel.generic.x = UI_SELECTION_POSX;
 	uiLoadGame.cancel.generic.y = 330;
 	uiLoadGame.cancel.generic.name = "Cancel";
 	uiLoadGame.cancel.generic.statusText = "Return back to main menu";

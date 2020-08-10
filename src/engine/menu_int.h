@@ -94,8 +94,10 @@ typedef struct ui_enginefuncs_s
 	// text message system
 	void	(*pfnDrawCharacter)( int x, int y, int width, int height, int ch, int ulRGBA, HIMAGE hFont );
 	int	(*pfnDrawConsoleString)( int x, int y, const char *string );
+	int	(*pfnDrawBoldString)(int x, int y, const char* string);
 	void	(*pfnDrawSetTextColor)( int r, int g, int b, int alpha );
 	void	(*pfnDrawConsoleStringLen)(  const char *string, int *length, int *height );
+	void	(*pfnDrawSecStringLen)(const char* string, int* length, int* height);
 	void	(*pfnSetConsoleDefaultColor)( int r, int g, int b ); // color must came from colors.lst
 
 	// custom rendering (for playermodel preview)

@@ -176,7 +176,7 @@ static void UI_Options_Init( void )
 	uiOptions.controls.generic.id	= ID_CONTROLS;
 	uiOptions.controls.generic.type = QMTYPE_BM_BUTTON;
 	uiOptions.controls.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiOptions.controls.generic.x = 72;
+	uiOptions.controls.generic.x = UI_SELECTION_POSX;
 	uiOptions.controls.generic.y = 230;
 	uiOptions.controls.generic.name = "Controls";
 	uiOptions.controls.generic.statusText = "Change keyboard and mouse settings";
@@ -187,7 +187,7 @@ static void UI_Options_Init( void )
 	uiOptions.audio.generic.id = ID_AUDIO;
 	uiOptions.audio.generic.type = QMTYPE_BM_BUTTON;
 	uiOptions.audio.generic.flags	= QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiOptions.audio.generic.x = 72;
+	uiOptions.audio.generic.x = UI_SELECTION_POSX;
 	uiOptions.audio.generic.y = 280;
 	uiOptions.audio.generic.name = "Audio";
 	uiOptions.audio.generic.statusText = "Change sound volume and quality";
@@ -198,7 +198,7 @@ static void UI_Options_Init( void )
 	uiOptions.video.generic.id = ID_VIDEO;
 	uiOptions.video.generic.type = QMTYPE_BM_BUTTON;
 	uiOptions.video.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiOptions.video.generic.x = 72;
+	uiOptions.video.generic.x = UI_SELECTION_POSX;
 	uiOptions.video.generic.y = 330;
 	uiOptions.video.generic.name = "Video";
 	uiOptions.video.generic.statusText = "Change screen size, video mode and gamma";
@@ -209,7 +209,7 @@ static void UI_Options_Init( void )
 	uiOptions.update.generic.id = ID_UPDATE;
 	uiOptions.update.generic.type = QMTYPE_BM_BUTTON;
 	uiOptions.update.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiOptions.update.generic.x = 72;
+	uiOptions.update.generic.x = UI_SELECTION_POSX;
 	uiOptions.update.generic.y = 380;
 	uiOptions.update.generic.name = "Update";
 	uiOptions.update.generic.statusText = "Donwload the latest version of the Xash3D engine";
@@ -222,7 +222,7 @@ static void UI_Options_Init( void )
 	uiOptions.done.generic.id = ID_DONE;
 	uiOptions.done.generic.type = QMTYPE_BM_BUTTON;
 	uiOptions.done.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiOptions.done.generic.x = 72;
+	uiOptions.done.generic.x = UI_SELECTION_POSX;
 	uiOptions.done.generic.y = 430;
 	uiOptions.done.generic.name = "Done";
 	uiOptions.done.generic.statusText = "Go back to the Main Menu";

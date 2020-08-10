@@ -178,7 +178,7 @@ static void UI_VidModes_Init( void )
 	uiVidModes.ok.generic.id = ID_APPLY;
 	uiVidModes.ok.generic.type = QMTYPE_BM_BUTTON;
 	uiVidModes.ok.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiVidModes.ok.generic.x = 72;
+	uiVidModes.ok.generic.x = UI_SELECTION_POSX;
 	uiVidModes.ok.generic.y = 230;
 	uiVidModes.ok.generic.name = "Apply";
 	uiVidModes.ok.generic.statusText = "Apply changes";
@@ -189,7 +189,7 @@ static void UI_VidModes_Init( void )
 	uiVidModes.cancel.generic.id = ID_DONE;
 	uiVidModes.cancel.generic.type = QMTYPE_BM_BUTTON;
 	uiVidModes.cancel.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiVidModes.cancel.generic.x = 72;
+	uiVidModes.cancel.generic.x = UI_SELECTION_POSX;
 	uiVidModes.cancel.generic.y = 280;
 	uiVidModes.cancel.generic.name = "Done";
 	uiVidModes.cancel.generic.statusText = "Return back to previous menu";

@@ -349,7 +349,7 @@ static void UI_SaveGame_Init( void )
 	uiSaveGame.save.generic.id = ID_SAVE;
 	uiSaveGame.save.generic.type = QMTYPE_BM_BUTTON;
 	uiSaveGame.save.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiSaveGame.save.generic.x = 72;
+	uiSaveGame.save.generic.x = UI_SELECTION_POSX;
 	uiSaveGame.save.generic.y = 230;
 	uiSaveGame.save.generic.name = "Save";
 	uiSaveGame.save.generic.statusText = "Save current game";
@@ -360,7 +360,7 @@ static void UI_SaveGame_Init( void )
 	uiSaveGame.remove.generic.id = ID_DELETE;
 	uiSaveGame.remove.generic.type = QMTYPE_BM_BUTTON;
 	uiSaveGame.remove.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiSaveGame.remove.generic.x = 72;
+	uiSaveGame.remove.generic.x = UI_SELECTION_POSX;
 	uiSaveGame.remove.generic.y = 280;
 	uiSaveGame.remove.generic.name = "Delete";
 	uiSaveGame.remove.generic.statusText = "Delete saved game";
@@ -371,7 +371,7 @@ static void UI_SaveGame_Init( void )
 	uiSaveGame.cancel.generic.id = ID_CANCEL;
 	uiSaveGame.cancel.generic.type = QMTYPE_BM_BUTTON;
 	uiSaveGame.cancel.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
-	uiSaveGame.cancel.generic.x = 72;
+	uiSaveGame.cancel.generic.x = UI_SELECTION_POSX;
 	uiSaveGame.cancel.generic.y = 330;
 	uiSaveGame.cancel.generic.name = "Cancel";
 	uiSaveGame.cancel.generic.statusText = "Return back to main menu";

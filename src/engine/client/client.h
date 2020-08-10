@@ -357,6 +357,8 @@ typedef struct
 typedef struct
 {
 	int		hFontTexture;		// handle to texture
+	int		secFontTexture;
+	int		boldFontTexture;
 	wrect_t		fontRc[256];		// rectangles
 	byte		charWidths[256];
 	int		charHeight;
@@ -1018,14 +1020,20 @@ void Con_RunConsole( void );
 void Con_DrawConsole( void );
 void Con_DrawVersion( void );
 void Con_DrawStringLen( const char *pText, int *length, int *height );
+void Con_DrawSecLen(const char* pText, int* length, int* height);
 int Con_DrawString( int x, int y, const char *string, rgba_t setColor );
+int Con_DrawSecString(int x, int y, const char* string, rgba_t setColor);
+int Con_DrawBoldString(int x, int y, const char* string, rgba_t setColor);
 int Con_DrawCharacter( int x, int y, int number, rgba_t color );
 void Con_DrawCharacterLen( int number, int *width, int *height );
 void Con_DefaultColor( int r, int g, int b );
 void Con_InvalidateFonts( void );
 void Con_SetFont( int fontNum );
+void Con_SetSecFont(int fontNum);
+void Con_SetBoldFont(int fontNum);
 void Con_CharEvent( int key );
 void Con_RestoreFont( void );
+void Con_RestoreSecFont(void);
 void Key_Console( int key );
 void Key_Message( int key );
 void Con_FastClose( void );

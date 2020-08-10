@@ -114,7 +114,11 @@ int CHudBattery::Draw(float flTime)
 	int iOffset = (m_prc1->bottom - m_prc1->top)/6;
 
 	y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;
-	x = ScreenWidth/5;
+
+	int HealthWidth = gHUD.GetSpriteRect(gHUD.m_HUD_number_0).right - gHUD.GetSpriteRect(gHUD.m_HUD_number_0).left;
+	int CrossWidth = gHUD.GetSpriteRect(gHUD.GetSpriteIndex("cross")).right - gHUD.GetSpriteRect(gHUD.GetSpriteIndex("cross")).left;
+	x = (CrossWidth * 2.25) + (HealthWidth * 3);
+	//x = ScreenWidth/5;
 
 	// make sure we have the right sprite handles
 	if ( !m_HLSPRITE1 )
