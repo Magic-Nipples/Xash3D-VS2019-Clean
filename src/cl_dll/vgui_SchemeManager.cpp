@@ -191,7 +191,7 @@ CSchemeManager::CSchemeManager( int xRes, int yRes )
 
 	if ( !pFile )
 	{
-		gEngfuncs.Con_DPrintf( "Unable to find *_textscheme.txt\n");
+		//gEngfuncs.Con_DPrintf( "Unable to find *_textscheme.txt\n"); //magic nipples - no missing textscheme warning
 		goto buildDefaultFont;
 	}
 
@@ -397,8 +397,8 @@ buildDefaultFont:
 			{
 				sprintf(fontFilename, "gfx\\vgui\\fonts\\%d_%s.tga", m_xRes, m_pSchemeList[i].schemeName);
 				pFontData = gEngfuncs.COM_LoadFile( fontFilename, 5, &fontFileLength );
-				if(!pFontData)
-					gEngfuncs.Con_Printf("Missing bitmap font: %s\n", fontFilename);
+				//if(!pFontData)
+					//gEngfuncs.Con_Printf("Missing bitmap font: %s\n", fontFilename); //magic nipples - no more bitmap font warning
 			}
 
 			m_pSchemeList[i].font = new vgui::Font(

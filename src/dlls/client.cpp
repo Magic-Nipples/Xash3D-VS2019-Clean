@@ -1492,67 +1492,7 @@ void RegisterEncoders( void )
 
 int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 {
-#if defined( CLIENT_WEAPONS )
-	int i;
-	weapon_data_t *item;
-	entvars_t *pev = &player->v;
-	CBasePlayer *pl = ( CBasePlayer *) CBasePlayer::Instance( pev );
-	CBasePlayerWeapon *gun;
-	
-	ItemInfo II;
-
 	memset( info, 0, 32 * sizeof( weapon_data_t ) );
-
-	if ( !pl )
-		return 1;
-
-	// go through all of the weapons and make a list of the ones to pack
-	for ( i = 0 ; i < MAX_ITEM_TYPES ; i++ )
-	{
-		if ( pl->m_rgpPlayerItems[ i ] )
-		{
-			// there's a weapon here. Should I pack it?
-			CBasePlayerItem *pPlayerItem = pl->m_rgpPlayerItems[ i ];
-
-			while ( pPlayerItem )
-			{
-				gun = (CBasePlayerWeapon *)pPlayerItem->GetWeaponPtr();
-				if ( gun && gun->UseDecrement() )
-				{
-					// Get The ID.
-					memset( &II, 0, sizeof( II ) );
-					gun->GetItemInfo( &II );
-
-					if ( II.iId >= 0 && II.iId < 32 )
-					{
-						item = &info[ II.iId ];
-					 	
-						item->m_iId						= II.iId;
-						item->m_iClip					= gun->m_iClip;
-
-						item->m_flTimeWeaponIdle		= max( gun->m_flTimeWeaponIdle, -0.001 );
-						item->m_flNextPrimaryAttack		= max( gun->m_flNextPrimaryAttack, -0.001 );
-						item->m_flNextSecondaryAttack	= max( gun->m_flNextSecondaryAttack, -0.001 );
-						item->m_fInReload				= gun->m_fInReload;
-						item->m_fInSpecialReload		= gun->m_fInSpecialReload;
-						item->fuser1					= max( gun->pev->fuser1, -0.001 );
-						item->fuser2					= gun->m_flStartThrow;
-						item->fuser3					= gun->m_flReleaseThrow;
-						item->iuser1					= gun->m_chargeReady;
-						item->iuser2					= gun->m_fInAttack;
-						item->iuser3					= gun->m_fireState;
-						
-											
-//						item->m_flPumpTime				= max( gun->m_flPumpTime, -0.001 );
-					}
-				}
-				pPlayerItem = pPlayerItem->m_pNext;
-			}
-		}
-	}
-#else
-	memset( info, 0, 32 * sizeof( weapon_data_t ) );
-#endif
 	return 1;
 }
 
@@ -1594,55 +1534,6 @@ void UpdateClientData ( const struct edict_s *ent, int sendweapons, struct clien
 	cd->weaponanim		= ent->v.weaponanim;
 
 	cd->pushmsec		= ent->v.pushmsec;
-
-#if defined( CLIENT_WEAPONS )
-	if ( sendweapons )
-	{
-		entvars_t *pev = (entvars_t *)&ent->v;
-		CBasePlayer *pl = ( CBasePlayer *) CBasePlayer::Instance( pev );
-
-		if ( pl )
-		{
-			cd->m_flNextAttack	= pl->m_flNextAttack;
-			cd->fuser2			= pl->m_flNextAmmoBurn;
-			cd->fuser3			= pl->m_flAmmoStartCharge;
-			cd->vuser1.x		= pl->ammo_9mm;
-			cd->vuser1.y		= pl->ammo_357;
-			cd->vuser1.z		= pl->ammo_argrens;
-			cd->ammo_nails		= pl->ammo_bolts;
-			cd->ammo_shells		= pl->ammo_buckshot;
-			cd->ammo_rockets	= pl->ammo_rockets;
-			cd->ammo_cells		= pl->ammo_uranium;
-			cd->vuser2.x		= pl->ammo_hornets;
-			
-
-			if ( pl->m_pActiveItem )
-			{
-				CBasePlayerWeapon *gun;
-				gun = (CBasePlayerWeapon *)pl->m_pActiveItem->GetWeaponPtr();
-				if ( gun && gun->UseDecrement() )
-				{
-					ItemInfo II;
-					memset( &II, 0, sizeof( II ) );
-					gun->GetItemInfo( &II );
-
-					cd->m_iId = II.iId;
-
-					cd->vuser3.z	= gun->m_iSecondaryAmmoType;
-					cd->vuser4.x	= gun->m_iPrimaryAmmoType;
-					cd->vuser4.y	= pl->m_rgAmmo[gun->m_iPrimaryAmmoType];
-					cd->vuser4.z	= pl->m_rgAmmo[gun->m_iSecondaryAmmoType];
-					
-					if ( pl->m_pActiveItem->m_iId == WEAPON_RPG )
-					{
-						cd->vuser2.y = ( ( CRpg * )pl->m_pActiveItem)->m_fSpotActive;
-						cd->vuser2.z = ( ( CRpg * )pl->m_pActiveItem)->m_cActiveRockets;
-					}
-				}
-			}
-		}
-	}
-#endif
 }
 
 /*

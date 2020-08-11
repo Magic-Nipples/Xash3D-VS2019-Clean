@@ -664,7 +664,7 @@ int TeamFortressViewport::CreateCommandMenu( char * menuFile, int direction, int
 	char *pfile = (char*)gEngfuncs.COM_LoadFile( menuFile, 5, NULL);
 	if (!pfile)
 	{
-		gEngfuncs.Con_DPrintf( "Unable to open %s\n", menuFile);
+		//gEngfuncs.Con_DPrintf( "Unable to open %s\n", menuFile); //magic nipples - disabled warning for missing command menu
 		SetCurrentCommandMenu( NULL );
 		return newIndex;
 	}

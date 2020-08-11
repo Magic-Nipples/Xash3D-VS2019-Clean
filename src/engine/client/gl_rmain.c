@@ -334,11 +334,8 @@ void R_SetupFrustum( void )
 
 	if( RP_NORMALPASS() && ( cl.local.waterlevel >= 3 )) //magic nipples - underwater view stretching
 	{
-		//RI.fov_x = atan(tan(DEG2RAD(RI.fov_x) / 2) * (0.97 + sin(cl.time * 4.5) * 0.23)) * 2 / (M_PI / 180.0); // :)
-		//RI.fov_y = atan(tan(DEG2RAD(RI.fov_y) / 2) * (1.03 - sin(cl.time * 5.5) * 0.23)) * 2 / (M_PI / 180.0); // :)
-
-		//RI.fov_x = atan( tan( DEG2RAD( RI.fov_x ) / 2 ) * ( 0.97 + sin( cl.time * 1.5 ) * 0.03 )) * 2 / (M_PI / 180.0);
-		//RI.fov_y = atan( tan( DEG2RAD( RI.fov_y ) / 2 ) * ( 1.03 - sin( cl.time * 1.5 ) * 0.03 )) * 2 / (M_PI / 180.0);
+		RI.fov_x = atan( tan( DEG2RAD( RI.fov_x ) / 2 ) * ( 0.97 + sin( cl.time * 1.5 ) * 0.03 )) * 2 / (M_PI / 180.0);
+		RI.fov_y = atan( tan( DEG2RAD( RI.fov_y ) / 2 ) * ( 1.03 - sin( cl.time * 1.5 ) * 0.03 )) * 2 / (M_PI / 180.0);
 	}
 
 	// build the transformation matrix for the given view angles

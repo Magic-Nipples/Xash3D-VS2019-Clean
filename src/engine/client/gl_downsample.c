@@ -63,15 +63,15 @@ static void R_Bloom_InitEffectTexture(void)
 	if (r_downsample->value > 5.0f)
 		r_downsample->value = 5.0f;
 
-	if (cl.local.waterlevel >= 3)
+	/*if (cl.local.waterlevel >= 3)
 	{
 		DOWNSAMPLE_SIZE_X = screen_texture_width / (2.5);
 		DOWNSAMPLE_SIZE_Y = screen_texture_width / (2.5);
 	}
-	else
+	else*/
 	{
 		DOWNSAMPLE_SIZE_X = screen_texture_width / (r_downsample->value * 2);
-		DOWNSAMPLE_SIZE_Y = screen_texture_width / (r_downsample->value * 2);
+		DOWNSAMPLE_SIZE_Y = screen_texture_height / (r_downsample->value * 2);
 	}
 
 	r_sampleeffecttexture = GL_CreateTexture("*sampleeffecttexture", DOWNSAMPLE_SIZE_X, DOWNSAMPLE_SIZE_Y, NULL, TF_NEAREST);
@@ -84,17 +84,8 @@ R_Sampling_InitTextures
 */
 static void R_Sampling_InitTextures(void)
 {
-	if (GL_Support(GL_ARB_TEXTURE_NPOT_EXT))
-	{
-		screen_texture_width = glState.width;
-		screen_texture_height = glState.height;
-	}
-	else
-	{
-		// find closer power of 2 to screen size 
-		for (screen_texture_width = 1; screen_texture_width < glState.width; screen_texture_width <<= 1);
-		for (screen_texture_height = 1; screen_texture_height < glState.height; screen_texture_height <<= 1);
-	}
+	screen_texture_width = glState.width;
+	screen_texture_height = glState.height;
 
 	// disable blooms if we can't handle a texture of that size
 	if (screen_texture_width > glConfig.max_2d_texture_size || screen_texture_height > glConfig.max_2d_texture_size)
@@ -139,7 +130,8 @@ void R_InitDownSampleTextures(void)
 	r_initsampletexture = r_sampleeffecttexture = 0;
 	r_samplebackuptexture = r_downsampletexture = 0;
 
-	if ((!r_downsample->value) && (cl.local.waterlevel < 3))
+	//if ((!r_downsample->value) && (cl.local.waterlevel < 3))
+	if (!r_downsample->value)
 		return;
 
 	R_Sampling_InitTextures();
@@ -252,7 +244,8 @@ R_DownSampling
 */
 void R_DownSampling(void)
 {
-	if ( (!r_downsample->value) && (cl.local.waterlevel < 3))
+	//if ( (!r_downsample->value) && (cl.local.waterlevel < 3))
+	if (!r_downsample->value)
 		return;
 
 	if (!DOWNSAMPLE_SIZE_X && !DOWNSAMPLE_SIZE_Y)
@@ -260,8 +253,6 @@ void R_DownSampling(void)
 
 	if (screen_texture_width < DOWNSAMPLE_SIZE_X || screen_texture_height < DOWNSAMPLE_SIZE_Y)
 		return;
-
-	//if ( cl.local.waterlevel <= 3 )
 
 	// set up full screen workspace
 	pglScissor(0, 0, glState.width, glState.height);
