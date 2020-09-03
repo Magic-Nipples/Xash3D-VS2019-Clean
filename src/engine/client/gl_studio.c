@@ -1556,7 +1556,7 @@ void R_StudioSetupChrome( float *pchrome, int bone, vec3_t normal )
 
 	// calc s coord
 	n = DotProduct( normal, g_studio.chromeright[bone] );
-	pchrome[0] = (n + 1.0f) * 32.0f;
+	pchrome[0] = (n + 1.0f) * -32.0f; //magic nipples - negated this value to flip the chrome to be accurate to goldsrc
 
 	// calc t coord
 	n = DotProduct( normal, g_studio.chromeup[bone] );

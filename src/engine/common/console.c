@@ -947,8 +947,8 @@ static int Con_DrawGenericChar( int x, int y, int number, rgba_t color )
 	if( !con.curFont || !con.curFont->valid )
 		return 0;
 
-	if( y < -con.curFont->charHeight )
-		return 0;
+	//if( y < -con.curFont->charHeight ) //magic nipples - disabled because it would leave a 1 char height gap at top of console
+	//	return 0;
 
 	rc = &con.curFont->fontRc[number];
 	glt = R_GetTexture( con.curFont->hFontTexture );
@@ -2389,7 +2389,7 @@ void Con_DrawInput( int lines )
 		return;
 
 	y = lines - ( con.curFont->charHeight * 2 );
-	Con_DrawCharacter( 8, y, ']', g_color_table[7] );
+	Con_DrawCharacter( con.curFont->charWidths[' '] * con.scale, y, ']', g_color_table[7] );
 	Field_DrawInputLine( 16 * con.scale, y, &con.input );
 }
 
@@ -2533,8 +2533,8 @@ int Con_DrawConsoleLine( int y, int lineno )
 	if( *li->start == '\1' )
 		return 0;	// this string will be shown only at notify
 
-	if( y >= con.curFont->charHeight )
-		Con_DrawGenericString( con.curFont->charWidths[' '], y, li->start, g_color_table[7], false, -1 );
+	//if( y >= con.curFont->charHeight ) //magic nipples - disabled because it would leave a 1 char height gap at top of console
+		Con_DrawGenericString( con.curFont->charWidths[' '] * con.scale, y, li->start, g_color_table[7], false, -1 );
 
 	return con.curFont->charHeight;
 }
@@ -2617,7 +2617,7 @@ void Con_DrawSolidConsole( int lines )
 	// draw the text
 	if( CON_LINES_COUNT > 0 )
 	{
-		int	ymax = lines - (con.curFont->charHeight * 2.0f);
+		int	ymax = lines - (con.curFont->charHeight * 1.0f); //magic nipples - total number of lines? 2.0
 		int	lastline;
 
 		Con_LastVisibleLine( &lastline );
@@ -2639,14 +2639,14 @@ void Con_DrawSolidConsole( int lines )
 			y -= Con_DrawConsoleLine( y, x );
 
 			// top of console buffer or console window
-			if( x == 0 || y < con.curFont->charHeight ) 
+			if (x == 0 || y < 0) //magic nipples - keep console from drawing anything above top of console FIX //( x == 0 || y < con.curFont->charHeight ) 
 				break;
 			x--;
 		}
 	}
 
 	// draw the input prompt, user text, and cursor if desired
-	Con_DrawInput( lines );
+	Con_DrawInput(lines + con.curFont->charHeight);
 
 	y = lines - ( con.curFont->charHeight * 1.2f );
 	SCR_DrawFPS( max( y, 4 )); // to avoid to hide fps counter

@@ -2157,10 +2157,10 @@ void CL_ParseTempEntity( sizebuf_t *msg )
 		pos2[2] = MSG_ReadCoord( &buf );
 		modelIndex = MSG_ReadShort( &buf );
 		count = MSG_ReadByte( &buf );
-		life = (float)(MSG_ReadByte( &buf ) * 0.1f);
+		life = (float)(MSG_ReadByte( &buf ) * 0.001f); //0.1
 		scale = (float)(MSG_ReadByte( &buf ) * 0.1f);
-		vel = (float)MSG_ReadByte( &buf );
-		random = (float)MSG_ReadByte( &buf );
+		vel = (float)(MSG_ReadByte( &buf ) * 30.0f);
+		random = (float)(MSG_ReadByte( &buf ) * 5.0f);
 		R_Sprite_Trail( type, pos, pos2, modelIndex, count, life, scale, random, 255, vel );
 		break;
 	case TE_SPRITE:
