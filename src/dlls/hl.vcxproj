@@ -170,6 +170,7 @@
     <ClCompile Include="doors.cpp" />
     <ClCompile Include="effects.cpp" />
     <ClCompile Include="egon.cpp" />
+    <ClCompile Include="env_model.cpp" />
     <ClCompile Include="explode.cpp" />
     <ClCompile Include="flyingmonster.cpp" />
     <ClCompile Include="func_break.cpp" />
@@ -201,6 +202,7 @@
     <ClCompile Include="items.cpp" />
     <ClCompile Include="leech.cpp" />
     <ClCompile Include="lights.cpp" />
+    <ClCompile Include="light_model.cpp" />
     <ClCompile Include="maprules.cpp" />
     <ClCompile Include="monstermaker.cpp" />
     <ClCompile Include="monsters.cpp" />

@@ -187,6 +187,7 @@ int gmsgTeamNames = 0;
 int gmsgStatusText = 0;
 int gmsgStatusValue = 0; 
 
+int gmsgAddELight = 0;
 
 
 void LinkUserMessages( void )
@@ -234,6 +235,7 @@ void LinkUserMessages( void )
 	gmsgStatusText = REG_USER_MSG("StatusText", -1);
 	gmsgStatusValue = REG_USER_MSG("StatusValue", 3); 
 
+	gmsgAddELight = REG_USER_MSG("AddELight", -1); //magic nipples - elights
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer );

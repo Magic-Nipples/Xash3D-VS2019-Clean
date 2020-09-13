@@ -16,6 +16,8 @@
 #ifndef CL_ENTITY_H
 #define CL_ENTITY_H
 
+#define MAX_ELIGHTS			128//64		// entity only point lights
+
 typedef struct efrag_s
 {
 	struct mleaf_s	*leaf;
@@ -100,6 +102,15 @@ struct cl_entity_s
 	float		syncbase;	// for client-side animations -- used by obsolete alias animation system, remove?
 	int		visframe;	// last frame this entity was found in an active leaf
 	colorVec		cvFloorColor;
+
+	// Magic Nipples - new variable for gl_studio.c
+	int		ltTime;
+	float	flShadeLightStart;
+	float	flAmbientLightStart;
+	vec3_t	flColorStart;
+	vec3_t	flLightStart;
+
+	float	flElightStart[MAX_ELIGHTS];
 };
 
 #endif//CL_ENTITY_H

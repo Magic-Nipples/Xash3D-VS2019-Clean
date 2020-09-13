@@ -112,3 +112,29 @@ int CHud :: MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf )
 		this->m_StatusIcons.DisableIcon("dmg_concuss");
 	return 1;
 }
+
+int CHud::MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+
+	dlight_t* dl = gEngfuncs.pEfxAPI->CL_AllocElight(READ_SHORT());
+
+	int bELightActive = READ_BYTE();
+	if (bELightActive <= 0)
+	{
+		dl->die = gEngfuncs.GetClientTime();
+	}
+	else
+	{
+		dl->die = gEngfuncs.GetClientTime() + 1E6;
+
+		dl->origin[0] = READ_COORD();
+		dl->origin[1] = READ_COORD();
+		dl->origin[2] = READ_COORD();
+		dl->radius = READ_COORD();
+		dl->color.r = READ_BYTE();
+		dl->color.g = READ_BYTE();
+		dl->color.b = READ_BYTE();
+	}
+	return 1;
+}

@@ -264,6 +264,11 @@ int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
 		return gViewPort->MsgFunc_AllowSpec( pszName, iSize, pbuf );
 	return 0;
 }
+
+int __MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf) //magic nipples - elights
+{
+	return gHUD.MsgFunc_AddELight(pszName, iSize, pbuf);
+}
  
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
@@ -297,6 +302,8 @@ void CHud :: Init( void )
 
 	HOOK_MESSAGE( Spectator );
 	HOOK_MESSAGE( AllowSpec );
+
+	HOOK_MESSAGE(AddELight); //magic nipples - elights
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
