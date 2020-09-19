@@ -722,10 +722,9 @@ extern convar_t* r_overbright; //magic nipples - overbright
 
 //magic nipples - down sampling
 extern convar_t* r_downsample;
-
 extern convar_t* gl_allow_mirrors; //Magic Nipples - readding mirrors
 extern convar_t* r_overbright; //magic nipples - overbright
-
 extern convar_t* r_lighting_lambert;
+extern convar_t* gammaboost;
 
 #endif//GL_LOCAL_H

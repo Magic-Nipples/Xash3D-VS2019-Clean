@@ -1087,8 +1087,18 @@ void R_BeginFrame( qboolean clearScene )
 	pglDrawBuffer( GL_BACK );
 
 	// update texture parameters
-	if( FBitSet( gl_texture_nearest->flags|gl_lightmap_nearest->flags|gl_texture_anisotropy->flags|gl_texture_lodbias->flags, FCVAR_CHANGED ))
+	if (FBitSet(gl_texture_nearest->flags | gl_lightmap_nearest->flags | gl_texture_anisotropy->flags | gl_texture_lodbias->flags | gammaboost->flags, FCVAR_CHANGED))
+	{
 		R_SetTextureParameters();
+		Cbuf_AddText("save temp\n"); //magic nipples - forces skybox to update with cvar change.
+		Cbuf_AddText("disconnect\n");
+		Cbuf_AddText("load temp\n");
+
+		ClearBits(gammaboost->flags, FCVAR_CHANGED);
+	}
+
+	if (FS_FileExists("save/temp.bmp", false))
+		Cbuf_AddText("killsave temp\n"); //magic nipples - make sure to wipe the save as well...
 
 	// swapinterval stuff
 	GL_UpdateSwapInterval();

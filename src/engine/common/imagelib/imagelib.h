@@ -284,6 +284,7 @@ qboolean Image_AddIndexedImageToPack( const byte *in, int width, int height );
 qboolean Image_AddRGBAImageToPack( uint imageSize, const void* data );
 void Image_Save( const char *filename, rgbdata_t *pix );
 void Image_GetPaletteLMP( const byte *pal, int rendermode );
+void Image_GetPaletteLMPCustom(const byte* pal, int rendermode);
 void Image_GetPaletteBMP( const byte *pal );
 int Image_ComparePalette( const byte *pal );
 void Image_FreeImage( rgbdata_t *pack );

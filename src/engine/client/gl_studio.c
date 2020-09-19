@@ -3295,10 +3295,14 @@ static void R_StudioDrawPointsShadow( void )
 			for( ; i > 0; i--, ptricmds += 4 )
 			{
 				av = g_studio.verts[ptricmds[0]];
-				point[0] = av[0] - (vec_x * ( av[2] - g_studio.lightspot[2] ));
-				point[1] = av[1] - (vec_y * ( av[2] - g_studio.lightspot[2] ));
-				point[2] = g_studio.lightspot[2] + height + 0.15f;
+				//point[0] = av[0] - (vec_x * ( av[2] - g_studio.lightspot[2] ));
+				//point[1] = av[1] - (vec_y * ( av[2] - g_studio.lightspot[2] ));
+				//point[2] = g_studio.lightspot[2] + height + 0.15f;
 				//point[2] = tr.endpos[2] + height + 0.16f; //magic nipples - height of shadow off ground
+
+				point[0] = av[0];
+				point[1] = av[1];
+				point[2] = tr.endpos[2] + height + 0.16f; //magic nipples - height of shadow off ground
 
 				pglVertex3fv( point );
 			}

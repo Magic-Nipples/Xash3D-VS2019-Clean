@@ -28,61 +28,62 @@ GNU General Public License for more details.
 #define WINDOW_NAME			"Xash3D Window" // Half-Life
 #define FCONTEXT_DEBUG_ARB		BIT( 0 )
 
-convar_t	*gl_extensions;
-convar_t	*gl_texture_anisotropy;
-convar_t	*gl_texture_lodbias;
-convar_t	*gl_texture_nearest;
-convar_t	*gl_lightmap_nearest;
-convar_t	*gl_wgl_msaa_samples;
-convar_t	*gl_keeptjunctions;
-convar_t	*gl_emboss_scale;
-convar_t	*gl_showtextures;
-convar_t	*gl_detailscale;
-convar_t	*gl_check_errors;
-convar_t	*gl_round_down;
-convar_t	*gl_polyoffset;
-convar_t	*gl_wireframe;
-convar_t	*gl_finish;
-convar_t	*gl_nosort;
-convar_t	*gl_vsync;
-convar_t	*gl_clear;
-convar_t	*gl_test;
-convar_t	*gl_msaa;
+convar_t* gl_extensions;
+convar_t* gl_texture_anisotropy;
+convar_t* gl_texture_lodbias;
+convar_t* gl_texture_nearest;
+convar_t* gl_lightmap_nearest;
+convar_t* gl_wgl_msaa_samples;
+convar_t* gl_keeptjunctions;
+convar_t* gl_emboss_scale;
+convar_t* gl_showtextures;
+convar_t* gl_detailscale;
+convar_t* gl_check_errors;
+convar_t* gl_round_down;
+convar_t* gl_polyoffset;
+convar_t* gl_wireframe;
+convar_t* gl_finish;
+convar_t* gl_nosort;
+convar_t* gl_vsync;
+convar_t* gl_clear;
+convar_t* gl_test;
+convar_t* gl_msaa;
 
-convar_t	*window_xpos;
-convar_t	*window_ypos;
-convar_t	*r_speeds;
-convar_t	*r_fullbright;
-convar_t	*r_norefresh;
-convar_t	*r_lighting_extended;
-convar_t	*r_lighting_modulate;
-convar_t	*r_lighting_ambient;
-convar_t	*r_detailtextures;
-convar_t	*r_drawentities;
-convar_t	*r_adjust_fov;
-convar_t	*r_showtree;
-convar_t	*r_decals;
-convar_t	*r_novis;
-convar_t	*r_nocull;
-convar_t	*r_lockpvs;
-convar_t	*r_lockfrustum;
-convar_t	*r_traceglow;
-convar_t	*r_dynamic;
-convar_t	*r_lightmap;
+convar_t* window_xpos;
+convar_t* window_ypos;
+convar_t* r_speeds;
+convar_t* r_fullbright;
+convar_t* r_norefresh;
+convar_t* r_lighting_extended;
+convar_t* r_lighting_modulate;
+convar_t* r_lighting_ambient;
+convar_t* r_detailtextures;
+convar_t* r_drawentities;
+convar_t* r_adjust_fov;
+convar_t* r_showtree;
+convar_t* r_decals;
+convar_t* r_novis;
+convar_t* r_nocull;
+convar_t* r_lockpvs;
+convar_t* r_lockfrustum;
+convar_t* r_traceglow;
+convar_t* r_dynamic;
+convar_t* r_lightmap;
+
 convar_t* r_overbright; //magic nipples - overbright
 convar_t* r_studio_lambert;
 convar_t* gl_allow_mirrors; //Magic Nipples - readding mirrors
+convar_t* gammaboost;
 
-convar_t	*vid_displayfrequency;
-convar_t	*vid_fullscreen;
-convar_t	*vid_brightness;
-convar_t	*vid_gamma;
-convar_t	*vid_mode;
+convar_t* vid_displayfrequency;
+convar_t* vid_fullscreen;
+convar_t* vid_brightness;
+convar_t* vid_gamma;
+convar_t* vid_mode;
 
-//magic nipples - down sampling
-convar_t* r_downsample;
+convar_t* r_downsample; //magic nipples - down sampling
 
-byte		*r_temppool;
+byte* r_temppool;
 
 ref_globals_t	tr;
 glconfig_t	glConfig;
@@ -1615,6 +1616,7 @@ void GL_InitCommands( void )
 	r_overbright = Cvar_Get("gl_overbright", "1", FCVAR_ARCHIVE, "world overbrights"); //magic nipples - overbright
 	r_studio_lambert = Cvar_Get("r_studio_lambert", "1.495", FCVAR_ARCHIVE, "");
 	gl_allow_mirrors = Cvar_Get("gl_mirrors", "1", FCVAR_ARCHIVE, "draw mirror surfaces"); //Magic Nipples - readding mirrors
+	gammaboost = Cvar_Get("gl_gammaboost", "0", FCVAR_ARCHIVE, "boost game texture palette");
 
 	window_xpos = Cvar_Get( "_window_xpos", "-1", FCVAR_RENDERINFO, "window position by horizontal" );
 	window_ypos = Cvar_Get( "_window_ypos", "-1", FCVAR_RENDERINFO, "window position by vertical" );

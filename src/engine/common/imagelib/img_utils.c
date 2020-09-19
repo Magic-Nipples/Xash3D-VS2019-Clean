@@ -21,6 +21,8 @@ GNU General Public License for more details.
 #define LERPBYTE( i )	r = resamplerow1[i]; out[i] = (byte)(((( resamplerow2[i] - r ) * lerp)>>16 ) + r )
 #define FILTER_SIZE		5
 
+extern convar_t* gammaboost;
+
 uint d_8toQ1table[256];
 uint d_8toHLtable[256];
 uint d_8to24table[256];
@@ -326,6 +328,79 @@ void Image_SetPalette( const byte *pal, uint *d_table )
 	}
 }
 
+void Image_SetPaletteCustom(const byte* pal, uint* d_table)
+{
+	byte	rgba[4];
+	int	i, j, k;
+
+	int adjust = 15;
+
+	// setup palette
+	switch (image.d_rendermode)
+	{
+	case LUMP_NORMAL:
+		for (i = 0; i < 256; i++)
+		{
+			rgba[0] = pal[i * 3 + 0];
+			rgba[1] = pal[i * 3 + 1];
+			rgba[2] = pal[i * 3 + 2];
+
+			if (gammaboost->value)
+			{
+				for (j = 0; j < 3; j++) //magic nipples - increase gamma on palette to be more like og goldsrc
+				{
+					if (rgba[j] < 255 - adjust)
+						rgba[j] += adjust;
+				}
+
+				for (k = 1; k < 10; k++) //magic nipples - increase gamma on palette to be more like og goldsrc | ditto
+				{
+					for (j = 0; j < 3; j++)
+					{
+						if (rgba[j] == k)
+							rgba[j] += 10 - k;
+					}
+				}
+			}
+
+			rgba[3] = 0xFF;
+			d_table[i] = *(uint*)rgba;
+		}
+		break;
+	case LUMP_GRADIENT:
+		for (i = 0; i < 256; i++)
+		{
+			rgba[0] = pal[765];
+			rgba[1] = pal[766];
+			rgba[2] = pal[767];
+			rgba[3] = i;
+			d_table[i] = *(uint*)rgba;
+		}
+		break;
+	case LUMP_MASKED:
+		for (i = 0; i < 255; i++)
+		{
+			rgba[0] = pal[i * 3 + 0];
+			rgba[1] = pal[i * 3 + 1];
+			rgba[2] = pal[i * 3 + 2];
+			rgba[3] = 0xFF;
+			d_table[i] = *(uint*)rgba;
+		}
+		d_table[255] = 0;
+		break;
+	case LUMP_EXTENDED:
+		for (i = 0; i < 256; i++)
+		{
+			rgba[0] = pal[i * 4 + 0];
+			rgba[1] = pal[i * 4 + 1];
+			rgba[2] = pal[i * 4 + 2];
+			rgba[3] = pal[i * 4 + 3];
+			d_table[i] = *(uint*)rgba;
+		}
+		break;
+	}
+}
+
 static void Image_ConvertPalTo24bit( rgbdata_t *pic )
 {
 	byte	*pal32, *pal24;
@@ -428,6 +503,33 @@ void Image_GetPaletteLMP( const byte *pal, int rendermode )
 	else
 	{
 		switch( rendermode )
+		{
+		case LUMP_QUAKE1:
+			Image_GetPaletteQ1();
+			break;
+		case LUMP_HALFLIFE:
+			Image_GetPaletteHL();
+			break;
+		default:
+			// defaulting to half-life palette
+			Image_GetPaletteHL();
+			break;
+		}
+	}
+}
+
+void Image_GetPaletteLMPCustom(const byte* pal, int rendermode)
+{
+	image.d_rendermode = rendermode;
+
+	if (pal)
+	{
+		Image_SetPaletteCustom(pal, d_8to24table);
+		image.d_currentpal = d_8to24table;
+	}
+	else
+	{
+		switch (rendermode)
 		{
 		case LUMP_QUAKE1:
 			Image_GetPaletteQ1();

@@ -873,31 +873,31 @@ R_Blood
 particle spray
 ===============
 */
-void R_Blood( const vec3_t org, const vec3_t ndir, int pcolor, int speed )
+void R_Blood(const vec3_t org, const vec3_t ndir, int pcolor, int speed)
 {
 	vec3_t		pos, dir, vec;
 	float		pspeed = speed * 3.0f;
 	int		i, j;
-	particle_t	*p;
+	particle_t* p;
 
-	VectorNormalize2( ndir, dir );
+	VectorNormalize2(ndir, dir);
 
-	for( i = 0; i < (speed / 2); i++ )
+	for (i = 0; i < (speed / 2); i++)
 	{
-		VectorAddScalar( org, COM_RandomFloat( -3.0f, 3.0f ), pos );
-		VectorAddScalar( dir, COM_RandomFloat( -0.06f, 0.06f ), vec );
+		VectorAddScalar(org, COM_RandomFloat(-3.0f, 3.0f), pos);
+		VectorAddScalar(dir, COM_RandomFloat(-0.06f, 0.06f), vec);
 
-		for( j = 0; j < 7; j++ )
+		for (j = 0; j < 7; j++)
 		{
-			p = R_AllocParticle( NULL );
-			if( !p ) return;
+			p = R_AllocParticle(NULL);
+			if (!p) return;
 
 			p->die = cl.time + 1.5f;
-			p->color = pcolor + COM_RandomLong( 0, 9 );
+			p->color = pcolor + COM_RandomLong(0, 9);
 			p->type = pt_vox_grav;
 
-			VectorAddScalar( pos, COM_RandomFloat( -1.0f, 1.0f ), p->org );
-			VectorScale( vec, pspeed, p->vel );
+			VectorAddScalar(pos, COM_RandomFloat(-1.0f, 1.0f), p->org);
+			VectorScale(vec, pspeed, p->vel);
 		}
 	}
 }
@@ -909,73 +909,113 @@ R_BloodStream
 particle spray 2
 ===============
 */
-void R_BloodStream( const vec3_t org, const vec3_t dir, int pcolor, int speed )
+void R_BloodStream(const vec3_t org, const vec3_t dir, int pcolor, int speed)
 {
-	particle_t	*p;
-	int		i, j;
+	particle_t* p;
+	int		i, j;// y;
 	float		arc;
 	float		accel = speed;
+	vec3_t newdir;
 
-	for( arc = 0.05f, i = 0; i < 100; i++ )
+	//int mainCount = COM_RandomLong(1, 3);
+	//int secCount = COM_RandomLong(1, 3);
+
+	//for (y = 0; y < mainCount; y++)
 	{
-		p = R_AllocParticle( NULL );
-		if( !p ) return;
+		for (j = 0; j < 3; j++)
+			newdir[j] = dir[j] + COM_RandomFloat(-1.0f, 1.0f);
 
-		p->die = cl.time + 2.0f;
-		p->type = pt_vox_grav;
-		p->color = pcolor + COM_RandomLong( 0, 9 );
+		newdir[2] = dir[2] + COM_RandomFloat(0.0f, 0.75f);
 
-		VectorCopy( org, p->org );
-		VectorCopy( dir, p->vel );
+		for (arc = 0.05f, i = 0; i < 100; i++)
+		{
+			p = R_AllocParticle(NULL);
+			if (!p) return;
 
-		p->vel[2] -= arc;
-		arc -= 0.005f;
-		VectorScale( p->vel, accel, p->vel );
-		accel -= 0.00001f; // so last few will drip
+			p->die = cl.time + 2.0f;
+			p->type = pt_vox_grav;
+
+			p->color = pcolor + COM_RandomLong(0, 9);
+
+			VectorCopy(org, p->org);
+			VectorCopy(newdir, p->vel);
+
+			p->vel[2] -= arc;
+			arc += 0.0055f;
+
+			VectorScale(p->vel, i * (speed * 0.0075), p->vel);
+		}
 	}
 
-	for( arc = 0.075f, i = 0; i < ( speed / 5 ); i++ )
+	//for (y = 0; y < secCount; y++)
+	{
+		for (j = 0; j < 3; j++)
+			newdir[j] = dir[j] + COM_RandomFloat(-1.0f, 1.0f);
+
+		newdir[2] = dir[2] + COM_RandomFloat(0.0f, 0.75f);
+
+		for (arc = 0.05f, i = 0; i < 50; i++)
+		{
+			p = R_AllocParticle(NULL);
+			if (!p) return;
+
+			p->die = cl.time + 2.0f;
+			p->type = pt_vox_grav;
+
+			p->color = pcolor + COM_RandomLong(0, 9);
+
+			VectorCopy(org, p->org);
+			VectorCopy(newdir, p->vel);
+
+			p->vel[2] -= arc;
+			arc += 0.0025f;
+
+			VectorScale(p->vel, i + (speed * 0.25), p->vel);
+		}
+	}
+
+	for (arc = 0.075f, i = 0; i < (speed / 5); i++)
 	{
 		float	num;
 
-		p = R_AllocParticle( NULL );
-		if( !p ) return;
+		p = R_AllocParticle(NULL);
+		if (!p) return;
 
 		p->die = cl.time + 3.0f;
-		p->color = pcolor + COM_RandomLong( 0, 9 );
+		p->color = pcolor + COM_RandomLong(0, 9);
 		p->type = pt_vox_slowgrav;
 
-		VectorCopy( org, p->org );
-		VectorCopy( dir, p->vel );
+		VectorCopy(org, p->org);
+		VectorCopy(dir, p->vel);
 
 		p->vel[2] -= arc;
 		arc -= 0.005f;
 
-		num = COM_RandomFloat( 0.0f, 1.0f );
+		num = COM_RandomFloat(0.0f, 1.0f);
 		accel = speed * num;
-		num *= 1.7f;
+		num *= 1.125f;
 
-		VectorScale( p->vel, num, p->vel );
-		VectorScale( p->vel, accel, p->vel );
+		VectorScale(p->vel, num, p->vel);
+		VectorScale(p->vel, accel, p->vel);
 
-		for( j = 0; j < 2; j++ )
+		for (j = 0; j < 2; j++)
 		{
-			p = R_AllocParticle( NULL );
-			if( !p ) return;
+			p = R_AllocParticle(NULL);
+			if (!p) return;
 
 			p->die = cl.time + 3.0f;
-			p->color = pcolor + COM_RandomLong( 0, 9 );
+			p->color = pcolor + COM_RandomLong(0, 9);
 			p->type = pt_vox_slowgrav;
 
-			p->org[0] = org[0] + COM_RandomFloat( -1.0f, 1.0f );
-			p->org[1] = org[1] + COM_RandomFloat( -1.0f, 1.0f );
-			p->org[2] = org[2] + COM_RandomFloat( -1.0f, 1.0f );
+			p->org[0] = org[0] + COM_RandomFloat(-1.0f, 1.0f);
+			p->org[1] = org[1] + COM_RandomFloat(-1.0f, 1.0f);
+			p->org[2] = org[2] + COM_RandomFloat(-1.0f, 1.0f);
 
-			VectorCopy( dir, p->vel );
+			VectorCopy(dir, p->vel);
 			p->vel[2] -= arc;
 
-			VectorScale( p->vel, num, p->vel );
-			VectorScale( p->vel, accel, p->vel );
+			VectorScale(p->vel, num, p->vel);
+			VectorScale(p->vel, accel, p->vel);
 		}
 	}
 }
