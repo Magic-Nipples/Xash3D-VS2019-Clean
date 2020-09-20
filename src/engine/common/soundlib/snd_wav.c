@@ -155,7 +155,7 @@ qboolean Sound_LoadWAV( const char *name, const byte *buffer, size_t filesize )
 
 	if( !( iff_dataPtr && !Q_strncmp( iff_dataPtr + 8, "WAVE", 4 )))
 	{
-		Con_DPrintf( S_ERROR "Sound_LoadWAV: %s missing 'RIFF/WAVE' chunks\n", name );
+		Con_Reportf(S_ERROR "Sound_LoadWAV: file with %i samples (%s)\n", sound.samples, name);
 		return false;
 	}
 
