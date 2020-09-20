@@ -100,7 +100,7 @@ GNU General Public License for more details.
 
 #define ID_BACKGROUND		0	// catch warning on change this
 
-#define EMPTY_SAVE_PIC		"save/no_save.bmp" //"gfx\\lambda32" //magic nipples - no save graphic
+#define EMPTY_SAVE_PIC		"gfx/shell/no_save.bmp" //"gfx\\lambda32" //magic nipples - no save graphic
 
 // Generic types
 typedef enum

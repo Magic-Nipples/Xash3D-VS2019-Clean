@@ -1079,14 +1079,17 @@ void R_BeginFrame(qboolean clearScene)
 	pglDrawBuffer( GL_BACK );
 
 	// update texture parameters
-	if (FBitSet(gl_texture_nearest->flags | gl_lightmap_nearest->flags | gl_texture_anisotropy->flags | gl_texture_lodbias->flags | gammaboost->flags, FCVAR_CHANGED))
+	if (clearScene) //fix for starting game with +map parameter
 	{
-		R_SetTextureParameters();
-		Cbuf_AddText("save temp\n"); //magic nipples - forces skybox to update with cvar change.
-		Cbuf_AddText("disconnect\n");
-		Cbuf_AddText("load temp\n");
+		if (FBitSet(gl_texture_nearest->flags | gl_lightmap_nearest->flags | gl_texture_anisotropy->flags | gl_texture_lodbias->flags | gammaboost->flags, FCVAR_CHANGED))
+		{
+			R_SetTextureParameters();
+			Cbuf_AddText("save temp\n"); //magic nipples - forces skybox to update with cvar change.
+			Cbuf_AddText("disconnect\n");
+			Cbuf_AddText("load temp\n");
 
-		ClearBits(gammaboost->flags, FCVAR_CHANGED);
+			ClearBits(gammaboost->flags, FCVAR_CHANGED);
+		}
 	}
 
 	if (FS_FileExists("save/temp.bmp", false))
