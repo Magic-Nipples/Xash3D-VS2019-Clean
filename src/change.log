@@ -16,6 +16,20 @@ VGUI:	- a VGUI implementation code in xash.dll
 Memory:	- a memory manager in xash.dll
 Physic:	- a server physics code in xash.dll
 
+build 4529
+
+Render: add support for hardware compression 3DC for old ATI-cards
+
+build 4511
+
+Engine: some expansion of RenderAPI (with keep compatibility of course)
+Render: fixup screen clearing while SCR_BeginLoadingPlaque is called
+Engine: cl_testlights now supports custom rendering
+Render: fixup cubemap rendering code, reset gamma
+Console: allow to drawing progress-bar in console without carriage return call
+Engine: small fix for system logging
+ImageLib: ignore to process emboss-filter with scale <= 0
+
 build 4483
 
 Engine: implementation of improved line trace that can be collided with solid-pixels on grates or fences. (see features.h for details)

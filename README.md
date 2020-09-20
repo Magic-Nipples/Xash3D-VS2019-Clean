@@ -1,4 +1,4 @@
-# Xash3D [Build 4483] for Visual Studio 2019
+# Xash3D [Build 4529] for Visual Studio 2019
 
 ***
 **Links:**\
