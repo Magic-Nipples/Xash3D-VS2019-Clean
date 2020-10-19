@@ -8,7 +8,6 @@
 [Mod DB](https://www.moddb.com/members/amd889) 
 
 **Donations:**\
-[Patreon](https://www.patreon.com/magicnipples) \
 [PayPal](https://www.paypal.me/magicnipples)
 
 
