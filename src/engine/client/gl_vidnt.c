@@ -1616,7 +1616,7 @@ void GL_InitCommands( void )
 	r_overbright = Cvar_Get("gl_overbright", "1", FCVAR_ARCHIVE, "world overbrights"); //magic nipples - overbright
 	r_studio_lambert = Cvar_Get("r_studio_lambert", "1.495", FCVAR_ARCHIVE, "");
 	gl_allow_mirrors = Cvar_Get("gl_mirrors", "1", FCVAR_ARCHIVE, "draw mirror surfaces"); //Magic Nipples - readding mirrors
-	gammaboost = Cvar_Get("gl_gammaboost", "0", FCVAR_ARCHIVE, "boost game texture palette");
+	gammaboost = Cvar_Get("gl_texgamma", "0", FCVAR_ARCHIVE, "textures use gamma table");
 
 	window_xpos = Cvar_Get( "_window_xpos", "-1", FCVAR_RENDERINFO, "window position by horizontal" );
 	window_ypos = Cvar_Get( "_window_ypos", "-1", FCVAR_RENDERINFO, "window position by vertical" );

@@ -331,9 +331,7 @@ void Image_SetPalette( const byte *pal, uint *d_table )
 void Image_SetPaletteCustom(const byte* pal, uint* d_table)
 {
 	byte	rgba[4];
-	int	i, j, k;
-
-	int adjust = 15;
+	int	i, j;
 
 	// setup palette
 	switch (image.d_rendermode)
@@ -347,20 +345,9 @@ void Image_SetPaletteCustom(const byte* pal, uint* d_table)
 
 			if (gammaboost->value)
 			{
-				for (j = 0; j < 3; j++) //magic nipples - increase gamma on palette to be more like og goldsrc
-				{
-					if (rgba[j] < 255 - adjust)
-						rgba[j] += adjust;
-				}
-
-				for (k = 1; k < 10; k++) //magic nipples - increase gamma on palette to be more like og goldsrc | ditto
-				{
-					for (j = 0; j < 3; j++)
-					{
-						if (rgba[j] == k)
-							rgba[j] += 10 - k;
-					}
-				}
+				//magic nipples - increase gamma on palette to be more like og goldsrc
+				for (j = 0; j < 3; j++)
+					rgba[j] = TextureToGamma(rgba[j]);
 			}
 
 			rgba[3] = 0xFF;

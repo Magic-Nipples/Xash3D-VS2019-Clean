@@ -66,7 +66,7 @@ XASH SPECIFIC			- sort of hack that works only in Xash3D not in GoldSrc
 #define BIT( n )		(1<<( n ))
 #define GAMMA		( 2.2 )		// Valve Software gamma
 #define INVGAMMA		( 1.0 / 2.2 )	// back to 1.0
-#define TEXGAMMA		( 0.9 )		// compensate dim textures
+#define TEXGAMMA		( 0.73 )//( 0.9 )		// compensate dim textures
 #define SetBits( iBitVector, bits )	((iBitVector) = (iBitVector) | (bits))
 #define ClearBits( iBitVector, bits )	((iBitVector) = (iBitVector) & ~(bits))
 #define FBitSet( iBitVector, bit )	((iBitVector) & (bit))

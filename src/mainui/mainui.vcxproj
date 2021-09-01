@@ -39,13 +39,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\build\</OutDir>
+    <OutDir>$(SolutionDir)..\build\valve\bin\</OutDir>
     <IntDir>$(SolutionDir)build\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\build\</OutDir>
+    <OutDir>$(SolutionDir)..\build\valve\bin\</OutDir>
     <IntDir>$(SolutionDir)build\$(TargetName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
