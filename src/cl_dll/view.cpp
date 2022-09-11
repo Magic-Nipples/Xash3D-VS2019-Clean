@@ -496,6 +496,7 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	static viewinterp_t		ViewInterp;
 
 	static float oldz = 0;
+	static float oldViewz = 0;
 	static float lasttime;
 
 	vec3_t camAngles, camForward, camRight, camUp;
@@ -697,29 +698,45 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	V_DropPunchAngle ( pparams->frametime, (float *)&ev_punchangle );
 
 	// smooth out stair step ups
-#if 1
-	if ( !pparams->smoothing && pparams->onground && pparams->simorg[2] - oldz > 0)
+	if (!pparams->smoothing && pparams->onground && (pparams->simorg[2] != oldz) && oldViewz == pparams->viewheight[2])
 	{
+		int dir = (pparams->simorg[2] > oldz) ? 1 : -1;
+
 		float steptime;
-		
+
 		steptime = pparams->time - lasttime;
 		if (steptime < 0)
-	//FIXME		I_Error ("steptime < 0");
-			steptime = 0;
+			steptime = 0; //FIXME	I_Error ("steptime < 0");
 
-		oldz += steptime * 150;
-		if (oldz > pparams->simorg[2])
-			oldz = pparams->simorg[2];
-		if (pparams->simorg[2] - oldz > 18)
-			oldz = pparams->simorg[2]- 18;
+		oldz += steptime * 150 * dir;
+
+		const float stepSize = pparams->movevars->stepsize;
+
+		if (dir > 0)
+		{
+			if (oldz > pparams->simorg[2])
+				oldz = pparams->simorg[2];
+
+			if (pparams->simorg[2] - oldz > stepSize)
+				oldz = pparams->simorg[2] - stepSize;
+		}
+		else
+		{
+			if (oldz < pparams->simorg[2])
+				oldz = pparams->simorg[2];
+
+			if (pparams->simorg[2] - oldz < -stepSize)
+				oldz = pparams->simorg[2] + stepSize;
+		}
+
 		pparams->vieworg[2] += oldz - pparams->simorg[2];
 		view->origin[2] += oldz - pparams->simorg[2];
 	}
 	else
 	{
 		oldz = pparams->simorg[2];
+		oldViewz = pparams->viewheight[2];
 	}
-#endif
 
 	{
 		static float lastorg[3];

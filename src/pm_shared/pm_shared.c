@@ -1015,6 +1015,47 @@ void PM_Accelerate (vec3_t wishdir, float wishspeed, float accel)
 
 /*
 =====================
+PM_StayOnGround
+
+Try to keep a walking player on the ground when running down slopes etc
+
+Ripped from Source 1
+======================
+*/
+void PM_StayOnGround(void)
+{
+	pmtrace_t trace;
+	vec3_t start, end;
+
+	VectorCopy(pmove->origin, start);
+	start[2] += 2;
+
+	VectorCopy(pmove->origin, end);
+	end[2] -= pmove->movevars->stepsize;
+
+	// See how far up we can go down without getting stuck
+	trace = pmove->PM_PlayerTrace(pmove->origin, start, PM_NORMAL, -1);
+	VectorCopy(trace.endpos, start);
+
+	// Now trace down from a known safe position
+	trace = pmove->PM_PlayerTrace(start, end, PM_NORMAL, -1);
+
+	if (trace.fraction > 0.0f &&            // must go somewhere
+		trace.fraction < 1.0f &&            // must hit something
+		!trace.startsolid &&                // can't be embedded in a solid
+		trace.plane.normal[2] >= 0.7)        // can't hit a steep slope that we can't stand on anyway
+	{
+		//This is incredibly hacky. The real problem is that trace returning that strange value we can't network over.
+		// Vasia: I honestly don't know if Goldsrc needs this but I'm leaving it just in case
+		float flDelta = fabs(pmove->origin[2] - trace.endpos[2]);
+
+		if (flDelta > 0.5)
+			VectorCopy(trace.endpos, pmove->origin);
+	}
+}
+
+/*
+=====================
 PM_WalkMove
 
 Only used by players.  Moves along the ground when player is a MOVETYPE_WALK.
@@ -1102,6 +1143,7 @@ void PM_WalkMove ()
 	if (trace.fraction == 1)
 	{
 		VectorCopy (trace.endpos, pmove->origin);
+		PM_StayOnGround();
 		return;
 	}
 
@@ -1179,6 +1221,7 @@ usedown:
 	} else // copy z value from slide move
 		pmove->velocity[2] = downvel[2];
 
+	PM_StayOnGround();
 }
 
 /*
