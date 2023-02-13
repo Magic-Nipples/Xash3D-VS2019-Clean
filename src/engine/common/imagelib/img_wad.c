@@ -409,7 +409,7 @@ qboolean Image_LoadMIP( const char *name, const byte *buffer, size_t filesize )
 			// glow textures, but some modifications might be in order
 			//if (mip.name[0] == '+' && mip.name[1] != 'A' && mip.name[2] == '~')
 			//magic nipples - seems ~ is for luma. check first and 3rd char in name
-			if ((mip.name[2] == '~' && mip.name[1] != 'A') || (mip.name[0] == '~' && mip.name[1] != 'A'))
+			if ((mip.name[2] == '~' ) || (mip.name[0] == '~'))
 			{
 				for (i = 0; i < image.width * image.height; i++)
 				{
