@@ -126,7 +126,7 @@ typedef enum
 #define XASH_VERSION	"0.99"		// engine current version
 
 // PERFORMANCE INFO
-#define MIN_FPS         	20.0		// host minimum fps value for maxfps.
+#define MIN_FPS         	15.0		// host minimum fps value for maxfps. //magic nipples - 20
 #define MAX_FPS         	200.0		// upper limit for maxfps.
 #define HOST_FPS		100.0		// multiplayer games typical fps
 
@@ -561,17 +561,17 @@ typedef enum
 typedef enum
 {
 	// rgbdata->flags
-	IMAGE_CUBEMAP	= BIT(0),		// it's 6-sides cubemap buffer
-	IMAGE_HAS_ALPHA	= BIT(1),		// image contain alpha-channel
-	IMAGE_HAS_COLOR	= BIT(2),		// image contain RGB-channel
+	IMAGE_CUBEMAP		= BIT(0),		// it's 6-sides cubemap buffer
+	IMAGE_HAS_ALPHA		= BIT(1),		// image contain alpha-channel
+	IMAGE_HAS_COLOR		= BIT(2),		// image contain RGB-channel
 	IMAGE_COLORINDEX	= BIT(3),		// all colors in palette is gradients of last color (decals)
-	IMAGE_HAS_LUMA	= BIT(4),		// image has luma pixels (q1-style maps)
-	IMAGE_SKYBOX	= BIT(5),		// only used by FS_SaveImage - for write right suffixes
-	IMAGE_QUAKESKY	= BIT(6),		// it's a quake sky double layered clouds (so keep it as 8 bit)
+	IMAGE_HAS_LUMA		= BIT(4),		// image has luma pixels (q1-style maps)
+	IMAGE_SKYBOX		= BIT(5),		// only used by FS_SaveImage - for write right suffixes
+	IMAGE_QUAKESKY		= BIT(6),		// it's a quake sky double layered clouds (so keep it as 8 bit)
 	IMAGE_DDS_FORMAT	= BIT(7),		// a hint for GL loader
 	IMAGE_MULTILAYER	= BIT(8),		// to differentiate from 3D texture
 	IMAGE_ONEBIT_ALPHA	= BIT(9),		// binary alpha
-	IMAGE_QUAKEPAL	= BIT(10),	// image has quake1 palette
+	IMAGE_QUAKEPAL		= BIT(10),		// image has quake1 palette
 
 	// Image_Process manipulation flags
 	IMAGE_FLIP_X	= BIT(16),	// flip the image by width

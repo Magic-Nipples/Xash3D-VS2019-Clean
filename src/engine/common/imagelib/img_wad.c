@@ -392,7 +392,7 @@ qboolean Image_LoadMIP( const char *name, const byte *buffer, size_t filesize )
 			pal_type = Image_ComparePalette( pal );
 
 			// check for luma pixels (but ignore liquid textures because they have no lightmap)
-			if( mip.name[0] != '*' && mip.name[0] != '!' && pal_type == PAL_QUAKE1 )
+			/*if (mip.name[0] != '*' && mip.name[0] != '!' && pal_type == PAL_QUAKE1)
 			{
 				for( i = 0; i < image.width * image.height; i++ )
 				{
@@ -400,6 +400,26 @@ qboolean Image_LoadMIP( const char *name, const byte *buffer, size_t filesize )
 					{
 						image.flags |= IMAGE_HAS_LUMA;
 						break;
+					}
+				}
+			}*/
+
+			// headcrab - turns out xash sorta already figured out hl glowing textures. Valve
+			// was doing the same thing, I've sorta set these up so they should work similarly to the alpha
+			// glow textures, but some modifications might be in order
+			//if (mip.name[0] == '+' && mip.name[1] != 'A' && mip.name[2] == '~')
+			//magic nipples - seems ~ is for luma. check first and 3rd char in name
+			if ((mip.name[2] == '~' && mip.name[1] != 'A') || (mip.name[0] == '~' && mip.name[1] != 'A'))
+			{
+				for (i = 0; i < image.width * image.height; i++)
+				{
+					if (pal[669] == 0 && pal[670] == 0 && pal[671] == 2) // valves transparent color ig
+					{
+						if (fin[i] > 224)
+						{
+							image.flags |= IMAGE_HAS_LUMA;
+							break;
+						}
 					}
 				}
 			}

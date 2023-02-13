@@ -682,7 +682,7 @@ qboolean Image_Copy8bitRGBA( const byte *in, byte *out, int pixels )
 	if( image.flags & IMAGE_HAS_LUMA )
 	{
 		for( i = 0; i < image.width * image.height; i++ )
-			fin[i] = fin[i] < 224 ? fin[i] : 0;
+			fin[i] = fin[i] < 224 ? fin[i] : 223;//fin[i] = fin[i] < 224 ? fin[i] : 0; //headcrab - old hl1 glow textures from 0.52 alpha software mode.
 	}
 
 	// check for color
@@ -1269,8 +1269,10 @@ byte *Image_CreateLumaInternal( byte *fin, int width, int height, int type, int 
 	case PF_INDEXED_24:
 	case PF_INDEXED_32:
 		out = image.tempbuffer = Mem_Realloc( host.imagepool, image.tempbuffer, width * height );
-		for( i = 0; i < width * height; i++ )
-			*out++ = fin[i] >= 224 ? fin[i] : 0;
+		for (i = 0; i < width * height; i++)
+		{
+			*out++ = fin[i] >= 224 ? fin[i] : 223;//*out++ = fin[i] >= 224 ? fin[i] : 0; //headcrab - old hl1 glow textures from 0.52 alpha software mode.
+		}
 		break;
 	default:
 		// another formats does ugly result :(

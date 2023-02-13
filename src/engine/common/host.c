@@ -465,7 +465,15 @@ qboolean Host_FilterTime( float time )
 		}
 	}
 
-	host.frametime = host.realtime - oldtime;
+	if (fps <= 15) //magic nipples - for low fps. reduces frametime so things function better.
+		host.frametime = (host.realtime - oldtime) * 0.65;
+	else if (fps <= 20)
+		host.frametime = (host.realtime - oldtime) * 0.70;
+	else if (fps <= 25)
+		host.frametime = (host.realtime - oldtime) * 0.75;
+	else
+		host.frametime = host.realtime - oldtime;
+
 	host.realframetime = bound( MIN_FRAMETIME, host.frametime, MAX_FRAMETIME );
 	oldtime = host.realtime;
 
