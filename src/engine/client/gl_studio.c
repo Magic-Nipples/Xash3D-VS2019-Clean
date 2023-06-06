@@ -2177,27 +2177,36 @@ R_LightLambert
 
 ====================
 */
-void R_LightLambert( vec4_t light[MAX_LOCALLIGHTS], vec3_t normal, vec3_t color )
+static void R_LightLambert(vec4_t light[MAX_LOCALLIGHTS], const vec3_t normal, const vec3_t color, byte* out)
 {
 	vec3_t	finalLight;
 	vec3_t	localLight;
 	int	i;
 
+	if (!g_studio.numlocallights)
+	{
+		VectorScale(color, 255.0f, out);
+		return;
+	}
+
 	VectorCopy( color, finalLight );
 
 	for( i = 0; i < g_studio.numlocallights; i++ )
 	{
-		float	r, r2;
+		float	r;
 
-		if( tr.fFlipViewModel )
-			r = DotProduct( normal, light[i] );
-		else r = -DotProduct( normal, light[i] );
+		if (tr.fFlipViewModel)
+			r = DotProduct(normal, light[i]);
+		else r = -DotProduct(normal, light[i]);
 
 		if( r > 0.0f )
 		{
+			vec3_t localLight;
+			float temp;
+
 			if( light[i][3] == 0.0f )
 			{
-				r2 = DotProduct( light[i], light[i] );
+				float r2 = DotProduct(light[i], light[i]);
 
 				if( r2 > 0.0f )
 					light[i][3] = g_studio.locallightR2[i] / ( r2 * sqrt( r2 ));
@@ -2207,18 +2216,37 @@ void R_LightLambert( vec4_t light[MAX_LOCALLIGHTS], vec3_t normal, vec3_t color 
 					light[i][3] = 0.025f;
 			}
 
-			localLight[0] = Q_min( g_studio.locallightcolor[i].r * r * light[i][3], 255.0f );
-			localLight[1] = Q_min( g_studio.locallightcolor[i].g * r * light[i][3], 255.0f );
-			localLight[2] = Q_min( g_studio.locallightcolor[i].b * r * light[i][3], 255.0f );
-			VectorScale( localLight, ( 1.0f / 255.0f ), localLight );
+			temp = Q_min(r * light[i][3] / 255.0f, 1.0f);
 
-			finalLight[0] = Q_min( finalLight[0] + localLight[0], 1.0f );
-			finalLight[1] = Q_min( finalLight[1] + localLight[1], 1.0f );
-			finalLight[2] = Q_min( finalLight[2] + localLight[2], 1.0f );
+			localLight[0] = (float)g_studio.locallightcolor[i].r * temp;
+			localLight[1] = (float)g_studio.locallightcolor[i].g * temp;
+			localLight[2] = (float)g_studio.locallightcolor[i].b * temp;
+
+			VectorAdd(finalLight, localLight, finalLight);
 		}
 	}
 
-	pglColor4f( finalLight[0], finalLight[1], finalLight[2], tr.blend );
+	VectorScale(finalLight, 255.0f, finalLight);
+
+	out[0] = Q_min((int)(finalLight[0]), 255);
+	out[1] = Q_min((int)(finalLight[1]), 255);
+	out[2] = Q_min((int)(finalLight[2]), 255);
+}
+
+static void R_StudioSetColorArray(short* ptricmds, vec3_t* pstudionorms, byte* color)
+{
+	float* lv = (float*)g_studio.lightvalues[ptricmds[1]];
+
+	color[3] = tr.blend * 255;
+	R_LightLambert(g_studio.lightpos[ptricmds[0]], pstudionorms[ptricmds[1]], lv, color);
+}
+
+static void R_StudioSetColorBegin(short* ptricmds, vec3_t* pstudionorms)
+{
+	rgba_t color;
+
+	R_StudioSetColorArray(ptricmds, pstudionorms, color);
+	pglColor4ubv(color);
 }
 
 /*
@@ -2398,11 +2426,8 @@ static _inline void R_StudioDrawNormalMesh( short *ptricmds, vec3_t *pstudionorm
 
 		for( ; i > 0; i--, ptricmds += 4 )
 		{
-			lv = (float *)g_studio.lightvalues[ptricmds[1]];
+			R_StudioSetColorBegin(ptricmds, pstudionorms);
 
-			if( g_studio.numlocallights )
-				R_LightLambert( g_studio.lightpos[ptricmds[0]], pstudionorms[ptricmds[1]], lv );
-			else pglColor4f( lv[0], lv[1], lv[2], tr.blend );
 			pglTexCoord2f( ptricmds[2] * s, ptricmds[3] * t );
 			pglVertex3fv( g_studio.verts[ptricmds[0]] );
 		}
@@ -2434,10 +2459,8 @@ static _inline void R_StudioDrawFloatMesh( short *ptricmds, vec3_t *pstudionorms
 
 		for( ; i > 0; i--, ptricmds += 4 )
 		{
-			lv = (float *)g_studio.lightvalues[ptricmds[1]];
-			if( g_studio.numlocallights )
-				R_LightLambert( g_studio.lightpos[ptricmds[0]], pstudionorms[ptricmds[1]], lv );
-			else pglColor4f( lv[0], lv[1], lv[2], tr.blend );
+			R_StudioSetColorBegin(ptricmds, pstudionorms);
+
 			pglTexCoord2f( HalfToFloat( ptricmds[2] ), HalfToFloat( ptricmds[3] ));
 			pglVertex3fv( g_studio.verts[ptricmds[0]] );
 		}
@@ -2484,9 +2507,8 @@ static _inline void R_StudioDrawChromeMesh( short *ptricmds, vec3_t *pstudionorm
 			{
 				idx = ptricmds[1];
 				lv = (float *)g_studio.lightvalues[ptricmds[1]];
-				if( g_studio.numlocallights )
-					R_LightLambert( g_studio.lightpos[ptricmds[0]], pstudionorms[ptricmds[1]], lv );
-				else pglColor4f( lv[0], lv[1], lv[2], tr.blend );
+				R_StudioSetColorBegin(ptricmds, pstudionorms);
+
 				pglTexCoord2f( g_studio.chrome[idx][0] * s, g_studio.chrome[idx][1] * t );
 				pglVertex3fv( g_studio.verts[ptricmds[0]] );
 			}
@@ -2680,12 +2702,6 @@ static void R_StudioDrawPoints( void )
 
 		R_StudioSetupSkin( m_pStudioHeader, pskinref[pmesh->skinref] );
 
-		/*if( FBitSet( g_nFaceFlags, STUDIO_NF_CHROME ))
-			R_StudioDrawChromeMesh( ptricmds, pstudionorms, s, t, shellscale );
-		else if( FBitSet( g_nFaceFlags, STUDIO_NF_UV_COORDS ))
-			R_StudioDrawFloatMesh( ptricmds, pstudionorms );
-		else R_StudioDrawNormalMesh( ptricmds, pstudionorms, s, t );*/
-
 		//magic nipples - fix for boneweight entity lighting
 		if (FBitSet(g_nFaceFlags, STUDIO_NF_CHROME))
 		{
@@ -2696,7 +2712,10 @@ static void R_StudioDrawPoints( void )
 		}
 		else if (FBitSet(g_nFaceFlags, STUDIO_NF_UV_COORDS))
 		{
-			R_StudioDrawFloatMesh(ptricmds, pstudionorms);
+			if (FBitSet(m_pStudioHeader->flags, STUDIO_HAS_BONEWEIGHTS))
+				R_StudioDrawFloatMesh(ptricmds, (vec3_t*)g_studio.norms[0]);
+			else
+				R_StudioDrawFloatMesh(ptricmds, pstudionorms);
 		}
 		else
 		{
