@@ -130,6 +130,7 @@ void GL_Bind( GLint tmu, GLenum texnum )
 
 	pglBindTexture( texture->target, texture->texnum );
 	glState.currentTextures[tmu] = texture->texnum;
+	glState.currentTexturesIndex[tmu] = texnum;
 }
 
 /*
@@ -1167,6 +1168,7 @@ static qboolean GL_UploadTexture( gl_texture_t *tex, rgbdata_t *pic )
 
 	// uploading texture into video memory, change the binding
 	glState.currentTextures[glState.activeTMU] = tex->texnum;
+	glState.currentTexturesIndex[glState.activeTMU] = tex - gl_textures;
 	pglBindTexture( tex->target, tex->texnum );
 
 	for( i = 0; i < numSides; i++ )
@@ -1384,7 +1386,7 @@ static gl_texture_t *GL_AllocTexture( const char *name, texFlags_t flags )
 	Q_strncpy( tex->name, name, sizeof( tex->name ));
 	if( FBitSet( flags, TF_SKYSIDE ))
 		tex->texnum = tr.skyboxbasenum++;
-	else tex->texnum = i; // texnum is used for fast acess into gl_textures array too
+	else pglGenTextures(1, &tex->texnum); //else tex->texnum = i; // texnum is used for fast acess into gl_textures array too
 	tex->flags = flags;
 
 	// add to hash table

@@ -739,7 +739,7 @@ void DrawGLPoly( glpoly_t *p, float xScale, float yScale )
 			flConveyorSpeed = (e->curstate.rendercolor.g<<8|e->curstate.rendercolor.b) / 16.0f;
 			if( e->curstate.rendercolor.r ) flConveyorSpeed = -flConveyorSpeed;
 		}
-		texture = R_GetTexture( glState.currentTextures[glState.activeTMU] );
+		texture = R_GetTexture(glState.currentTexturesIndex[glState.activeTMU]);
 
 		flRate = abs( flConveyorSpeed ) / (float)texture->srcWidth;
 		flAngle = ( flConveyorSpeed >= 0 ) ? 180 : 0;
