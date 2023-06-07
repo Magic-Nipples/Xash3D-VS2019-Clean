@@ -527,7 +527,7 @@ void Host_Error( const char *error, ... )
 	}
 
 	va_start( argptr, error );
-	Q_vsprintf( hosterror1, error, argptr );
+	Q_vsnprintf(hosterror1, sizeof(hosterror1), error, argptr);
 	va_end( argptr );
 
 	CL_WriteMessageHistory (); // before Q_error call

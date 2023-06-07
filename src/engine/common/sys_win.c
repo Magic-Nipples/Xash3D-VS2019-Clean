@@ -518,7 +518,7 @@ void Sys_Error( const char *error, ... )
 	error_on_exit = true;
 	host.status = HOST_ERR_FATAL;	
 	va_start( argptr, error );
-	Q_vsprintf( text, error, argptr );
+	Q_vsnprintf(text, sizeof(text), error, argptr);
 	va_end( argptr );
 
 	SV_SysError( text );
