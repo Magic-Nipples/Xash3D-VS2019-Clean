@@ -339,6 +339,9 @@
     <ClCompile Include="light_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="env_fog.cpp">
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="activitymap.h">

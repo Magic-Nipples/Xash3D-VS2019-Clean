@@ -100,7 +100,6 @@ Non-transparent triangles-- add them here
 */
 void DLLEXPORT HUD_DrawNormalTriangles( void )
 {
-
 	gHUD.m_Spectator.DrawOverview();
 	
 #if defined( TEST_IT )
@@ -121,4 +120,16 @@ void DLLEXPORT HUD_DrawTransparentTriangles( void )
 #if defined( TEST_IT )
 //	Draw_Triangles();
 #endif
+}
+
+void RenderFog(void)
+{
+	int bOn;
+
+	if (gHUD.g_ftargetValue >= 30000 && gHUD.g_iStartValue >= 30000)
+		bOn = 0;
+	else
+		bOn = 1;
+
+	gEngfuncs.pTriAPI->Fog(gHUD.FogColor, gHUD.g_fStartDist, gHUD.g_fFinalValue, bOn, gHUD.g_fskybox);
 }

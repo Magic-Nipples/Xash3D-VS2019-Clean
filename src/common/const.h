@@ -114,11 +114,11 @@
 #define EF_LIGHT			64	// rocket flare glow sprite
 #define EF_NODRAW			128	// don't draw entity
 #define EF_NOREFLECT		256 // Entity won't reflecting in mirrors //Magic Nipples - readding mirrors
+#define EF_NOSHADOW			512	// ignore shadow for this entity
 
 #define EF_REFLECTONLY		(1<<25)	// Entity will be drawing only in mirrors //Magic Nipples - readding mirrors
 #define EF_WATERSIDES		(1<<26)	// Do not remove sides for func_water entity
 #define EF_FULLBRIGHT		(1<<27)	// Just get fullbright
-#define EF_NOSHADOW			(1<<28)	// ignore shadow for this entity
 #define EF_MERGE_VISIBILITY		(1<<29)	// this entity allowed to merge vis (e.g. env_sky or portal camera)
 #define EF_REQUEST_PHS		(1<<30)	// This entity requested phs bitvector instead of pvsbitvector in AddToFullPack calls
 // g-cont. one reserved bit here for me

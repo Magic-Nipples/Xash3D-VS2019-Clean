@@ -50,7 +50,7 @@ typedef struct triangleapi_s
 	void	(*CullFace)( TRICULLSTYLE style );	
 	int		(*SpriteTexture)( struct model_s *pSpriteModel, int frame );
 	qboolean	(*WorldToScreen)(const vec3_t world, vec3_t screen );  // Returns 1 if it's z clipped
-	void	(*Fog)( float flFogColor[3], float flStart, float flEnd, int bOn ); //Works just like GL_FOG, flFogColor is r/g/b.
+	void	(*Fog)( float flFogColor[3], float flStart, float flEnd, int bOn, qboolean skybox ); //Works just like GL_FOG, flFogColor is r/g/b.
 	void	(*ScreenToWorld)(const vec3_t screen, vec3_t world  );
 	void	(*GetMatrix)( const int pname, float *matrix );
 	int		(*BoxInPVS)( float *mins, float *maxs );

@@ -170,6 +170,7 @@
     <ClCompile Include="doors.cpp" />
     <ClCompile Include="effects.cpp" />
     <ClCompile Include="egon.cpp" />
+    <ClCompile Include="env_fog.cpp" />
     <ClCompile Include="env_model.cpp" />
     <ClCompile Include="explode.cpp" />
     <ClCompile Include="flyingmonster.cpp" />

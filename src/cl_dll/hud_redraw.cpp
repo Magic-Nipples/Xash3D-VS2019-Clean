@@ -95,6 +95,33 @@ int CHud :: Redraw( float flTime, int intermission )
 	if ( m_flTimeDelta < 0 )
 		m_flTimeDelta = 0;
 
+	//Magic Nipples - handle fog fading effects. (is this the right place for it?)
+	if (g_fFadeDuration)
+	{
+		float absd, d, fadeoutspeed;
+
+		d = gHUD.g_ftargetValue - gHUD.g_iStartValue;
+		absd = fabs(d);
+
+		fadeoutspeed = fabs(30000 - absd) * 0.00005;
+
+		if (absd > 0.01f)
+		{
+			if (d > 0)
+				gHUD.g_fFinalValue = gHUD.g_iStartValue + (absd * (gHUD.m_flTimeDelta * gHUD.g_fFadeDuration * fadeoutspeed));
+			else
+				gHUD.g_fFinalValue = gHUD.g_iStartValue - (absd * (gHUD.m_flTimeDelta * gHUD.g_fFadeDuration * 2.0));
+		}
+		else
+		{
+			gHUD.g_fFinalValue = gHUD.g_ftargetValue;
+			gHUD.g_fFadeDuration = 0;
+		}
+		gHUD.g_iStartValue = gHUD.g_fFinalValue;
+
+		//gEngfuncs.Con_Printf("%0.f %0.f %f\n", g_ftargetValue, g_iStartValue, fadeoutspeed);
+	}
+
 	// Bring up the scoreboard during intermission
 	if (gViewPort)
 	{

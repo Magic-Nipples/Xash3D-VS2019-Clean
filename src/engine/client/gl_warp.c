@@ -792,12 +792,6 @@ void EmitWaterPolys( msurface_t *warp, qboolean reverse )
 		RI.fogSkybox = true;
 	}
 
-	pglFogi(GL_FOG_MODE, GL_EXP);
-	pglFogfv(GL_FOG_COLOR, RI.fogColor);
-	pglFogf(GL_FOG_START, RI.fogStart);
-	pglFogf(GL_FOG_END, RI.fogEnd);
-	pglHint(GL_FOG_HINT, GL_NICEST);
-
 	if( FBitSet( warp->flags, SURF_DRAWTURB_QUADS ))
 		pglBegin( GL_QUADS );
 

@@ -138,3 +138,20 @@ int CHud::MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf)
 	}
 	return 1;
 }
+
+void CHud::MsgFunc_SetFog(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+	gHUD.FogColor.x = READ_BYTE();
+	gHUD.FogColor.y = READ_BYTE();
+	gHUD.FogColor.z = READ_BYTE();
+	gHUD.g_fFadeDuration = READ_BYTE();
+	gHUD.g_fStartDist = READ_SHORT();
+
+	if (gHUD.g_fFadeDuration > 0)
+		gHUD.g_ftargetValue = READ_SHORT();
+	else
+		gHUD.g_fFinalValue = gHUD.g_iStartValue = READ_SHORT();
+
+	gHUD.g_fskybox = READ_BYTE();
+}

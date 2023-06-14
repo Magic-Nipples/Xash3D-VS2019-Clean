@@ -3156,7 +3156,7 @@ TriFog
 enables global fog on the level
 =============
 */
-void TriFog( float flFogColor[3], float flStart, float flEnd, int bOn )
+void TriFog( float flFogColor[3], float flStart, float flEnd, int bOn, BOOL skybox )
 {
 	// overrided by internal fog
 	if( RI.fogEnabled ) return;
@@ -3182,7 +3182,7 @@ void TriFog( float flFogColor[3], float flStart, float flEnd, int bOn )
 	RI.fogStart = flStart;
 	RI.fogColor[3] = 1.0f;
 	RI.fogDensity = 0.0f;
-	RI.fogSkybox = true;
+	RI.fogSkybox = skybox; //I want control overthis.
 	RI.fogEnd = flEnd;
 
 	pglFogi( GL_FOG_MODE, GL_LINEAR );

@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 2020, Magic Nipples.
+*	Copyright (c) 2023, Magic Nipples.
 *
 *	Use and modification of this code is allowed as long
 *	as credit is provided! Enjoy!
@@ -23,8 +23,8 @@
 // env_model: like env_sprite, except you can specify a sequence.
 //=================================================================
 #define SF_ENVMODEL_OFF			1
-#define SF_ENVMODEL_DROPTOFLOOR	2
-#define SF_ENVMODEL_SOLID		4
+#define SF_ENVMODEL_SOLID		2
+#define SF_ENVMODEL_NOSHADOW	4
 
 class CEnvModel : public CBaseAnimating
 {
@@ -99,21 +99,15 @@ void CEnvModel::Spawn(void)
 		UTIL_SetSize(pev, Vector(-10, -10, -10), Vector(10, 10, 10));	//LRCT
 	}
 
-	if (pev->spawnflags & SF_ENVMODEL_DROPTOFLOOR)
-	{
-		pev->origin.z += 1;
-		DROP_TO_FLOOR(ENT(pev));
-	}
+	if (pev->spawnflags & SF_ENVMODEL_NOSHADOW)
+		pev->effects |= EF_NOSHADOW;
+
 	SetBoneController(0, 0);
 	SetBoneController(1, 0);
 
 	SetSequence();
 
-	//SetNextThink(0.1);
 	pev->nextthink = gpGlobals->time + 0.1;
-
-	pev->fuser1 = 12;
-	ALERT(at_console, "%f is the scale\n", pev->scale);
 }
 
 void CEnvModel::Precache(void)

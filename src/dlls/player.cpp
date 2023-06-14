@@ -188,6 +188,7 @@ int gmsgStatusText = 0;
 int gmsgStatusValue = 0; 
 
 int gmsgAddELight = 0;
+int gmsgSetFog = 0;
 
 
 void LinkUserMessages( void )
@@ -236,6 +237,7 @@ void LinkUserMessages( void )
 	gmsgStatusValue = REG_USER_MSG("StatusValue", 3); 
 
 	gmsgAddELight = REG_USER_MSG("AddELight", -1); //magic nipples - elights
+	gmsgSetFog = REG_USER_MSG("SetFog", -1);
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer );

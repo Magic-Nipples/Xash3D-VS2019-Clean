@@ -2180,7 +2180,6 @@ R_LightLambert
 static void R_LightLambert(vec4_t light[MAX_LOCALLIGHTS], const vec3_t normal, const vec3_t color, byte* out)
 {
 	vec3_t	finalLight;
-	vec3_t	localLight;
 	int	i;
 
 	if (!g_studio.numlocallights)
@@ -2445,7 +2444,6 @@ generic path
 */
 static _inline void R_StudioDrawFloatMesh( short *ptricmds, vec3_t *pstudionorms )
 {
-	float	*lv;
 	int	i;
 
 	while( i = *( ptricmds++ ))

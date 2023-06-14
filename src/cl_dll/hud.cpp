@@ -269,6 +269,12 @@ int __MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf) //magic nipp
 {
 	return gHUD.MsgFunc_AddELight(pszName, iSize, pbuf);
 }
+
+int __MsgFunc_SetFog(const char* pszName, int iSize, void* pbuf)
+{
+	gHUD.MsgFunc_SetFog(pszName, iSize, pbuf);
+	return 1;
+}
  
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
@@ -304,6 +310,7 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( AllowSpec );
 
 	HOOK_MESSAGE(AddELight); //magic nipples - elights
+	HOOK_MESSAGE(SetFog);
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
@@ -528,6 +535,10 @@ void CHud :: VidInit( void )
 	m_StatusIcons.VidInit();
 
 	GetClientVoiceMgr()->VidInit();
+
+	//reset fog on initial start.
+	gHUD.g_ftargetValue = gHUD.g_iStartValue = 30000;
+	gHUD.g_fFadeDuration = 0;
 }
 
 int CHud::MsgFunc_Logo(const char *pszName,  int iSize, void *pbuf)
