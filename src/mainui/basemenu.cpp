@@ -61,7 +61,7 @@ int		uiColorConsole	= 0xFFF0B418;	// just for reference
 int		uiColorSelect	= 0xFF503818;	// 80,  56,  24,  255
 
 // color presets (this is nasty hack to allow color presets to part of text)
-int g_iColorTable[8] =
+unsigned int g_iColorTable[8] =
 {
 0xFF000000, // black
 0xFFFF0000, // red

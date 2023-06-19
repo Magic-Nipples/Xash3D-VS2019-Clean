@@ -20,6 +20,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "r_efx.h"
+#include "rain.h"
 
 #define MAX_CLIENTS 32
 
@@ -154,4 +155,19 @@ void CHud::MsgFunc_SetFog(const char* pszName, int iSize, void* pbuf)
 		gHUD.g_fFinalValue = gHUD.g_iStartValue = READ_SHORT();
 
 	gHUD.g_fskybox = READ_BYTE();
+}
+
+extern rain_properties Rain;
+int CHud::MsgFunc_RainData(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+	Rain.dripsPerSecond = READ_SHORT();
+	Rain.distFromPlayer = READ_COORD();
+	Rain.windX = READ_COORD();
+	Rain.windY = READ_COORD();
+	Rain.randX = READ_COORD();
+	Rain.randY = READ_COORD();
+	Rain.weatherMode = READ_SHORT();
+	Rain.globalHeight = READ_COORD();
+	return 1;
 }

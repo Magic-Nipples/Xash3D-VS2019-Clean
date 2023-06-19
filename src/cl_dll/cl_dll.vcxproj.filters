@@ -226,6 +226,9 @@
     <ClCompile Include="statusbar.cpp">
       <Filter>Source Files\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="rain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parsemsg.h">
@@ -356,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="vgui_SpectatorPanel.h">
       <Filter>Header Files\VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="rain.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

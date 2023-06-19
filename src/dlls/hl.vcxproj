@@ -219,6 +219,7 @@
     <ClCompile Include="plats.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="python.cpp" />
+    <ClCompile Include="rain.cpp" />
     <ClCompile Include="rat.cpp" />
     <ClCompile Include="roach.cpp" />
     <ClCompile Include="rpg.cpp" />
@@ -280,6 +281,7 @@
     <ClInclude Include="nodes.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="rain.h" />
     <ClInclude Include="saverestore.h" />
     <ClInclude Include="schedule.h" />
     <ClInclude Include="scripted.h" />

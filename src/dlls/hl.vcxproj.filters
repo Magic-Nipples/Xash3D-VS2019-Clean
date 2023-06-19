@@ -28,6 +28,12 @@
     <Filter Include="Header Files\Monsters">
       <UniqueIdentifier>{ff8e152b-9647-4eb4-a289-85f80fd2ba8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Custom">
+      <UniqueIdentifier>{ec3dca4f-39ea-4e8b-8180-df8b5eaa3be4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Custom">
+      <UniqueIdentifier>{7269968f-bf30-4d81-a3bf-ad9636bb216d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animating.cpp">
@@ -333,14 +339,17 @@
     <ClCompile Include="scripted.cpp">
       <Filter>Source Files\Weapons</Filter>
     </ClCompile>
-    <ClCompile Include="env_model.cpp">
-      <Filter>Source Files\Items</Filter>
-    </ClCompile>
     <ClCompile Include="light_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="env_model.cpp">
+      <Filter>Source Files\Custom</Filter>
+    </ClCompile>
     <ClCompile Include="env_fog.cpp">
-      <Filter>Source Files\Items</Filter>
+      <Filter>Source Files\Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="rain.cpp">
+      <Filter>Source Files\Custom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -478,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="hornet.h">
       <Filter>Header Files\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="rain.h">
+      <Filter>Header Files\Custom</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

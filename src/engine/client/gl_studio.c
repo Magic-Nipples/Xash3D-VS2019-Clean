@@ -2411,7 +2411,6 @@ generic path
 */
 static _inline void R_StudioDrawNormalMesh( short *ptricmds, vec3_t *pstudionorms, float s, float t )
 {
-	float	*lv;
 	int	i;
 
 	while( i = *( ptricmds++ ))
