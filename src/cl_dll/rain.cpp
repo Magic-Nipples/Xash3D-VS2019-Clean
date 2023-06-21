@@ -151,9 +151,9 @@ void ProcessRain(void)
 			float yDelta = Rain.windY + gEngfuncs.pfnRandomFloat(Rain.randY * -1, Rain.randY);
 
 			// find a point at bottom of map
-			vecEnd[0] = falltime * xDelta;
-			vecEnd[1] = falltime * yDelta;
-			vecEnd[2] = -8192;//-4096;
+			vecEnd[0] = vecStart[0] + (falltime * xDelta);
+			vecEnd[1] = vecStart[1] + (falltime * yDelta);
+			vecEnd[2] = vecStart[2] - 4096; //8192 for big maps maybe
 
 			pmtrace_t pmtrace;
 			gEngfuncs.pEventAPI->EV_SetTraceHull(2); //0-standing 1-duck 2-point 3-big
