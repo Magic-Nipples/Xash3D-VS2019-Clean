@@ -35,6 +35,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define ID_VERTICALSYNC	6
 #define ID_TABLEHINT	7
 
+#define ID_CWIDTH		8
+#define ID_CHEIGHT		9
+
 #define MAX_VIDMODES	65
 
 typedef struct
@@ -52,6 +55,9 @@ typedef struct
 
 	menuScrollList_s	vidList;
 	menuAction_s	listCaption;
+
+	menuField_s	cwidth;
+	menuField_s	cheight;
 } uiVidModes_t;
 
 static uiVidModes_t	uiVidModes;
@@ -64,6 +70,9 @@ UI_VidModes_GetModesList
 static void UI_VidModes_GetConfig( void )
 {
 	int i;
+
+	strncpy(uiVidModes.cwidth.buffer, CVAR_GET_STRING("custom_width"), sizeof(uiVidModes.cwidth.buffer));
+	strncpy(uiVidModes.cheight.buffer, CVAR_GET_STRING("custom_height"), sizeof(uiVidModes.cheight.buffer));
 
 	for( i = 0; i < MAX_VIDMODES-1; i++ )
 	{
@@ -91,6 +100,15 @@ UI_VidModes_SetConfig
 */
 static void UI_VidOptions_SetConfig( void )
 {
+	CVAR_SET_STRING("custom_width", uiVidModes.cwidth.buffer); //uses string but input box is numbers only so it should be safe :)
+	CVAR_SET_STRING("custom_height", uiVidModes.cheight.buffer);
+
+	if (CVAR_GET_FLOAT("custom_width") < 320)
+		CVAR_SET_FLOAT("custom_width", 320);
+
+	if (CVAR_GET_FLOAT("custom_height") < 240)
+		CVAR_SET_FLOAT("custom_height", 240);
+
 	CVAR_SET_FLOAT( "vid_mode", uiVidModes.vidList.curItem );
 	CVAR_SET_FLOAT( "fullscreen", !uiVidModes.windowed.enabled );
 	CVAR_SET_FLOAT( "gl_vsync", uiVidModes.vsync.enabled );
@@ -232,6 +250,30 @@ static void UI_VidModes_Init( void )
 	uiVidModes.vsync.generic.callback = UI_VidModes_Callback;
 	uiVidModes.vsync.generic.statusText = "enable vertical synchronization";
 
+	uiVidModes.cwidth.generic.name = "Width";
+	uiVidModes.cwidth.generic.id = ID_CWIDTH;
+	uiVidModes.cwidth.generic.type = QMTYPE_FIELD;
+	uiVidModes.cwidth.generic.flags = QMF_CENTER_JUSTIFY | QMF_HIGHLIGHTIFFOCUS | QMF_DROPSHADOW | QMF_NUMBERSONLY | QMF_SMALLFONT;
+	uiVidModes.cwidth.generic.x = 84;
+	uiVidModes.cwidth.generic.y = 420;
+	uiVidModes.cwidth.generic.width = 100;
+	uiVidModes.cwidth.generic.height = 20;
+	uiVidModes.cwidth.generic.callback = UI_VidModes_Callback;
+	uiVidModes.cwidth.generic.statusText = "Custom resolution width";
+	uiVidModes.cwidth.maxLength = 4;
+
+	uiVidModes.cheight.generic.name = "Height";
+	uiVidModes.cheight.generic.id = ID_CWIDTH;
+	uiVidModes.cheight.generic.type = QMTYPE_FIELD;
+	uiVidModes.cheight.generic.flags = QMF_CENTER_JUSTIFY | QMF_HIGHLIGHTIFFOCUS | QMF_DROPSHADOW | QMF_NUMBERSONLY | QMF_SMALLFONT;
+	uiVidModes.cheight.generic.x = 84;
+	uiVidModes.cheight.generic.y = 480;
+	uiVidModes.cheight.generic.width = 100;
+	uiVidModes.cheight.generic.height = 20;
+	uiVidModes.cheight.generic.callback = UI_VidModes_Callback;
+	uiVidModes.cheight.generic.statusText = "Custom resolution height";
+	uiVidModes.cheight.maxLength = 4;
+
 	UI_VidModes_GetConfig();
 
 	UI_AddItem( &uiVidModes.menu, (void *)&uiVidModes.background );
@@ -242,6 +284,12 @@ static void UI_VidModes_Init( void )
 	UI_AddItem( &uiVidModes.menu, (void *)&uiVidModes.vsync );
 	UI_AddItem( &uiVidModes.menu, (void *)&uiVidModes.listCaption );
 	UI_AddItem( &uiVidModes.menu, (void *)&uiVidModes.vidList );
+
+	if (uiVidModes.vidList.curItem <= 0)
+	{
+		UI_AddItem(&uiVidModes.menu, (void*)&uiVidModes.cwidth);
+		UI_AddItem(&uiVidModes.menu, (void*)&uiVidModes.cheight);
+	}
 }
 
 /*
