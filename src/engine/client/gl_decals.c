@@ -54,7 +54,7 @@ typedef struct
 static float	g_DecalClipVerts[MAX_DECALCLIPVERT][VERTEXSIZE];
 static float	g_DecalClipVerts2[MAX_DECALCLIPVERT][VERTEXSIZE];
 
-static decal_t	gDecalPool[MAX_RENDER_DECALS];
+decal_t	gDecalPool[MAX_RENDER_DECALS];
 static int	gDecalCount;
 
 void R_ClearDecals( void )
