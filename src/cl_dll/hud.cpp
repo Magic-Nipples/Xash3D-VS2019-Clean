@@ -426,8 +426,6 @@ void CHud :: VidInit( void )
 	m_scrinfo.iSize = sizeof(m_scrinfo);
 	GetScreenInfo(&m_scrinfo);
 
-	ResetRain();
-
 	// ----------
 	// Load Sprites
 	// ---------
@@ -549,9 +547,14 @@ void CHud :: VidInit( void )
 
 	GetClientVoiceMgr()->VidInit();
 
-	//reset fog on initial start.
-	gHUD.g_ftargetValue = gHUD.g_iStartValue = 30000;
-	gHUD.g_fFadeDuration = 0;
+	if (!gEngfuncs.pDemoAPI->IsRecording() && !gEngfuncs.pDemoAPI->IsPlayingback())
+	{
+		//reset fog on initial start.
+		gHUD.g_ftargetValue = gHUD.g_iStartValue = 30000;
+		gHUD.g_fFadeDuration = 0;
+
+		ResetRain();
+	}
 }
 
 int CHud::MsgFunc_Logo(const char *pszName,  int iSize, void *pbuf)

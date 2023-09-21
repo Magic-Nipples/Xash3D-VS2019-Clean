@@ -191,6 +191,9 @@ typedef struct
 	int		skyboxTextures[6];	// skybox sides
 	int		cinTexture;      	// cinematic texture
 
+	int		r_initsampletexture; //magic nipples - down sampling
+	int		r_sampleeffecttexture;
+
 	int		mirrorTextures[MAX_MIRRORS]; //Magic Nipples - readding mirrors
 	int		num_mirrors_used;	// used mirror textures
 	gl_entity_t	mirror_entities[MAX_VISIBLE_PACKET];	// an entities that has mirror
@@ -499,7 +502,7 @@ void R_Shutdown( void );
 //
 // gl_downsample.c //magic nipples - down sampling
 //
-void R_InitDownSampleTextures(void);
+void R_Sampling_InitTextures(void);
 void R_DownSampling(void);
 
 //

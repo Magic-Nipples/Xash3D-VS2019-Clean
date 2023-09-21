@@ -1008,7 +1008,7 @@ void R_RenderScene( void )
 
 	R_DrawWaterSurfaces();
 
-	R_InitDownSampleTextures(); //magic nipples - down sampling
+	R_DownSampling(); //magic nipples - down sampling
 
 	R_EndGL();
 }
@@ -1182,7 +1182,6 @@ void R_RenderFrame( const ref_viewpass_t *rvp )
 
 	}
 	R_RenderScene();
-	R_DownSampling(); //magic nipples - down sampling
 }
 
 /*

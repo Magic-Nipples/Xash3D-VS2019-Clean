@@ -3282,6 +3282,7 @@ void CBasePlayer :: ForceClientDllUpdate( void )
 	m_fKnownItem = FALSE;    // Force weaponinit messages.
 	m_fInitHUD = TRUE;		// Force HUD gmsgResetHUD message
 
+	Rain_needsUpdate = 1;
 	memset(m_rgAmmoLast, 0, sizeof(m_rgAmmoLast)); // a1ba: Force update AmmoX
 	// Now force all the necessary messages
 	//  to be sent.

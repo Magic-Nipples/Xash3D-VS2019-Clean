@@ -119,7 +119,7 @@ int CHud :: Redraw( float flTime, int intermission )
 		}
 		gHUD.g_iStartValue = gHUD.g_fFinalValue;
 
-		//gEngfuncs.Con_Printf("%0.f %0.f %f\n", g_ftargetValue, g_iStartValue, fadeoutspeed);
+		//gEngfuncs.Con_Printf("%0.2f %0.2f %0.2f\n", g_ftargetValue, g_iStartValue, fadeoutspeed);
 	}
 
 	// Bring up the scoreboard during intermission
