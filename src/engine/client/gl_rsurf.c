@@ -208,7 +208,7 @@ void GL_SetupFogColorForSurfaces( void )
 		return;
 
 	if( RI.currententity && RI.currententity->curstate.rendermode == kRenderTransTexture )
-          {
+	{
 		pglFogfv( GL_FOG_COLOR, RI.fogColor );
 		return;
 	}
@@ -1095,14 +1095,17 @@ void R_RenderBrushPoly( msurface_t *fa, int cull_type )
 		// DEBUG: reset the mirror texture after drawing
 		fa->info->mirrortexturenum = 0;
 	}
-	else GL_Bind(GL_TEXTURE0, t->gl_texturenum); //if mirrors removed. leave just this line.
+	//else GL_Bind(GL_TEXTURE0, t->gl_texturenum); //if mirrors removed. leave just this line.
 
-	if( FBitSet( fa->flags, SURF_DRAWTURB ))
+	else if( FBitSet( fa->flags, SURF_DRAWTURB )) //might not need else
 	{	
+		R_UploadRipples(t);
+
 		// warp texture, no lightmaps
 		EmitWaterPolys( fa, (cull_type == CULL_BACKSIDE));
 		return;
 	}
+	else GL_Bind(GL_TEXTURE0, t->gl_texturenum); //if mirrors removed. leave just this line.
 
 	if( t->fb_texturenum )
 	{
@@ -1377,7 +1380,8 @@ void R_DrawWaterSurfaces( void )
 			continue;
 
 		// set modulate mode explicitly
-		GL_Bind( GL_TEXTURE0, t->gl_texturenum );
+		//GL_Bind( GL_TEXTURE0, t->gl_texturenum );
+		R_UploadRipples(t);
 
 		for( ; s; s = s->texturechain )
 			EmitWaterPolys( s, false );

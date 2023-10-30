@@ -1000,6 +1000,10 @@ void R_RenderScene( void )
 
 	R_CheckGLFog();	
 	R_DrawWorld();
+
+	if (RI.drawWorld)
+		R_AnimateRipples();
+
 	R_CheckFog();
 
 	CL_ExtraUpdate ();	// don't let sound get messed up if going slow

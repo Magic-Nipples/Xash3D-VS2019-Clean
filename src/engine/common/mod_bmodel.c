@@ -1892,6 +1892,20 @@ static void Mod_LoadMarkSurfaces( dbspmodel_t *bmod )
 	}
 }
 
+static qboolean Mod_LooksLikeWaterTexture(const char* name)
+{
+	if ((name[0] == '*' && Q__stricmp(name, "*default")) || name[0] == '!')
+		return true;
+
+	if (!CL_IsQuakeCompatible())
+	{
+		if (!Q_strncmp(name, "water", 5) || !Q__strnicmp(name, "laser", 5))
+			return true;
+	}
+
+	return false;
+}
+
 /*
 =================
 Mod_LoadTextures
@@ -1963,6 +1977,10 @@ static void Mod_LoadTextures( dbspmodel_t *bmod )
 
 		if( FBitSet( host.features, ENGINE_IMPROVED_LINETRACE ) && mt->name[0] == '{' )
 			SetBits( txFlags, TF_KEEP_SOURCE ); // Paranoia2 texture alpha-tracing
+
+		// check if this is water to keep the source texture and expand it to RGBA (so ripple effect works)
+		if (Mod_LooksLikeWaterTexture(mt->name))
+			SetBits(txFlags, TF_KEEP_SOURCE | TF_EXPAND_SOURCE);
 
 		if( mt->offsets[0] > 0 )
 		{
@@ -2301,14 +2319,16 @@ static void Mod_LoadSurfaces( dbspmodel_t *bmod )
 		if( !Q_strncmp( tex->name, "sky", 3 ))
 			SetBits( out->flags, SURF_DRAWSKY );
 
-		if(( tex->name[0] == '*' && Q__stricmp( tex->name, "*default" )) || tex->name[0] == '!' )
-			SetBits( out->flags, SURF_DRAWTURB );
+		//if(( tex->name[0] == '*' && Q__stricmp( tex->name, "*default" )) || tex->name[0] == '!' )
+		//	SetBits( out->flags, SURF_DRAWTURB );
 
-		if( !CL_IsQuakeCompatible( ))
-		{
-			if( !Q_strncmp( tex->name, "water", 5 ) || !Q__strnicmp( tex->name, "laser", 5 ))
-				SetBits( out->flags, SURF_DRAWTURB );
-		}
+		//if( !CL_IsQuakeCompatible( ))
+		//{
+		//	if( !Q_strncmp( tex->name, "water", 5 ) || !Q__strnicmp( tex->name, "laser", 5 ))
+		//		SetBits( out->flags, SURF_DRAWTURB );
+		//}
+		if (Mod_LooksLikeWaterTexture(tex->name))
+			SetBits(out->flags, SURF_DRAWTURB);
 
 		if( !Q_strncmp( tex->name, "scroll", 6 ))
 			SetBits( out->flags, SURF_CONVEYOR );

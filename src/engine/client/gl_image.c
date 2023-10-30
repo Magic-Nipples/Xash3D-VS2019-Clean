@@ -353,6 +353,8 @@ void R_SetTextureParameters( void )
 	// change all the existing mipmapped texture objects
 	for( i = 0; i < gl_numTextures; i++ )
 		GL_UpdateTextureParams( i );
+
+	R_UpdateRippleTexParams();
 }
 
 /*
@@ -2288,9 +2290,12 @@ void R_InitImages( void )
 	gl_texturesHashTable[gl_textures->hashValue] = gl_textures;
 	gl_numTextures = 1;
 
+	R_InitRipples(); //placed this before texture parameters to prevent *default texture upload error in game.
+
 	// validate cvars
 	R_SetTextureParameters();
 	GL_CreateInternalTextures();
+	
 
 	Cmd_AddCommand( "texturelist", R_TextureList_f, "display loaded textures list" );
 }

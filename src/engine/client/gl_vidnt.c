@@ -85,6 +85,10 @@ convar_t* vid_mode;
 
 convar_t* r_downsample; //magic nipples - down sampling
 
+convar_t* r_ripple;
+convar_t* r_ripple_updatetime;
+convar_t* r_ripple_spawntime;
+
 byte* r_temppool;
 
 ref_globals_t	tr;
@@ -1653,6 +1657,10 @@ void GL_InitCommands( void )
 	gl_wireframe = Cvar_Get( "gl_wireframe", "0", FCVAR_ARCHIVE|FCVAR_SPONLY, "show wireframe overlay" );
 	gl_round_down = Cvar_Get( "gl_round_down", "2", FCVAR_RENDERINFO, "round texture sizes to nearest POT value" );
 	gl_msaa = Cvar_Get( "gl_msaa", "1", FCVAR_ARCHIVE, "enable multi sample anti-aliasing" );
+
+	r_ripple = Cvar_Get("r_ripple", "1", FCVAR_ARCHIVE, "enable software - like water texture ripple simulation");
+	r_ripple_updatetime = Cvar_Get("r_ripple_updatetime", "0.05", FCVAR_ARCHIVE, "how fast ripple simulation is");
+	r_ripple_spawntime = Cvar_Get("r_ripple_spawntime", "0.1", FCVAR_ARCHIVE, "how fast new ripples spawn");
 
 	// these cvar not used by engine but some mods requires this
 	gl_polyoffset = Cvar_Get( "gl_polyoffset", "2.0", FCVAR_ARCHIVE, "polygon offset for decals" );

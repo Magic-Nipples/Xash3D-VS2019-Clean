@@ -733,4 +733,16 @@ extern convar_t* r_overbright; //magic nipples - overbright
 extern convar_t* r_lighting_lambert;
 extern convar_t* gammaboost;
 
+
+//software water
+void R_InitRipples(void);
+void R_ResetRipples(void);
+void R_AnimateRipples(void);
+void R_UpdateRippleTexParams(void);
+void R_UploadRipples(texture_t* image);
+
+extern convar_t* r_ripple;
+extern convar_t* r_ripple_updatetime;
+extern convar_t* r_ripple_spawntime;
+
 #endif//GL_LOCAL_H
