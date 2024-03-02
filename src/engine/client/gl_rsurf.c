@@ -40,6 +40,8 @@ static qboolean		draw_fullbrights = false;
 static qboolean		draw_details = false;
 static msurface_t		*skychain = NULL;
 static gllightmapstate_t	gl_lms;
+static mextrasurf_t* chrome_surfaces;
+static qboolean		draw_chromes = false;
 
 static void LM_UploadBlock( int lightmapnum );
 
@@ -1055,6 +1057,209 @@ void R_RenderDetails( void )
 
 /*
 ================
+R_RenderChrome
+================
+*/
+void R_RenderChrome(void)
+{
+	if (!r_chrometexture->value) return;
+
+	if (!draw_chromes) return;
+
+	if (glState.isFogEnabled)
+	{
+		vec3_t	fogColor;
+		fogColor[0] = 0.5; fogColor[1] = 0.5; fogColor[2] = 0.5;
+		pglFogfv(GL_FOG_COLOR, fogColor);
+	}
+
+	pglEnable(GL_BLEND);
+	pglBlendFunc(GL_DST_COLOR, GL_SRC_COLOR);
+	pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	if (RI.currententity->curstate.rendermode == kRenderTransAlpha)
+		pglDepthFunc(GL_EQUAL);
+
+	float scale, scale_speed;
+
+	mextrasurf_t* es = chrome_surfaces;
+
+	for (mextrasurf_t* p = es; p; p = p->chromechain)
+	{
+		msurface_t* fa = p->surf;//fa = INFO_SURF(p, RI.currentmodel); // get texture scale
+		mtexinfo_t* tex = fa->texinfo;
+		float* v;
+		int j;
+
+		//Con_Printf("%s | %i | %f\n", fa->chromename, fa->chromespeed, fa->chromescale);
+		tr.chromeTexture = GL_LoadTexture(fa->chromename, NULL, 0, 0);
+
+		GL_Bind(GL_TEXTURE0, tr.chromeTexture);
+
+		scale = fa->chromescale; //1.0f;
+		scale_speed = fa->chromespeed * 0.001; //0.0025f;
+
+		pglBegin(GL_POLYGON);
+
+		float bigx = 0, bigy = 0;
+
+		//I'm so sorry for the code below. I hope someone makes this better one day...
+		for (j = 0, v = fa->polys->verts[0]; j < fa->polys->numverts; j++, v += VERTEXSIZE)
+		{
+			//vec3_t start;
+			//start[0] = fa->plane->normal[0];//tex->vecs[0][0]; start[1] = fa->plane->normal[1];//tex->vecs[0][1]; start[2] = fa->plane->normal[2];//tex->vecs[1][2];
+			//float flDot_Forward = DotProduct(RI.vforward, start); Con_Printf("%0.2f\n", flDot_Forward);
+
+			if (fa->plane->normal[0] == 1) //PLANE_X
+			{
+				bigx = v[3] - (RI.vieworg[1] * scale_speed);
+				bigy = v[4] + (RI.vieworg[2] * scale_speed);
+			}
+			else if (fa->plane->normal[1] == 1) //PLANE_Y
+			{
+				bigx = v[3] - (RI.vieworg[0] * scale_speed);
+				bigy = v[4] + (RI.vieworg[2] * scale_speed);
+			}
+			else if (fa->plane->normal[2] == 1) //PLANE_Z
+			{
+				bigx = v[3] - (RI.vieworg[0] * scale_speed);
+				bigy = v[4] + (RI.vieworg[1] * scale_speed);
+			}
+			else
+			{
+				if (fa->plane->normal[2] == 0) //vertical walls with angle other then 0 or 45 degrees...
+				{
+					if (fa->plane->normal[0] == fa->plane->normal[1]) //45 degree matching plane
+						bigx = v[3] + (RI.vieworg[1] * ((-fa->plane->normal[1]) * scale_speed)) - (RI.vieworg[0] * ((-fa->plane->normal[0]) * scale_speed));
+					else if (fabs(fa->plane->normal[0] == fabs(fa->plane->normal[1]))) //45 degree matching plane but ones negative
+						bigx = v[3] + (RI.vieworg[1] * ((fa->plane->normal[1]) * scale_speed)) - (RI.vieworg[0] * ((fa->plane->normal[0]) * scale_speed));
+					else
+					{
+						if (fabs(fa->plane->normal[1] > fabs(fa->plane->normal[0])))
+							bigx = v[3] - (RI.vieworg[0] * scale_speed);
+						else
+							bigx = v[3] - (RI.vieworg[1] * scale_speed);
+					}
+					bigy = v[4] + (RI.vieworg[2] * scale_speed);
+				}
+				else //slanted walls
+				{
+					if (fabs(fa->plane->normal[2]) > fabs(fa->plane->normal[0]) && fabs(fa->plane->normal[2]) > fabs(fa->plane->normal[1])) //slanted wall but less than 45 upright
+					{
+						bigx = v[3] - (RI.vieworg[0] * scale_speed);
+						bigy = v[4] + (RI.vieworg[1] * scale_speed);
+
+						if (fa->plane->normal[0] > 0 && fa->plane->normal[1] > 0)
+						{
+							bigx += RI.vieworg[2] * (scale_speed * 0.5);
+							bigy -= RI.vieworg[2] * (scale_speed * 0.5);
+						}
+						else if (fa->plane->normal[0] < 0 && fa->plane->normal[1] > 0)
+						{
+							bigx -= RI.vieworg[2] * (scale_speed * 0.5);
+							bigy -= RI.vieworg[2] * (scale_speed * 0.5);
+						}
+						else if (fa->plane->normal[0] < 0 && fa->plane->normal[1] < 0)
+						{
+							bigx -= RI.vieworg[2] * (scale_speed * 0.5);
+							bigy += RI.vieworg[2] * (scale_speed * 0.5);
+						}
+						else if (fa->plane->normal[0] > 0 && fa->plane->normal[1] < 0)
+						{
+							bigx += RI.vieworg[2] * (scale_speed * 0.5);
+							bigy += RI.vieworg[2] * (scale_speed * 0.5);
+						}
+						else if(fa->plane->normal[0] > 0)
+							bigx += RI.vieworg[2] * scale_speed;
+						else if (fa->plane->normal[0] < 0)
+							bigx -= RI.vieworg[2] * scale_speed;
+						else if (fa->plane->normal[1] > 0)
+							bigy -= RI.vieworg[2] * scale_speed;
+						else
+							bigy += RI.vieworg[2] * scale_speed;
+
+					}
+					else if (fabs(fa->plane->normal[2]) < fabs(fa->plane->normal[0]) && fabs(fa->plane->normal[2]) < fabs(fa->plane->normal[1]))
+					{
+						bigy = v[4];
+
+						if (fa->plane->normal[0] > 0 && fa->plane->normal[1] > 0 && fa->plane->normal[2] > 0)
+						{
+							bigx = v[3] - (RI.vieworg[0] * scale_speed);
+
+							bigx += RI.vieworg[1] * scale_speed;
+							bigx += RI.vieworg[2] * (scale_speed * 0.5);
+							bigy += RI.vieworg[2] * scale_speed;
+						}
+						else if (fa->plane->normal[0] > 0 && fa->plane->normal[1] > 0 && fa->plane->normal[2] < 0)
+						{
+							bigx = v[3] - (RI.vieworg[1] * scale_speed);
+
+							bigx += RI.vieworg[0] * scale_speed;
+							bigx -= RI.vieworg[2] * (scale_speed * 0.5);
+							bigy += RI.vieworg[2] * scale_speed;
+						}
+						else //if (fa->plane->normal[0] > 0 && fa->plane->normal[1] < 0 && fa->plane->normal[2] > 0)
+						{
+							bigx = v[3] - (RI.vieworg[1] * scale_speed);
+
+							bigx -= RI.vieworg[0] * scale_speed;
+							bigx -= RI.vieworg[2] * (scale_speed * 0.5);
+							bigy += RI.vieworg[2] * scale_speed;
+						}
+					}
+					else if (fabs(fa->plane->normal[0]) > 0)
+					{
+						bigx = v[3] - (RI.vieworg[1] * scale_speed);
+
+						if (fa->plane->normal[2] > 0)
+							bigy = v[4] - (RI.vieworg[0] * scale_speed);
+						else
+							bigy = v[4] + (RI.vieworg[0] * scale_speed);
+						bigy += RI.vieworg[2] * scale_speed;
+					}
+					else if (fabs(fa->plane->normal[1]) > 0)
+					{
+						bigx = v[3] - (RI.vieworg[0] * scale_speed);
+
+						if (fa->plane->normal[2] > 0)
+							bigy = v[4] - (RI.vieworg[1] * scale_speed);
+						else
+							bigy = v[4] + (RI.vieworg[1] * scale_speed);
+						bigy += RI.vieworg[2] * scale_speed;
+					}
+				}
+			}
+			//float yaw = (int)(atan2(tex->vecs[0][0], tex->vecs[0][1]) * 180.0f / M_PI);
+			//if (yaw < 0) yaw += 360.0f;
+			//Con_Printf("PLANE NON-AXIAL X:%0.2f Y:%0.2f Z:%0.2f\n", fa->plane->normal[0], fa->plane->normal[1], fa->plane->normal[2]);
+			//Con_Printf("ROTATION: %0.2f OFFSET X: %0.2f OFFSET Y: %0.2f\n", yaw, tex->vecs[0][3], tex->vecs[1][3]);
+			//Con_Printf("%0.2f | %0.2f | %0.2f\n", tex->vecs[0][0], tex->vecs[0][1], tex->vecs[1][2]);
+
+			//=====================================================
+			pglTexCoord4f(bigx, bigy, 0, scale);
+			pglVertex3fv(v);
+		}
+		pglEnd();
+	}
+
+	chrome_surfaces = NULL;
+	es->chromechain = NULL;
+
+	pglDisable(GL_BLEND);
+	pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	if (RI.currententity->curstate.rendermode == kRenderTransAlpha)
+		pglDepthFunc(GL_LEQUAL);
+
+	draw_chromes = false;
+
+	GL_ResetFogColor();
+	GL_DisableAllTexGens();
+}
+
+/*
+================
 R_RenderBrushPoly
 ================
 */
@@ -1157,6 +1362,19 @@ void R_RenderBrushPoly( msurface_t *fa, int cull_type )
 	{
 		// if rendermode != kRenderNormal draw decals sequentially
 		DrawSurfaceDecals( fa, true, (cull_type == CULL_BACKSIDE));
+	}
+
+	if (r_chrometexture->value)
+	{
+		if (fa->flags & SURF_CHROME && tr.chromeTexture)
+		{
+			mextrasurf_t* es = fa->info; //mextrasurf_t* es = SURF_INFO(fa, RI.currentmodel);
+
+			// draw common chrome texture (use particle texture as chrome)
+			es->chromechain = chrome_surfaces;
+			chrome_surfaces = es;
+			draw_chromes = true;
+		}
 	}
 
 	// NOTE: draw mirror through in mirror show dummy lightmapped texture
@@ -1601,6 +1819,7 @@ void R_DrawBrushModel( cl_entity_t *e )
 	R_BlendLightmaps();
 	R_RenderFullbrights();
 	R_RenderDetails();
+	R_RenderChrome();
 
 	// restore fog here
 	if( e->curstate.rendermode == kRenderTransAdd )
@@ -1948,6 +2167,7 @@ void R_DrawWorld( void )
 		R_BlendLightmaps();
 		R_RenderFullbrights();
 		R_RenderDetails();
+		R_RenderChrome();
 
 		if( skychain )
 			R_DrawSkyBox();

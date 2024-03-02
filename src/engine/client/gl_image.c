@@ -2000,6 +2000,7 @@ static void GL_CreateInternalTextures( void )
 	}
 
 	tr.defaultTexture = GL_LoadTextureInternal( "*default", pic, TF_COLORMAP );
+	tr.chromeTexture = GL_LoadTexture("gfx/chrome1.tga", NULL, 0, 0);
 
 	// particle texture from quake1
 	/*pic = GL_FakeImage( 16, 16, 1, IMAGE_HAS_COLOR|IMAGE_HAS_ALPHA );
@@ -2295,7 +2296,6 @@ void R_InitImages( void )
 	// validate cvars
 	R_SetTextureParameters();
 	GL_CreateInternalTextures();
-	
 
 	Cmd_AddCommand( "texturelist", R_TextureList_f, "display loaded textures list" );
 }

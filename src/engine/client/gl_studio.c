@@ -74,6 +74,7 @@ typedef struct
 	sortedmesh_t	meshes[MAXSTUDIOMESHES];	// sorted meshes
 	vec3_t		verts[MAXSTUDIOVERTS];
 	vec3_t		norms[MAXSTUDIOVERTS];
+	vec3_t		copynorms[MAXSTUDIOVERTS]; //fix chrome with boneweights
 
 	// lighting state
 	float		ambientlight;
@@ -2567,6 +2568,12 @@ static void R_StudioDrawPoints( void )
 		{
 			R_StudioComputeSkinMatrix( &pnormweight[i], skinMat );
 			Matrix3x4_VectorRotate( skinMat, pstudionorms[i], g_studio.norms[i] );
+
+			//FIXME: this fixes chrome on boneweights models 100% now, but it throws a warning for being a m4x4 to vec3_t. needs to be fixed.
+			VectorCopy(g_studio.norms[i], g_studio.copynorms[i]);
+			Matrix4x4_ConcatRotate(g_studio.copynorms[i], RI.currententity->angles[1], 0, 0, 1);
+			Matrix4x4_ConcatRotate(g_studio.copynorms[i], RI.currententity->angles[0], 0, -1, 0);
+			Matrix4x4_ConcatRotate(g_studio.copynorms[i], RI.currententity->angles[2], 1, 0, 0);
 		}
 	}
 	else
@@ -2642,7 +2649,7 @@ static void R_StudioDrawPoints( void )
 				if ((FBitSet(m_pStudioHeader->flags, STUDIO_HAS_BONEWEIGHTS))) //magic nipples - chrome fix with bone weights
 				{
 					if (FBitSet(g_nFaceFlags, STUDIO_NF_CHROME))
-						R_StudioSetupChrome(g_studio.chrome[k], -1, g_studio.norms[k]);
+						R_StudioSetupChrome(g_studio.chrome[k], -1, g_studio.copynorms[k]); //fix chrome bomeweights
 				}
 				else
 				{

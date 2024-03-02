@@ -202,6 +202,8 @@ typedef struct
 	int		skytexturenum;	// this not a gl_texturenum!
 	int		skyboxbasenum;	// start with 5800
 
+	int		chromeTexture;
+
 	// entity lists
 	draw_list_t	draw_stack[MAX_DRAW_STACK];
 	int		draw_stack_pos;
@@ -724,14 +726,12 @@ extern convar_t	*vid_brightness;
 extern convar_t	*vid_gamma;
 extern convar_t	*vid_mode;
 
-extern convar_t* r_overbright; //magic nipples - overbright
-
-//magic nipples - down sampling
-extern convar_t* r_downsample;
+extern convar_t* r_downsample; //magic nipples - down sampling
 extern convar_t* gl_allow_mirrors; //Magic Nipples - readding mirrors
 extern convar_t* r_overbright; //magic nipples - overbright
 extern convar_t* r_lighting_lambert;
 extern convar_t* gammaboost;
+extern convar_t* r_chrometexture;
 
 
 //software water

@@ -2330,6 +2330,40 @@ static void Mod_LoadSurfaces( dbspmodel_t *bmod )
 		if (Mod_LooksLikeWaterTexture(tex->name))
 			SetBits(out->flags, SURF_DRAWTURB);
 
+		//===================================================
+
+		char* c1file, * p1file;
+		string	token1;
+		string	chrome1tex;
+
+		c1file = FS_LoadFile("gfx/chrome.txt", NULL, false);
+		if (c1file)
+		{
+			p1file = c1file;
+
+			while ((p1file = COM_ParseFile(p1file, token1)) != NULL)
+			{
+				Q_strncpy(chrome1tex, token1, sizeof(chrome1tex));
+
+				if (!Q_strncmp(tex->name, chrome1tex, sizeof(chrome1tex)))
+				{
+					out->flags |= SURF_CHROME;
+
+					p1file = COM_ParseFile(p1file, token1);
+					out->chromescale = Q_atof(token1);
+
+					p1file = COM_ParseFile(p1file, token1);
+					strncpy(out->chromename, token1, sizeof(out->chromename));
+
+					p1file = COM_ParseFile(p1file, token1);
+					out->chromespeed = Q_atoi(token1);
+				}
+			}
+			Mem_Free(c1file);
+		}
+
+		//===================================================
+
 		if( !Q_strncmp( tex->name, "scroll", 6 ))
 			SetBits( out->flags, SURF_CONVEYOR );
 

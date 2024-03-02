@@ -89,6 +89,8 @@ convar_t* r_ripple;
 convar_t* r_ripple_updatetime;
 convar_t* r_ripple_spawntime;
 
+convar_t* r_chrometexture;
+
 byte* r_temppool;
 
 ref_globals_t	tr;
@@ -1661,6 +1663,8 @@ void GL_InitCommands( void )
 	r_ripple = Cvar_Get("r_ripple", "1", FCVAR_ARCHIVE, "enable software - like water texture ripple simulation");
 	r_ripple_updatetime = Cvar_Get("r_ripple_updatetime", "0.05", FCVAR_ARCHIVE, "how fast ripple simulation is");
 	r_ripple_spawntime = Cvar_Get("r_ripple_spawntime", "0.1", FCVAR_ARCHIVE, "how fast new ripples spawn");
+
+	r_chrometexture = Cvar_Get("r_chromes", "1", FCVAR_ARCHIVE, "draw chrome on surfaces");
 
 	// these cvar not used by engine but some mods requires this
 	gl_polyoffset = Cvar_Get( "gl_polyoffset", "2.0", FCVAR_ARCHIVE, "polygon offset for decals" );

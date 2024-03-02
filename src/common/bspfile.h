@@ -54,6 +54,9 @@ BRUSH MODELS
 #define SURF_CONVEYOR		BIT( 6 )		// scrolled texture (was SURF_DRAWBACKGROUND)
 #define SURF_UNDERWATER		BIT( 7 )		// caustics
 #define SURF_TRANSPARENT		BIT( 8 )		// it's a transparent texture (was SURF_DONTWARP)
+
+#define SURF_CHROME		BIT( 12 )		// has a chrome effect
+
 #define SURF_REFLECT		BIT( 31 )		// reflect surface (mirror) //Magic Nipples - readding mirrors
 
 // lightstyle management

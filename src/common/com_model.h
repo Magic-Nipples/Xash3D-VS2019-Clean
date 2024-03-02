@@ -231,6 +231,8 @@ typedef struct mextrasurf_s
 	int		firstvertex;	// fisrt look up in tr.tbn_vectors[], then acess to world->vertexes[]
 
 	int		reserved[32];	// just for future expansions or mod-makers
+
+	struct mextrasurf_s* chromechain;	// for chrome-effect drawing
 } mextrasurf_t;
 
 typedef struct msurface_s
@@ -265,6 +267,10 @@ typedef struct msurface_s
 
 	color24		*samples;		// note: this is the actual lightmap data for this surface
 	decal_t		*pdecals;
+
+	float	chromescale;
+	char	chromename[64];
+	int		chromespeed;
 } msurface_t;
 
 typedef struct hull_s
