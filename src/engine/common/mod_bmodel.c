@@ -2331,7 +2331,6 @@ static void Mod_LoadSurfaces( dbspmodel_t *bmod )
 			SetBits(out->flags, SURF_DRAWTURB);
 
 		//===================================================
-
 		char* c1file, * p1file;
 		string	token1;
 		string	chrome1tex;
@@ -2361,7 +2360,6 @@ static void Mod_LoadSurfaces( dbspmodel_t *bmod )
 			}
 			Mem_Free(c1file);
 		}
-
 		//===================================================
 
 		if( !Q_strncmp( tex->name, "scroll", 6 ))

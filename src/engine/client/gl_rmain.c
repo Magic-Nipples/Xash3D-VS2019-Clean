@@ -1012,7 +1012,8 @@ void R_RenderScene( void )
 
 	R_DrawWaterSurfaces();
 
-	R_DownSampling(); //magic nipples - down sampling
+	if (RI.drawWorld)
+		R_DownSampling(); //magic nipples - down sampling
 
 	R_EndGL();
 }

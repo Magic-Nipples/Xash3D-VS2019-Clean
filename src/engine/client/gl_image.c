@@ -2060,8 +2060,6 @@ static void GL_CreateInternalTextures( void )
 	// cinematic dummy
 	pic = GL_FakeImage( 640, 100, 1, IMAGE_HAS_COLOR );
 	tr.cinTexture = GL_LoadTextureInternal( "*cintexture", pic, TF_NOMIPMAP|TF_CLAMP );
-
-	R_Sampling_InitTextures(); //magic nipples - down sampling
 }
 
 /*

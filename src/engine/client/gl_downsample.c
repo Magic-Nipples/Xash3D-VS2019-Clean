@@ -11,9 +11,8 @@ FIXED CRASH WITH GL_INVALID BY SETTING 'ENABLE INCREMENTAL LINKING' TO 'YES'
 #include "client.h"
 #include "gl_local.h"
 
-static int DOWNSAMPLE_SIZE_X;
-static int DOWNSAMPLE_SIZE_Y;
-static int DSCVAR_VAL;
+static int DOWNSAMPLE_SIZE;
+//static int DSCVAR_VAL;
 
 static int screen_texture_width, screen_texture_height;
 
@@ -44,10 +43,10 @@ static float sampleText_tch;
 
 /*
 =================
-R_Bloom_InitEffectTexture
+R_InitEffectTexture
 =================
 */
-void R_Bloom_InitEffectTexture(void)
+void R_InitEffectTexture(void)
 {
 	int texture = tr.r_sampleeffecttexture;
 	rgbdata_t	r_screen;
@@ -69,35 +68,33 @@ void R_Bloom_InitEffectTexture(void)
 	if (r_downsample->value == 1)
 	{
 		if (glState.height > 480)
-			DOWNSAMPLE_SIZE_X = 480;
+			DOWNSAMPLE_SIZE = 480;
 		else
-			DOWNSAMPLE_SIZE_X = 320;
+			DOWNSAMPLE_SIZE = 320;
 	}
 	else if (r_downsample->value == 2)
 	{
 		if (glState.height > 480)
-			DOWNSAMPLE_SIZE_X = 320;
+			DOWNSAMPLE_SIZE = 320;
 		else
-			DOWNSAMPLE_SIZE_X = 240;
+			DOWNSAMPLE_SIZE = 240;
 	}
 	else if (r_downsample->value == 3)
 	{
 		if (glState.height > 480)
-			DOWNSAMPLE_SIZE_X = 240;
+			DOWNSAMPLE_SIZE = 240;
 		else
-			DOWNSAMPLE_SIZE_X = 160;
+			DOWNSAMPLE_SIZE = 160;
 	}
 	else if (r_downsample->value == 4)
 	{
 		if (glState.height > 480)
-			DOWNSAMPLE_SIZE_X = 160;
+			DOWNSAMPLE_SIZE = 160;
 		else
-			DOWNSAMPLE_SIZE_X = 80;
+			DOWNSAMPLE_SIZE = 80;
 	}
 	if (!glState.wideScreen) //fix for 4:3 resolutions having different scaling?
-		DOWNSAMPLE_SIZE_X -= 80;
-
-	DOWNSAMPLE_SIZE_Y = DOWNSAMPLE_SIZE_X;
+		DOWNSAMPLE_SIZE -= 80;
 
 	/*if (!GL_Support(GL_ARB_TEXTURE_NPOT_EXT))
 	{
@@ -110,10 +107,10 @@ void R_Bloom_InitEffectTexture(void)
 		// not initialized ?
 		memset(&r_screen, 0, sizeof(r_screen));
 
-		r_screen.width = DOWNSAMPLE_SIZE_X;
-		r_screen.height = DOWNSAMPLE_SIZE_Y;
+		r_screen.width = DOWNSAMPLE_SIZE;
+		r_screen.height = DOWNSAMPLE_SIZE;
 		r_screen.type = PF_RGBA_32;
-		r_screen.size = DOWNSAMPLE_SIZE_X * DOWNSAMPLE_SIZE_Y * 4;
+		r_screen.size = DOWNSAMPLE_SIZE * DOWNSAMPLE_SIZE * 4;
 		r_screen.flags = IMAGE_HAS_COLOR;
 		r_screen.buffer = NULL; // create empty texture for now
 		tr.r_sampleeffecttexture = GL_LoadTextureInternal("*sampleeffecttexture", &r_screen, TF_NEAREST);
@@ -157,10 +154,8 @@ void R_Sampling_InitTextures(void)
 		texture = tr.r_initsampletexture;
 	}
 
-	// validate bloom size and init the bloom effect texture
-	R_Bloom_InitEffectTexture();
-
-	DSCVAR_VAL = r_downsample->value;
+	// validate size and init theeffect texture
+	R_InitEffectTexture();
 }
 
 /*
@@ -170,8 +165,7 @@ R_InitDownSampleTextures
 */
 void R_InitDownSampleTextures(void)
 {
-	DOWNSAMPLE_SIZE_X = 0;
-	DOWNSAMPLE_SIZE_Y = 0;
+	DOWNSAMPLE_SIZE = 0;
 
 	if (tr.r_initsampletexture)
 		GL_FreeTexture(tr.r_initsampletexture);
@@ -217,13 +211,9 @@ void R_DownSampling(void)
 	if (!r_downsample->value)
 		return;
 
-	//if (!DOWNSAMPLE_SIZE_X && !DOWNSAMPLE_SIZE_Y)
-	//	R_Sampling_InitTextures();
+	R_InitDownSampleTextures();
 
-	if (DSCVAR_VAL != r_downsample->value)
-		R_InitDownSampleTextures();
-
-	if (screen_texture_width < DOWNSAMPLE_SIZE_X || screen_texture_height < DOWNSAMPLE_SIZE_Y)
+	if (screen_texture_width < DOWNSAMPLE_SIZE || screen_texture_height < DOWNSAMPLE_SIZE)
 		return;
 
 	// set up full screen workspace
@@ -264,8 +254,8 @@ void R_DownSampling(void)
 		sampleText_tch = ((float)curView_height / (float)curView_width);
 	}
 
-	sample_width = (DOWNSAMPLE_SIZE_X * sampleText_tcw);
-	sample_height = (DOWNSAMPLE_SIZE_Y * sampleText_tch);
+	sample_width = (DOWNSAMPLE_SIZE * sampleText_tcw);
+	sample_height = (DOWNSAMPLE_SIZE * sampleText_tch);
 
 	// copy the screen and draw resized
 	GL_Bind(GL_TEXTURE0, tr.r_initsampletexture);
