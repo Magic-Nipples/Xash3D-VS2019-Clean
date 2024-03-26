@@ -113,7 +113,7 @@ void R_InitEffectTexture(void)
 		r_screen.size = DOWNSAMPLE_SIZE * DOWNSAMPLE_SIZE * 4;
 		r_screen.flags = IMAGE_HAS_COLOR;
 		r_screen.buffer = NULL; // create empty texture for now
-		tr.r_sampleeffecttexture = GL_LoadTextureInternal("*sampleeffecttexture", &r_screen, TF_NEAREST);
+		tr.r_sampleeffecttexture = GL_LoadTextureInternal("*sampleeffecttexture", &r_screen, TF_NEAREST | TF_NOMIPMAP | TF_NOROUND);
 		texture = tr.r_sampleeffecttexture;
 	}
 }
@@ -150,7 +150,7 @@ void R_Sampling_InitTextures(void)
 		r_screen.size = screen_texture_width * screen_texture_height * 4;
 		r_screen.flags = IMAGE_HAS_COLOR;
 		r_screen.buffer = NULL; // create empty texture for now
-		tr.r_initsampletexture = GL_LoadTextureInternal("*samplescreentexture", &r_screen, TF_NEAREST);
+		tr.r_initsampletexture = GL_LoadTextureInternal("*samplescreentexture", &r_screen, TF_NEAREST | TF_NOMIPMAP | TF_NOROUND);
 		texture = tr.r_initsampletexture;
 	}
 

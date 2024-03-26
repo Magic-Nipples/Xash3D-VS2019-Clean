@@ -575,7 +575,7 @@ static void GL_SetTextureDimensions( gl_texture_t *tex, int width, int height, i
 	tex->srcWidth = width;
 	tex->srcHeight = height;
 
-	if( !GL_Support( GL_ARB_TEXTURE_NPOT_EXT ))
+	/*if (!GL_Support(GL_ARB_TEXTURE_NPOT_EXT))
 	{
 		int	step = (int)gl_round_down->value;
 		int	scaled_width, scaled_height;
@@ -592,6 +592,14 @@ static void GL_SetTextureDimensions( gl_texture_t *tex, int width, int height, i
 
 		width = scaled_width;
 		height = scaled_height;
+	}*/
+	if (!FBitSet(tex->flags, TF_NOROUND))
+	{
+		if (((int)gl_round_down->value >= 1) && (tex->srcWidth > 8 || tex->srcHeight > 8))
+		{
+			width = tex->srcWidth / ((int)gl_round_down->value + 1);
+			height = tex->srcHeight / ((int)gl_round_down->value + 1);
+		}
 	}
 
 	if( width > maxTextureSize || height > maxTextureSize || depth > maxDepthSize )
@@ -1972,7 +1980,7 @@ void R_InitDlightTexture( void )
 	r_image.type = PF_RGBA_32;
 	r_image.size = r_image.width * r_image.height * 4;
 
-	tr.dlightTexture = GL_LoadTextureInternal( "*dlight", &r_image, TF_NOMIPMAP|TF_CLAMP|TF_ATLAS_PAGE );
+	tr.dlightTexture = GL_LoadTextureInternal( "*dlight", &r_image, TF_NOMIPMAP|TF_CLAMP|TF_ATLAS_PAGE|TF_NOROUND );
 }
 
 /*
