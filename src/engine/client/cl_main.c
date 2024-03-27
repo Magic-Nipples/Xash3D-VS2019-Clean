@@ -2632,8 +2632,8 @@ void CL_InitLocal( void )
 	Cvar_Get( "lastdemo", "", FCVAR_ARCHIVE, "last played demo" );
 
 	// these two added to shut up CS 1.5 about 'unknown' commands
-	Cvar_Get( "lightgamma", "1", FCVAR_ARCHIVE, "ambient lighting level (legacy, unused)" );
-	Cvar_Get( "direct", "1", FCVAR_ARCHIVE, "direct lighting level (legacy, unused)" );
+	//Cvar_Get( "lightgamma", "1", FCVAR_ARCHIVE, "ambient lighting level (legacy, unused)" );
+	//Cvar_Get( "direct", "1", FCVAR_ARCHIVE, "direct lighting level (legacy, unused)" );
 
 	// server commands
 	Cmd_AddCommand ("noclip", NULL, "enable or disable no clipping mode" );
