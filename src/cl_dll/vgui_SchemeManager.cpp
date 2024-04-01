@@ -28,7 +28,7 @@ cvar_t *g_CV_BitmapFonts;
 
 void Scheme_Init()
 {
-	g_CV_BitmapFonts = gEngfuncs.pfnRegisterVariable("bitmapfonts", "1", 0);
+	g_CV_BitmapFonts = gEngfuncs.pfnRegisterVariable("bitmapfonts", "0", 0);
 }
 
 
