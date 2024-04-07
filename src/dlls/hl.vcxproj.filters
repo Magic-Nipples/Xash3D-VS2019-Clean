@@ -351,6 +351,9 @@
     <ClCompile Include="rain.cpp">
       <Filter>Source Files\Custom</Filter>
     </ClCompile>
+    <ClCompile Include="info_shadow.cpp">
+      <Filter>Source Files\Custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="activitymap.h">

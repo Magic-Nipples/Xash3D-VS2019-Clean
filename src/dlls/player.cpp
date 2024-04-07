@@ -208,6 +208,8 @@ int gmsgAddELight = 0;
 int gmsgSetFog = 0;
 int gmsgRainData = 0;
 
+int gmsgShadowInfo = 0;
+
 
 void LinkUserMessages( void )
 {
@@ -257,6 +259,8 @@ void LinkUserMessages( void )
 	gmsgAddELight = REG_USER_MSG("AddELight", -1); //magic nipples - elights
 	gmsgSetFog = REG_USER_MSG("SetFog", -1);
 	gmsgRainData = REG_USER_MSG("RainData", -1);
+
+	gmsgShadowInfo = REG_USER_MSG("ShadowInfo", -1);
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer );

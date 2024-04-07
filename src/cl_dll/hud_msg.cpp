@@ -171,3 +171,31 @@ int CHud::MsgFunc_RainData(const char* pszName, int iSize, void* pbuf)
 	Rain.globalHeight = READ_COORD();
 	return 1;
 }
+
+int CHud::MsgFunc_ShadowInfo(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+
+	m_fShadowAngle[0] = (float)READ_COORD();
+	m_fShadowAngle[1] = (float)READ_COORD();
+	m_fShadowAngle[2] = (float)READ_COORD();
+	m_fShadowAlpha = (float)READ_COORD();
+
+	m_iShadowColor[0] = READ_COORD();
+	m_iShadowColor[1] = READ_COORD();
+	m_iShadowColor[2] = READ_COORD();
+
+	if(m_iShadowColor[0] != 0)
+		m_iShadowColor[0] /= 255;
+
+	if (m_iShadowColor[1] != 0)
+		m_iShadowColor[1] /= 255;
+
+	if (m_iShadowColor[2] != 0)
+		m_iShadowColor[2] /= 255;
+
+	//gEngfuncs.Con_DPrintf( "CLIENT: %0.2f %0.2f %0.2f %0.2f\n", m_fShadowAngle[0], m_fShadowAngle[1], m_fShadowAngle[2], m_fShadowAlpha);
+	//gEngfuncs.Con_DPrintf( "CLIENT: %0.2f %0.2f %0.2f\n", m_iShadowColor[0], m_iShadowColor[1], m_iShadowColor[2]);
+
+	return 1;
+}

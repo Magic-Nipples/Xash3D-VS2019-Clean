@@ -1018,6 +1018,28 @@ void R_RenderScene( void )
 	R_EndGL();
 }
 
+void R_RenderSceneMirror(void) //magic nipples - separate mirror render scene to fix downsample and stencil shadows
+{
+	if (!cl.worldmodel && RI.drawWorld)
+		Host_Error("R_RenderView: NULL worldmodel\n");
+
+	//R_PushDlights();
+	R_SetupFrustum();
+	R_SetupFrame();
+	R_SetupGL(true);
+	R_Clear(~0);
+
+	R_MarkLeaves();
+	//R_DrawFog();
+	//R_CheckGLFog();
+	R_DrawWorld();
+	//R_CheckFog();
+	R_DrawEntitiesOnList();
+	//R_DrawWaterSurfaces();
+
+	R_EndGL();
+}
+
 /*
 ===============
 R_DoResetGamma
@@ -1158,6 +1180,8 @@ void R_RenderFrame( const ref_viewpass_t *rvp )
 		else pglDisable( GL_MULTISAMPLE_ARB );
 		ClearBits( gl_msaa->flags, FCVAR_CHANGED );
 	}
+
+	pglEnable(GL_DITHER);
 
 	// completely override rendering
 	if( clgame.drawFuncs.GL_RenderFrame != NULL )

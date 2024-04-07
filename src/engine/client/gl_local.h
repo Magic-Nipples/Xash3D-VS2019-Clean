@@ -388,6 +388,7 @@ int R_CountDlights( void );
 void R_ClearScene( void );
 void R_LoadIdentity( void );
 void R_RenderScene( void );
+void R_RenderSceneMirror(void);
 void R_DrawCubemapView( const vec3_t origin, const vec3_t angles, int size );
 void R_SetupRefParams( const struct ref_viewpass_s *rvp );
 void R_TranslateForEntity( cl_entity_t *e );
@@ -728,6 +729,7 @@ extern convar_t	*vid_mode;
 
 extern convar_t* r_downsample; //magic nipples - down sampling
 extern convar_t* gl_allow_mirrors; //Magic Nipples - readding mirrors
+extern convar_t* gl_mirror_msaa;
 extern convar_t* r_overbright; //magic nipples - overbright
 extern convar_t* r_lighting_lambert;
 extern convar_t* gammaboost;

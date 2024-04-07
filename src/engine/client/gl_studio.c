@@ -28,7 +28,6 @@ GNU General Public License for more details.
 #define MAX_LOCALLIGHTS	32//4
 
 CVAR_DEFINE_AUTO( r_glowshellfreq, "2.2", 0, "glowing shell frequency update" );
-//CVAR_DEFINE_AUTO( r_shadows, "0", 0, "cast shadows from models" );
 
 static vec3_t hullcolor[8] = 
 {
@@ -149,11 +148,11 @@ void R_StudioInit( void )
 	r_studio_sort_textures = Cvar_Get( "r_studio_sort_textures", "0", FCVAR_ARCHIVE, "change draw order for additive meshes" );
 	r_drawviewmodel = Cvar_Get( "r_drawviewmodel", "1", 0, "draw firstperson weapon model" );
 
-	r_shadows = Cvar_Get("r_shadows", "1", FCVAR_ARCHIVE, "drop shadow"); //magic nipples - shadows
-	r_shadow_height = Cvar_Get("r_shadow_height", "0", FCVAR_ARCHIVE, "shadow height");
-	r_shadow_x = Cvar_Get("r_shadow_x", "0.75", FCVAR_ARCHIVE, "shadow distance x axis");
-	r_shadow_y = Cvar_Get("r_shadow_y", "0", FCVAR_ARCHIVE, "shadow distance y-axis");
-	r_shadow_alpha = Cvar_Get("r_shadow_alpha", "0.5", FCVAR_ARCHIVE, "shadow opacity");
+	r_shadows = Cvar_Get("r_old_shadows", "0", 0, "drop shadow"); //magic nipples - shadows
+	r_shadow_height = Cvar_Get("r_old_shadow_height", "0", 0, "shadow height");
+	r_shadow_x = Cvar_Get("r_old_shadow_x", "0.75", 0, "shadow distance x axis");
+	r_shadow_y = Cvar_Get("r_old_shadow_y", "0", 0, "shadow distance y-axis");
+	r_shadow_alpha = Cvar_Get("r_old_shadow_alpha", "0.5", 0, "shadow opacity");
 
 	r_viewmodelfov = Cvar_Get("r_viewmodel_fov", "90", FCVAR_ARCHIVE, "fov of view models"); //magic nipples - weapon fov
 
@@ -164,9 +163,6 @@ void R_StudioInit( void )
 
 	Matrix3x4_LoadIdentity( g_studio.rotationmatrix );
 	Cvar_RegisterVariable( &r_glowshellfreq );
-
-	// g-cont. cvar disabled by Valve
-//	Cvar_RegisterVariable( &r_shadows );
 
 	g_studio.interpolate = true;
 	g_studio.framecount = 0;

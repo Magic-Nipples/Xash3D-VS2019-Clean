@@ -32,6 +32,11 @@
 #include "vgui_scorepanel.h"
 #include "rain.h"
 
+// STENCIL SHADOWS BEGIN
+#include "svd_render.h"
+#include "svdformat.h"
+#include "svd_render.h"
+// STENCIL SHADOWS END
 
 class CHLVoiceStatusHelper : public IVoiceStatusHelper
 {
@@ -280,6 +285,11 @@ int __MsgFunc_RainData(const char* pszName, int iSize, void* pbuf)
 {
 	return gHUD.MsgFunc_RainData(pszName, iSize, pbuf);
 }
+
+int __MsgFunc_ShadowInfo(const char* pszName, int iSize, void* pbuf)
+{
+	return gHUD.MsgFunc_ShadowInfo(pszName, iSize, pbuf);
+}
  
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
@@ -317,6 +327,7 @@ void CHud :: Init( void )
 	HOOK_MESSAGE(AddELight); //magic nipples - elights
 	HOOK_MESSAGE(SetFog);
 	HOOK_MESSAGE(RainData);
+	HOOK_MESSAGE(ShadowInfo);
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
@@ -401,6 +412,7 @@ CHud :: ~CHud()
 		m_pHudList = NULL;
 	}
 
+	SVD_Shutdown(); // STENCIL SHADOWS
 	ServersShutdown();
 }
 
@@ -547,6 +559,8 @@ void CHud :: VidInit( void )
 
 	GetClientVoiceMgr()->VidInit();
 
+	SVD_VidInit(); // STENCIL SHADOWS
+
 	if (!gEngfuncs.pDemoAPI->IsRecording() && !gEngfuncs.pDemoAPI->IsPlayingback())
 	{
 		//reset fog on initial start.
@@ -555,6 +569,10 @@ void CHud :: VidInit( void )
 
 		ResetRain();
 	}
+
+	m_fShadowAngle = Vector(0, 0, 0);
+	m_fShadowAlpha = 0;
+	m_iShadowColor = Vector(0, 0, 0);
 }
 
 int CHud::MsgFunc_Logo(const char *pszName,  int iSize, void *pbuf)

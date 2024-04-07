@@ -75,6 +75,7 @@ convar_t* r_lightmap;
 convar_t* r_overbright; //magic nipples - overbright
 convar_t* r_studio_lambert;
 convar_t* gl_allow_mirrors; //Magic Nipples - readding mirrors
+convar_t* gl_mirror_msaa;
 convar_t* gammaboost;
 
 convar_t* vid_displayfrequency;
@@ -1633,6 +1634,7 @@ void GL_InitCommands( void )
 	r_overbright = Cvar_Get("gl_overbright", "1", FCVAR_ARCHIVE, "world overbrights"); //magic nipples - overbright
 	r_studio_lambert = Cvar_Get("r_studio_lambert", "1.495", FCVAR_ARCHIVE, "");
 	gl_allow_mirrors = Cvar_Get("gl_mirrors", "1", FCVAR_ARCHIVE, "draw mirror surfaces"); //Magic Nipples - readding mirrors
+	gl_mirror_msaa = Cvar_Get("gl_mirror_msaa", "1", FCVAR_ARCHIVE, "force msaa on mirrors to smooth reflections");
 	gammaboost = Cvar_Get("gl_texgamma", "0", FCVAR_ARCHIVE, "textures use gamma table");
 
 	window_xpos = Cvar_Get( "_window_xpos", "-1", FCVAR_RENDERINFO, "horizontal window position" );

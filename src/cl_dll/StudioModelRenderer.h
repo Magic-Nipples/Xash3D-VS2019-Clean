@@ -11,6 +11,19 @@
 #pragma once
 #endif
 
+// STENCIL SHADOWS BEGIN
+#include <windows.h>
+#include "svdformat.h"
+#include "gl/gl.h"
+#include "gl/glext.h"
+
+enum shadow_lightype_t
+{
+	SL_TYPE_LIGHTVECTOR = 0,
+	SL_TYPE_POINTLIGHT
+};
+// STENCIL SHADOWS END
+
 /*
 ====================
 CStudioModelRenderer
@@ -98,6 +111,26 @@ public:
 	// Process movement of player
 	virtual void StudioProcessGait ( entity_state_t *pplayer );
 
+
+	// STENCIL SHADOWS BEGIN
+	// Sets up bodypart pointers
+	virtual void StudioSetupModelSVD(int bodypart);
+
+	// Draws shadows for an entity
+	virtual void StudioDrawShadow(void);
+
+	virtual void R_StudioComputeSkinMatrix(mstudioboneweight_t* boneweights, /*matrix3x4 result*/float result[3][4]);
+
+	// Draws a shadow volume
+	virtual void StudioDrawShadowVolume(void);
+
+	// Tells if we should draw a shadow for this ent
+	virtual bool StudioShouldDrawShadow(void);
+
+	// Sets up the shadow info
+	virtual void StudioSetupShadows(void);
+	// STENCIL SHADOWS END
+
 public:
 
 	// Client clock
@@ -184,6 +217,45 @@ public:
 	// Concatenated bone and light transforms
 	float			(*m_pbonetransform) [ MAXSTUDIOBONES ][ 3 ][ 4 ];
 	float			(*m_plighttransform)[ MAXSTUDIOBONES ][ 3 ][ 4 ];
+
+	// STENCIL SHADOWS BEGIN
+public:
+	// Pointer to the shadow volume data
+	svdheader_t* m_pSVDHeader;
+	// Pointer to shadow volume submodel data
+	svdsubmodel_t* m_pSVDSubModel;
+
+	// Tells if a face is facing the light
+	bool            m_trianglesFacingLight[MAXSTUDIOTRIANGLES];
+	// Index array used for rendering
+	GLushort        m_shadowVolumeIndexes[MAXSTUDIOTRIANGLES * 3];
+
+	cvar_t* m_pSkylightDirX;
+	cvar_t* m_pSkylightDirY;
+	cvar_t* m_pSkylightDirZ;
+
+	// Shadowing light vector
+	vec3_t            m_vShadowLightVector;
+
+	// Array of transformed vertexes
+	vec3_t            m_vertexTransform[MAXSTUDIOVERTS * 2];
+
+	// Toggles rendering of stencil shadows
+	cvar_t* m_pCvarDrawStencilShadows;
+	// Extrusion length for stencil shadow volumes
+	cvar_t* m_pCvarShadowVolumeExtrudeDistance;
+	// Tells if two sided stencil test is supported
+	bool            m_bTwoSideSupported;
+
+	cvar_t* m_pCvarShadowAlpha;
+	cvar_t* m_pCvarShadowWeight;
+
+public:
+	// Opengl functions
+	PFNGLACTIVETEXTUREPROC            glActiveTexture;
+	PFNGLCLIENTACTIVETEXTUREPROC    glClientActiveTexture;
+	PFNGLACTIVESTENCILFACEEXTPROC    glActiveStencilFaceEXT;
+	// STENCIL SHADOWS END
 };
 
 #endif // STUDIOMODELRENDERER_H

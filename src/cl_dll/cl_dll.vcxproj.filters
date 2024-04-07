@@ -29,6 +29,12 @@
     <Filter Include="Header Files\VGUI">
       <UniqueIdentifier>{4def3520-25c1-486d-a594-e9a10fa12315}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\shadow">
+      <UniqueIdentifier>{94b72af1-9692-434f-8b2b-85c54d3dc7b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shadow">
+      <UniqueIdentifier>{c0d9386f-1211-4cb4-a36c-3138fbcfa387}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ev_hldm.cpp">
@@ -229,6 +235,15 @@
     <ClCompile Include="rain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="studio_stencil.cpp">
+      <Filter>Source Files\shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="svd_render.cpp">
+      <Filter>Source Files\shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="svdformat.cpp">
+      <Filter>Source Files\shadow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parsemsg.h">
@@ -362,6 +377,12 @@
     </ClInclude>
     <ClInclude Include="rain.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="svd_render.h">
+      <Filter>Header Files\shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="svdformat.h">
+      <Filter>Header Files\shadow</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

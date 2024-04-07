@@ -25,6 +25,7 @@
 #include "screenfade.h"
 #include "shake.h"
 #include "hltv.h"
+#include "svd_render.h" // STENCIL SHADOWS
 
 // Spectator Mode
 extern "C" 
@@ -1641,6 +1642,7 @@ void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 		V_CalcNormalRefdef ( pparams );
 	}
 
+	SVD_CalcRefDef(pparams); // STENCIL SHADOWS
 /*
 // Example of how to overlay the whole screen with red at 50 % alpha
 #define SF_TEST

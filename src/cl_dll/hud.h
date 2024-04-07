@@ -639,6 +639,7 @@ public:
 	int _cdecl MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf); //magic nipples - elights
 	void _cdecl MsgFunc_SetFog(const char* pszName, int iSize, void* pbuf);
 	int  _cdecl MsgFunc_RainData(const char* pszName, int iSize, void* pbuf);
+	int  _cdecl MsgFunc_ShadowInfo(const char* pszName, int iSize, void* pbuf);
 
 	vec3_t FogColor;
 	int g_fFadeDuration; //negative = fading out
@@ -650,6 +651,10 @@ public:
 
 	cvar_t* RainInfo;
 	cvar_t* RainSplash;
+
+	vec3_t m_fShadowAngle;
+	float m_fShadowAlpha;
+	vec3_t	m_iShadowColor;
 
 	// Screen information
 	SCREENINFO	m_scrinfo;

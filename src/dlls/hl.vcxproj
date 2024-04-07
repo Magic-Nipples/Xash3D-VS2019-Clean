@@ -199,6 +199,7 @@
     <ClCompile Include="h_cycler.cpp" />
     <ClCompile Include="h_export.cpp" />
     <ClCompile Include="ichthyosaur.cpp" />
+    <ClCompile Include="info_shadow.cpp" />
     <ClCompile Include="islave.cpp" />
     <ClCompile Include="items.cpp" />
     <ClCompile Include="leech.cpp" />

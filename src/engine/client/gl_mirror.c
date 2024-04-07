@@ -285,8 +285,8 @@ void R_DrawMirrors(void)
 				// allow screen size
 				if (RI.currententity->curstate.sequence > 0)
 				{
-					RI.viewport[2] = RI.viewport[2] / (RI.currententity->curstate.sequence);
-					RI.viewport[3] = RI.viewport[3] / (RI.currententity->curstate.sequence);
+					RI.viewport[2] = RI.viewport[2] / (RI.currententity->curstate.sequence + 1);
+					RI.viewport[3] = RI.viewport[3] / (RI.currententity->curstate.sequence + 1);
 				}
 				else
 				{
@@ -298,8 +298,8 @@ void R_DrawMirrors(void)
 			{
 				if (RI.currententity->curstate.sequence > 0)
 				{
-					RI.viewport[2] = RI.viewport[2] / (RI.currententity->curstate.sequence);
-					RI.viewport[3] = RI.viewport[3] / (RI.currententity->curstate.sequence);
+					RI.viewport[2] = RI.viewport[2] / (RI.currententity->curstate.sequence + 1);
+					RI.viewport[3] = RI.viewport[3] / (RI.currententity->curstate.sequence + 1);
 				}
 				else
 				{
@@ -310,10 +310,16 @@ void R_DrawMirrors(void)
 				}
 			}
 
-			R_RenderScene();
+			if (!CVAR_TO_BOOL(gl_msaa) && CVAR_TO_BOOL(gl_mirror_msaa))
+				pglEnable(GL_MULTISAMPLE_ARB);
+
+			R_RenderSceneMirror();
 			r_stats.c_mirror_passes++;
 
 			es->mirrortexturenum = R_AllocateMirrorTexture();
+
+			if (!CVAR_TO_BOOL(gl_msaa) && CVAR_TO_BOOL(gl_mirror_msaa))
+				pglDisable(GL_MULTISAMPLE_ARB);
 
 			// create personal projection matrix for mirror
 			if (VectorIsNull(e->origin) && VectorIsNull(e->angles))
