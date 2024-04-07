@@ -113,8 +113,8 @@ bool CStudioModelRenderer::StudioShouldDrawShadow ( void )
 	if( !m_pRenderModel->visdata )
 		return false;
 
-	//if(m_pCurrentEntity->curstate.renderfx == kRenderFxNoShadow)
-	//	return false;
+	if(m_pCurrentEntity->curstate.effects & EF_NOSHADOW)
+		return false;
 
 	// Fucking butt-ugly hack to make the shadows less annoying
 	//pmtrace_t tr;

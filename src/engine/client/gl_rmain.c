@@ -1181,8 +1181,6 @@ void R_RenderFrame( const ref_viewpass_t *rvp )
 		ClearBits( gl_msaa->flags, FCVAR_CHANGED );
 	}
 
-	pglEnable(GL_DITHER);
-
 	// completely override rendering
 	if( clgame.drawFuncs.GL_RenderFrame != NULL )
 	{

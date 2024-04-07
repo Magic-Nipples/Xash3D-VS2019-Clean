@@ -5,9 +5,6 @@
 // $NoKeywords: $
 //=============================================================================
 
-// Comment this out if you're not running on the latest Steam release of Half-Life
-//#define HL25_UPDATE
-
 #include "windows.h"
 #include "hud.h"
 #include "cl_util.h"
@@ -40,6 +37,7 @@
 #include "svd_render.h"
 #include "bspfile.h"
 
+#define BIT( n )		(1<<( n )) //magic nipples - using bspfile for SURF defs need BIT defined as well
 
 // 0-2 are axial planes
 #define	PLANE_X			0
@@ -134,7 +132,6 @@ SVD_RecursiveDrawWorld
 
 ====================
 */
-#define BIT( n )		(1<<( n )) //magic nipples - using bspfile for SURF defs need BIT defined as well
 void SVD_RecursiveDrawWorld ( mnode_t *node )
 {
 	if (node->contents == CONTENTS_SOLID)

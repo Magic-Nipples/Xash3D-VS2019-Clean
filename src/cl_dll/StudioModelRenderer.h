@@ -16,12 +16,6 @@
 #include "svdformat.h"
 #include "gl/gl.h"
 #include "gl/glext.h"
-
-enum shadow_lightype_t
-{
-	SL_TYPE_LIGHTVECTOR = 0,
-	SL_TYPE_POINTLIGHT
-};
 // STENCIL SHADOWS END
 
 /*
