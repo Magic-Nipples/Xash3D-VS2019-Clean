@@ -12,10 +12,45 @@
 #endif
 
 // STENCIL SHADOWS BEGIN
-#include <windows.h>
-#include "svdformat.h"
+#include "windows.h"
 #include "gl/gl.h"
 #include "gl/glext.h"
+
+#include <vector>
+#include <map>
+#include <string>
+
+const int MaxShadowFaceCount = 8192;
+
+struct Edge
+{
+	GLushort vertex0;
+	GLushort vertex1;
+	GLushort face0;
+	GLushort face1;
+};
+
+struct Face
+{
+	Face() {}
+	Face(GLushort v0, GLushort v1, GLushort v2) : vertex0(v0), vertex1(v1), vertex2(v2) {}
+	GLushort vertex0;
+	GLushort vertex1;
+	GLushort vertex2;
+};
+
+struct SubModelData
+{
+	std::vector<Face> faces;
+	std::vector<Edge> edges;
+};
+
+struct ModelExtraData
+{
+	std::vector<SubModelData> submodels;
+};
+
+typedef std::map<std::string, ModelExtraData> ExtraDataMap;
 // STENCIL SHADOWS END
 
 /*
@@ -105,26 +140,6 @@ public:
 	// Process movement of player
 	virtual void StudioProcessGait ( entity_state_t *pplayer );
 
-
-	// STENCIL SHADOWS BEGIN
-	// Sets up bodypart pointers
-	virtual void StudioSetupModelSVD(int bodypart);
-
-	// Draws shadows for an entity
-	virtual void StudioDrawShadow(void);
-
-	virtual void R_StudioComputeSkinMatrix(mstudioboneweight_t* boneweights, /*matrix3x4 result*/float result[3][4]);
-
-	// Draws a shadow volume
-	virtual void StudioDrawShadowVolume(void);
-
-	// Tells if we should draw a shadow for this ent
-	virtual bool StudioShouldDrawShadow(void);
-
-	// Sets up the shadow info
-	virtual void StudioSetupShadows(void);
-	// STENCIL SHADOWS END
-
 public:
 
 	// Client clock
@@ -212,43 +227,50 @@ public:
 	float			(*m_pbonetransform) [ MAXSTUDIOBONES ][ 3 ][ 4 ];
 	float			(*m_plighttransform)[ MAXSTUDIOBONES ][ 3 ][ 4 ];
 
-	// STENCIL SHADOWS BEGIN
-public:
-	// Pointer to the shadow volume data
-	svdheader_t* m_pSVDHeader;
-	// Pointer to shadow volume submodel data
-	svdsubmodel_t* m_pSVDSubModel;
+	// STENCIL SHADOWS START
+	private:
+		ExtraDataMap	m_ExtraData;
+		ModelExtraData* m_pCurretExtraData;
 
-	// Tells if a face is facing the light
-	bool            m_trianglesFacingLight[MAXSTUDIOTRIANGLES];
-	// Index array used for rendering
-	GLushort        m_shadowVolumeIndexes[MAXSTUDIOTRIANGLES * 3];
+		vec3_t		m_ShadowDir;
 
-	cvar_t* m_pSkylightDirX;
-	cvar_t* m_pSkylightDirY;
-	cvar_t* m_pSkylightDirZ;
+		void			SetupModelExtraData(void);
+		void			BuildFaces(SubModelData& dst, mstudiomodel_t* src);
+		void			BuildEdges(SubModelData& dst, mstudiomodel_t* src);
+		void			AddEdge(SubModelData& dst, int face, int v0, int v1);
 
-	// Shadowing light vector
-	vec3_t            m_vShadowLightVector;
+		void			DrawShadowsForEnt(void);
+		void			DrawShadowVolume(SubModelData& data, mstudiomodel_t* model);
 
-	// Array of transformed vertexes
-	vec3_t            m_vertexTransform[MAXSTUDIOVERTS * 2];
-
-	// Toggles rendering of stencil shadows
-	cvar_t* m_pCvarDrawStencilShadows;
-	// Extrusion length for stencil shadow volumes
-	cvar_t* m_pCvarShadowVolumeExtrudeDistance;
-	// Tells if two sided stencil test is supported
-	bool            m_bTwoSideSupported;
-
-	cvar_t* m_pCvarShadowAlpha;
-	cvar_t* m_pCvarShadowWeight;
+		// Tells if a face is facing the light
+		bool            m_trianglesFacingLight[MAXSTUDIOTRIANGLES];
+		// Index array used for rendering
+		GLushort        m_shadowVolumeIndexes[MAXSTUDIOTRIANGLES * 3];
 
 public:
-	// Opengl functions
-	PFNGLACTIVETEXTUREPROC            glActiveTexture;
-	PFNGLCLIENTACTIVETEXTUREPROC    glClientActiveTexture;
-	PFNGLACTIVESTENCILFACEEXTPROC    glActiveStencilFaceEXT;
+		// Tells if we should draw a shadow for this ent
+		virtual bool	StudioShouldDrawShadow(void);
+		virtual void	R_StudioComputeSkinMatrix(mstudioboneweight_t* boneweights, float result[3][4]); // STENCIL SHADOWS
+		void			GetShadowVector(vec3_t& vecOut);
+
+		// Toggles rendering of stencil shadows
+		cvar_t* m_pCvarDrawStencilShadows;
+		// Extrusion length for stencil shadow volumes
+		cvar_t* m_pCvarShadowVolumeExtrudeDistance;
+
+		cvar_t* m_pSkylightDirX;
+		cvar_t* m_pSkylightDirY;
+		cvar_t* m_pSkylightDirZ;
+
+		cvar_t* m_pCvarShadowAlpha;
+		cvar_t* m_pCvarShadowWeight;
+
+		qboolean		m_bTwoSideSupported;
+
+		// Opengl functions
+		PFNGLACTIVETEXTUREPROC            glActiveTexture;
+		PFNGLCLIENTACTIVETEXTUREPROC    glClientActiveTexture;
+		PFNGLACTIVESTENCILFACEEXTPROC    glActiveStencilFaceEXT;
 	// STENCIL SHADOWS END
 };
 

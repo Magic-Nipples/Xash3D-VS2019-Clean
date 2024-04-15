@@ -32,12 +32,6 @@
 #include "vgui_scorepanel.h"
 #include "rain.h"
 
-// STENCIL SHADOWS BEGIN
-#include "svd_render.h"
-#include "svdformat.h"
-#include "svd_render.h"
-// STENCIL SHADOWS END
-
 class CHLVoiceStatusHelper : public IVoiceStatusHelper
 {
 public:
@@ -411,8 +405,6 @@ CHud :: ~CHud()
 		}
 		m_pHudList = NULL;
 	}
-
-	SVD_Shutdown(); // STENCIL SHADOWS
 	ServersShutdown();
 }
 
@@ -558,8 +550,6 @@ void CHud :: VidInit( void )
 	m_StatusIcons.VidInit();
 
 	GetClientVoiceMgr()->VidInit();
-
-	SVD_VidInit(); // STENCIL SHADOWS
 
 	if (!gEngfuncs.pDemoAPI->IsRecording() && !gEngfuncs.pDemoAPI->IsPlayingback())
 	{

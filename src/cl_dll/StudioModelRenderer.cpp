@@ -72,15 +72,15 @@ void CStudioModelRenderer::Init( void )
 	m_paliastransform		= (float (*)[3][4])IEngineStudio.StudioGetAliasTransform();
 	m_protationmatrix		= (float (*)[3][4])IEngineStudio.StudioGetRotationMatrix();
 
-	// STENCIL SHADOWS BEGIN
-	m_pSkylightDirX = CVAR_CREATE("shadow_vec_x", "0.3", 0);
-	m_pSkylightDirY = CVAR_CREATE("shadow_vec_y", "0.5", 0);
-	m_pSkylightDirZ = CVAR_CREATE("shadow_vec_z", "1", 0);
-
+	// STENCIL SHADOWS START
 	m_pCvarDrawStencilShadows = CVAR_CREATE("r_shadows", "1", FCVAR_ARCHIVE);
 	m_pCvarShadowAlpha = CVAR_CREATE("r_shadow_alpha", "0.5", FCVAR_ARCHIVE);
 	m_pCvarShadowWeight = CVAR_CREATE("r_shadow_smooth", "0", FCVAR_ARCHIVE);
 	m_pCvarShadowVolumeExtrudeDistance = CVAR_CREATE("r_shadow_extrude_distance", "2048", FCVAR_ARCHIVE);
+
+	m_pSkylightDirX = CVAR_CREATE("shadow_vec_x", "0.3", 0);
+	m_pSkylightDirY = CVAR_CREATE("shadow_vec_y", "0.5", 0);
+	m_pSkylightDirZ = CVAR_CREATE("shadow_vec_z", "1", 0);
 	// STENCIL SHADOWS END
 }
 
@@ -111,7 +111,7 @@ CStudioModelRenderer::CStudioModelRenderer( void )
 	m_pPlayerInfo		= NULL;
 	m_pRenderModel		= NULL;
 
-	// STENCIL SHADOWS BEGIN
+	// STENCIL SHADOWS START
 	m_pCvarDrawStencilShadows = NULL;
 	m_pCvarShadowAlpha = NULL;
 	m_pCvarShadowWeight = NULL;
@@ -119,8 +119,6 @@ CStudioModelRenderer::CStudioModelRenderer( void )
 	m_pSkylightDirX = NULL;
 	m_pSkylightDirY = NULL;
 	m_pSkylightDirZ = NULL;
-	m_pSVDSubModel = NULL;
-	m_pSVDHeader = NULL;
 
 	glActiveTexture = (PFNGLACTIVETEXTUREPROC)wglGetProcAddress("glActiveTexture");
 	glClientActiveTexture = (PFNGLCLIENTACTIVETEXTUREPROC)wglGetProcAddress("glClientActiveTexture");
@@ -130,6 +128,7 @@ CStudioModelRenderer::CStudioModelRenderer( void )
 		m_bTwoSideSupported = true;
 	else
 		m_bTwoSideSupported = false;
+
 	// STENCIL SHADOWS END
 }
 
@@ -1603,8 +1602,6 @@ StudioRenderModel
 */
 void CStudioModelRenderer::StudioRenderModel( void )
 {
-	StudioSetupShadows(); // STENCIL SHADOWS
-
 	IEngineStudio.SetChromeOrigin();
 	IEngineStudio.SetForceFaceFlags( 0 );
 
@@ -1691,12 +1688,19 @@ void CStudioModelRenderer::StudioRenderFinal_Hardware( void )
 	int i;
 	int rendermode;
 
-	if (StudioShouldDrawShadow()) // STENCIL SHADOWS
-		StudioDrawShadow();
-
 	rendermode = IEngineStudio.GetForceFaceFlags() ? kRenderTransAdd : m_pCurrentEntity->curstate.rendermode;
+
+	// STENCIL SHADOWS START
+	// draw before entity itself, so it would not get any self-shadowing
+	if (rendermode == kRenderNormal && m_pCurrentEntity != gEngfuncs.GetViewModel())
+	{
+		if (StudioShouldDrawShadow())
+			DrawShadowsForEnt();
+	}
+	// STENCIL SHADOWS END
+
 	IEngineStudio.SetupRenderer( rendermode );
-	
+
 	if (m_pCvarDrawEntities->value == 2)
 	{
 		IEngineStudio.StudioDrawBones();
@@ -1719,7 +1723,7 @@ void CStudioModelRenderer::StudioRenderFinal_Hardware( void )
 
 			IEngineStudio.GL_SetRenderMode( rendermode );
 			IEngineStudio.StudioDrawPoints();
-			IEngineStudio.GL_StudioDrawShadow();
+			//IEngineStudio.GL_StudioDrawShadow();
 		}
 	}
 
@@ -1755,4 +1759,3 @@ void CStudioModelRenderer::StudioRenderFinal(void)
 		StudioRenderFinal_Software();
 	}
 }
-

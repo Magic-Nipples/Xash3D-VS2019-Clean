@@ -205,11 +205,10 @@
     <ClCompile Include="saytext.cpp" />
     <ClCompile Include="statusbar.cpp" />
     <ClCompile Include="status_icons.cpp" />
+    <ClCompile Include="StencilShadow.cpp" />
+    <ClCompile Include="StencilShadowRender.cpp" />
     <ClCompile Include="StudioModelRenderer.cpp" />
-    <ClCompile Include="studio_stencil.cpp" />
     <ClCompile Include="studio_util.cpp" />
-    <ClCompile Include="svdformat.cpp" />
-    <ClCompile Include="svd_render.cpp" />
     <ClCompile Include="text_message.cpp" />
     <ClCompile Include="train.cpp" />
     <ClCompile Include="tri.cpp" />
@@ -259,10 +258,9 @@
     <ClInclude Include="overview.h" />
     <ClInclude Include="parsemsg.h" />
     <ClInclude Include="rain.h" />
+    <ClInclude Include="StencilShadowRender.h" />
     <ClInclude Include="StudioModelRenderer.h" />
     <ClInclude Include="studio_util.h" />
-    <ClInclude Include="svdformat.h" />
-    <ClInclude Include="svd_render.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="util_vector.h" />
     <ClInclude Include="vgui_ConsolePanel.h" />

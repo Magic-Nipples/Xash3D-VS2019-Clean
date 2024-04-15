@@ -26,7 +26,7 @@
 #include <windows.h>
 #include <gl/gl.h>
 
-#include "svd_render.h" // STENCIL SHADOWS
+#include "StencilShadowRender.h" // STENCIL SHADOWS
 
 #define DLLEXPORT __declspec( dllexport )
 
@@ -35,7 +35,6 @@ extern "C"
 	void DLLEXPORT HUD_DrawNormalTriangles( void );
 	void DLLEXPORT HUD_DrawTransparentTriangles( void );
 };
-
 
 void SetPoint(float x, float y, float z, float(*matrix)[4])
 {
@@ -367,16 +366,14 @@ HUD_DrawNormalTriangles
 Non-transparent triangles-- add them here
 =================
 */
+
 void DLLEXPORT HUD_DrawNormalTriangles( void )
 {
-	gHUD.m_Spectator.DrawOverview();
-	
-#if defined( TEST_IT )
-//	Draw_Triangles();
-#endif
+	RenderShadow(); // STENCIL SHADOWS
 
-	//magic nipples - was under transparenttriangles but putting it here fixes shadows drawing through fog, transparent brushes, etc... xash jank?
-	SVD_DrawTransparentTriangles(); // STENCIL SHADOWS
+#if defined( TEST_IT )
+	//	Draw_Triangles();
+#endif
 }
 
 /*
