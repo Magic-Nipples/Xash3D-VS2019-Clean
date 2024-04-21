@@ -370,6 +370,7 @@ Non-transparent triangles-- add them here
 void DLLEXPORT HUD_DrawNormalTriangles( void )
 {
 	RenderShadow(); // STENCIL SHADOWS
+	//gHUD.m_Spectator.DrawOverview();
 
 #if defined( TEST_IT )
 	//	Draw_Triangles();
