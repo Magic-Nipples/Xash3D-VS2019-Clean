@@ -124,9 +124,9 @@ CStudioModelRenderer::CStudioModelRenderer( void )
 	glClientActiveTexture = (PFNGLCLIENTACTIVETEXTUREPROC)wglGetProcAddress("glClientActiveTexture");
 	glActiveStencilFaceEXT = (PFNGLACTIVESTENCILFACEEXTPROC)wglGetProcAddress("glActiveStencilFaceEXT");
 
-	if (glActiveStencilFaceEXT)
-		m_bTwoSideSupported = true;
-	else
+	/*if (glActiveStencilFaceEXT)		// magic nipples - the twosided stencil shadows are broken as of now. Will turn back on after a fix is found.
+		m_bTwoSideSupported = true;		// regular drawing works fine as far as I can tell.
+	else*/
 		m_bTwoSideSupported = false;
 
 	// STENCIL SHADOWS END
