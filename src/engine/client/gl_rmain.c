@@ -69,8 +69,16 @@ Opaque entity can be brush or studio model but sprite
 */
 static qboolean R_OpaqueEntity( cl_entity_t *ent )
 {
-	if( R_GetEntityRenderMode( ent ) == kRenderNormal )
-		return true;
+	if (R_GetEntityRenderMode(ent) == kRenderNormal)
+	{
+		switch (ent->curstate.renderfx)
+		{
+		case kRenderFxNone:
+		case kRenderFxDeadPlayer:
+		case kRenderFxExplode:
+			return true;
+		}
+	}
 	return false;
 }
 
