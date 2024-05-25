@@ -802,23 +802,7 @@ void EmitWaterPolys( msurface_t *warp, qboolean reverse )
 	else waveHeight = RI.currententity->curstate.scale;
 
 	// reset fog color for nonlightmapped water
-	//GL_ResetFogColor();
-
-	//MAGIC NIPPLES - func_water fix!!
-	gl_texture_t* tex = R_GetTexture(warp->texinfo->texture->gl_texturenum);
-
-	if (cl.local.waterlevel >= 3)
-	{
-		RI.fogColor[0] = tex->fogParams[0] / 255.0f;
-		RI.fogColor[1] = tex->fogParams[1] / 255.0f;
-		RI.fogColor[2] = tex->fogParams[2] / 255.0f;
-		RI.fogDensity = tex->fogParams[3] * 0.000050f; //0.000025f
-		RI.fogStart = RI.fogEnd = 0.0f;
-		RI.fogColor[3] = 1.0f;
-		RI.fogCustom = false;
-		RI.fogEnabled = true;
-		RI.fogSkybox = true;
-	}
+	GL_ResetFogColor();
 
 	if( FBitSet( warp->flags, SURF_DRAWTURB_QUADS ))
 		pglBegin( GL_QUADS );
@@ -878,8 +862,7 @@ void EmitWaterPolys( msurface_t *warp, qboolean reverse )
 	if( FBitSet( warp->flags, SURF_DRAWTURB_QUADS ))
 		pglEnd();
 
-	//GL_SetupFogColorForSurfaces();
-	GL_ResetFogColor(); //MAGIC NIPPLES - func_water fix!!
+	GL_SetupFogColorForSurfaces();
 }
 
 

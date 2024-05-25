@@ -732,45 +732,46 @@ void Delta_ParseTable( char **delta_script, delta_info_t *dt, const char *encode
 	dt->bInitialized = true; // table is ok
 }
 
-void Delta_InitFields( void )
+void Delta_InitFields(void)
 {
-	char		*afile, *pfile;
-	string		encodeDll, encodeFunc, token;	
-	delta_info_t	*dt;
+	char* afile, * pfile;
+	string		encodeDll, encodeFunc, token;
+	delta_info_t* dt;
 
-	afile = FS_LoadFile( DELTA_PATH, NULL, false );
-	if( !afile ) Sys_Error( "DELTA_Load: couldn't load file %s\n", DELTA_PATH );
+	afile = FS_LoadFile(DELTA_PATH, NULL, false);
+	if (!afile) Sys_Error("DELTA_Load: couldn't load file %s\n", DELTA_PATH);
 
 	pfile = afile;
 
-	while(( pfile = COM_ParseFile( pfile, token )) != NULL )
+	while ((pfile = COM_ParseFile(pfile, token)) != NULL)
 	{
-		dt = Delta_FindStruct( token );
+		dt = Delta_FindStruct(token);
 
-		if( dt == NULL )
+		if (dt == NULL)
 		{
-			Sys_Error( "%s: unknown struct %s\n", DELTA_PATH, token );
+			Sys_Error("%s: unknown struct %s\n", DELTA_PATH, token);
 		}
 
-		pfile = COM_ParseFile( pfile, encodeDll );
+		pfile = COM_ParseFile(pfile, encodeDll);
 
-		if( !Q__stricmp( encodeDll, "none" ))
-			Q_strcpy( encodeFunc, "null" );
-		else pfile = COM_ParseFile( pfile, encodeFunc );
+		if (!Q__stricmp(encodeDll, "none"))
+			Q_strcpy(encodeFunc, "null");
+		else pfile = COM_ParseFile(pfile, encodeFunc);
 
 		// jump to '{'
-		pfile = COM_ParseFile( pfile, token );
-	
-		if( token[0] != '{' )
+		pfile = COM_ParseFile(pfile, token);
+
+		if (token[0] != '{')
 		{
-			Sys_Error( "%s: missing '{' in section %s\n", DELTA_PATH, dt->pName );
+			Sys_Error("%s: missing '{' in section %s\n", DELTA_PATH, dt->pName);
 		}
 
-		Delta_ParseTable( &pfile, dt, encodeDll, encodeFunc );
+		Delta_ParseTable(&pfile, dt, encodeDll, encodeFunc);
 	}
 
-	Mem_Free( afile );
+	Mem_Free(afile);
 }
+
 
 void Delta_Init( void )
 {
@@ -885,8 +886,12 @@ int Delta_ClampIntegerField( delta_t *pField, int iValue, qboolean bSigned, int 
 	{
 		int signbits = bSigned ? (numbits - 1) : numbits;
 		int maxnum = BIT( signbits ) - 1;
-		int minnum = bSigned ? -maxnum : 0;
-		iValue = bound( minnum, iValue, maxnum );
+
+		if (iValue > maxnum)
+			iValue = maxnum;
+		else if (bSigned && iValue < -maxnum - 1)
+			iValue = -maxnum - 1;
+
 	}
 
 	return iValue; // clamped;
@@ -902,9 +907,9 @@ assume from and to is valid
 */
 qboolean Delta_CompareField( delta_t *pField, void *from, void *to, float timebase )
 {
-	qboolean	bSigned = ( pField->flags & DT_SIGNED ) ? true : false;
+	qboolean bSigned = (pField->flags & DT_SIGNED) ? true : false;
 	float	val_a, val_b;
-	int	fromF, toF;
+	int		fromF, toF;
 
 	Assert( pField != NULL );
 	Assert( from != NULL );
@@ -1073,88 +1078,95 @@ write fields by offsets
 assume from and to is valid
 =====================
 */
-qboolean Delta_WriteField( sizebuf_t *msg, delta_t *pField, void *from, void *to, float timebase )
+qboolean Delta_WriteField(sizebuf_t* msg, delta_t* pField, void* from, void* to, float timebase)
 {
-	qboolean	bSigned = ( pField->flags & DT_SIGNED ) ? true : false;
-	float		flValue, flAngle;// , flTime;
+	qboolean	bSigned = (pField->flags & DT_SIGNED) ? true : false;
+	float		flValue, flAngle, flTime;
 	uint		iValue;
-	int			dt;
-	const char	*pStr;
+	const char* pStr;
 
-	if( Delta_CompareField( pField, from, to, timebase ))
+	if (Delta_CompareField(pField, from, to, timebase))
 	{
-		MSG_WriteOneBit( msg, 0 );	// unchanged
+		MSG_WriteOneBit(msg, 0);	// unchanged
 		return false;
 	}
 
-	MSG_WriteOneBit( msg, 1 );	// changed
+	MSG_WriteOneBit(msg, 1);	// changed
 
-	if( pField->flags & DT_BYTE )
+	if (pField->flags & DT_BYTE)
 	{
-		iValue = *(byte *)((byte *)to + pField->offset );
-
-		if( pField->multiplier != 1.0f )
-			iValue *= pField->multiplier;
+		if (bSigned)
+			iValue = *(signed char*)((byte*)to + pField->offset);
+		else
+			iValue = *(byte*)((byte*)to + pField->offset);
 
 		iValue = Delta_ClampIntegerField(pField, iValue, bSigned, pField->bits);
-		MSG_WriteBitLong( msg, iValue, pField->bits, bSigned );
+		if (pField->multiplier != 1.0f) iValue *= pField->multiplier;
+		MSG_WriteBitLong(msg, iValue, pField->bits, bSigned);
 	}
-	else if( pField->flags & DT_SHORT )
+	else if (pField->flags & DT_SHORT)
 	{
-		iValue = *(word *)((byte *)to + pField->offset );
-
-		if( pField->multiplier != 1.0f )
-			iValue *= pField->multiplier;
+		if (bSigned)
+			iValue = *(short*)((byte*)to + pField->offset);
+		else
+			iValue = *(word*)((byte*)to + pField->offset);
 
 		iValue = Delta_ClampIntegerField(pField, iValue, bSigned, pField->bits);
-		MSG_WriteBitLong( msg, iValue, pField->bits, bSigned );
+		if (pField->multiplier != 1.0f) iValue *= pField->multiplier;
+		MSG_WriteBitLong(msg, iValue, pField->bits, bSigned);
 	}
-	else if( pField->flags & DT_INTEGER )
+	else if (pField->flags & DT_INTEGER)
 	{
-		iValue = *(uint *)((byte *)to + pField->offset );
-
-		if( pField->multiplier != 1.0f )
-			iValue *= pField->multiplier;
+		if (bSigned)
+			iValue = *(int*)((byte*)to + pField->offset);
+		else
+			iValue = *(uint*)((byte*)to + pField->offset);
 
 		iValue = Delta_ClampIntegerField(pField, iValue, bSigned, pField->bits);
-		MSG_WriteBitLong( msg, iValue, pField->bits, bSigned );
+		if (pField->multiplier != 1.0f) iValue *= pField->multiplier;
+		MSG_WriteBitLong(msg, iValue, pField->bits, bSigned);
 	}
-	else if( pField->flags & DT_FLOAT )
+	else if (pField->flags & DT_FLOAT)
 	{
-		flValue = *(float *)((byte *)to + pField->offset );
+		flValue = *(float*)((byte*)to + pField->offset);
 		iValue = (int)(flValue * pField->multiplier);
-		iValue = Delta_ClampIntegerField( pField, iValue, bSigned, pField->bits );
-		MSG_WriteBitLong( msg, iValue, pField->bits, bSigned );
+		iValue = Delta_ClampIntegerField(pField, iValue, bSigned, pField->bits);
+		MSG_WriteBitLong(msg, iValue, pField->bits, bSigned);
 	}
-	else if( pField->flags & DT_ANGLE )
+	else if (pField->flags & DT_ANGLE)
 	{
-		flAngle = *(float *)((byte *)to + pField->offset );
+		flAngle = *(float*)((byte*)to + pField->offset);
 
 		// NOTE: never applies multipliers to angle because
 		// result may be wrong on client-side
-		MSG_WriteBitAngle( msg, flAngle, pField->bits );
+		MSG_WriteBitAngle(msg, flAngle, pField->bits);
 	}
-	else if( pField->flags & DT_TIMEWINDOW_8 )
+	else if (pField->flags & DT_TIMEWINDOW_8)
 	{
-		flValue = *(float *)((byte *)to + pField->offset );
-		dt = Q_rint((timebase - flValue) * 100.0);
-		dt = Delta_ClampIntegerField(pField, dt, 1, pField->bits);
-		MSG_WriteSBitLong(msg, dt, pField->bits);
+		bSigned = true; // timewindow is always signed
+		flValue = *(float*)((byte*)to + pField->offset);
+		flTime = Q_rint(timebase * 100.0f) - Q_rint(flValue * 100.0f);
+		iValue = (int)flTime;
+		iValue = Delta_ClampIntegerField(pField, iValue, bSigned, pField->bits);
+		MSG_WriteBitLong(msg, iValue, pField->bits, bSigned);
 	}
-	else if( pField->flags & DT_TIMEWINDOW_BIG )
+	else if (pField->flags & DT_TIMEWINDOW_BIG)
 	{
-		flValue = *(float *)((byte *)to + pField->offset );
-		dt = Q_rint((timebase - flValue) * pField->multiplier);
-		dt = Delta_ClampIntegerField(pField, dt, 1, pField->bits);
-		MSG_WriteSBitLong(msg, dt, pField->bits);
+		bSigned = true; // timewindow is always signed
+		flValue = *(float*)((byte*)to + pField->offset);
+		flTime = Q_rint(timebase * pField->multiplier) - Q_rint(flValue * pField->multiplier);
+		iValue = (int)flTime;
+		iValue = Delta_ClampIntegerField(pField, iValue, bSigned, pField->bits);
+		MSG_WriteBitLong(msg, iValue, pField->bits, bSigned);
 	}
-	else if( pField->flags & DT_STRING )
+	else if (pField->flags & DT_STRING)
 	{
-		pStr = (char *)((byte *)to + pField->offset );
-		MSG_WriteString( msg, pStr );
+		pStr = (char*)((byte*)to + pField->offset);
+		MSG_WriteString(msg, pStr);
 	}
 	return true;
 }
+
 
 /*
 =====================
@@ -1164,125 +1176,145 @@ read fields by offsets
 assume 'from' and 'to' is valid
 =====================
 */
-qboolean Delta_ReadField( sizebuf_t *msg, delta_t *pField, void *from, void *to, float timebase )
+qboolean Delta_ReadField(sizebuf_t* msg, delta_t* pField, void* from, void* to, float timebase)
 {
-	qboolean		bSigned = ( pField->flags & DT_SIGNED ) ? true : false;
+	qboolean	bSigned = (pField->flags & DT_SIGNED) ? true : false;
 	float		flValue, flAngle, flTime;
-	qboolean		bChanged;
-	uint		iValue;	
-	const char	*pStr;
-	char		*pOut;
-	
-	bChanged = MSG_ReadOneBit( msg );
+	qboolean	bChanged;
+	uint		iValue;
+	const char* pStr;
+	char* pOut;
 
-	Assert( pField->multiplier != 0.0f );
+	bChanged = MSG_ReadOneBit(msg);
 
-	if( pField->flags & DT_BYTE )
+	Assert(pField->multiplier != 0.0f);
+
+	if (pField->flags & DT_BYTE)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			iValue = MSG_ReadBitLong( msg, pField->bits, bSigned );
-			if( pField->multiplier != 1.0f ) iValue /= pField->multiplier;
+			iValue = MSG_ReadBitLong(msg, pField->bits, bSigned);
+			if (pField->multiplier != 1.0f) iValue /= pField->multiplier;
 		}
 		else
 		{
-			iValue = *(byte *)((byte *)from + pField->offset );
+			if (bSigned)
+				iValue = *(signed char*)((byte*)from + pField->offset);
+			else
+				iValue = *(byte*)((byte*)from + pField->offset);
 		}
-		*(byte *)((byte *)to + pField->offset ) = iValue;
+		if (bSigned)
+			*(signed char*)((byte*)to + pField->offset) = iValue;
+		else
+			*(byte*)((byte*)to + pField->offset) = iValue;
 	}
-	else if( pField->flags & DT_SHORT )
+	else if (pField->flags & DT_SHORT)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			iValue = MSG_ReadBitLong( msg, pField->bits, bSigned );
-			if( pField->multiplier != 1.0f ) iValue /= pField->multiplier;
+			iValue = MSG_ReadBitLong(msg, pField->bits, bSigned);
+			if (pField->multiplier != 1.0f) iValue /= pField->multiplier;
 		}
 		else
 		{
-			iValue = *(word *)((byte *)from + pField->offset );
+			if (bSigned)
+				iValue = *(short*)((byte*)from + pField->offset);
+			else
+				iValue = *(word*)((byte*)from + pField->offset);
 		}
-		*(word *)((byte *)to + pField->offset ) = iValue;
+		if (bSigned)
+			*(short*)((byte*)to + pField->offset) = iValue;
+		else
+			*(word*)((byte*)to + pField->offset) = iValue;
 	}
-	else if( pField->flags & DT_INTEGER )
+	else if (pField->flags & DT_INTEGER)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			iValue = MSG_ReadBitLong( msg, pField->bits, bSigned );
-			if( pField->multiplier != 1.0f ) iValue /= pField->multiplier;
+			iValue = MSG_ReadBitLong(msg, pField->bits, bSigned);
+			if (pField->multiplier != 1.0f) iValue /= pField->multiplier;
 		}
 		else
 		{
-			iValue = *(uint *)((byte *)from + pField->offset );
+			if (bSigned)
+				iValue = *(int*)((byte*)from + pField->offset);
+			else
+				iValue = *(uint*)((byte*)from + pField->offset);
 		}
-		*(uint *)((byte *)to + pField->offset ) = iValue;
+		if (bSigned)
+			*(int*)((byte*)to + pField->offset) = iValue;
+		else
+			*(uint*)((byte*)to + pField->offset) = iValue;
 	}
-	else if( pField->flags & DT_FLOAT )
+	else if (pField->flags & DT_FLOAT)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			iValue = MSG_ReadBitLong( msg, pField->bits, bSigned );
-			flValue = (int)iValue * ( 1.0f / pField->multiplier );
+			iValue = MSG_ReadBitLong(msg, pField->bits, bSigned);
+			flValue = (int)iValue * (1.0f / pField->multiplier);
 			flValue = flValue * pField->post_multiplier;
 		}
 		else
 		{
-			flValue = *(float *)((byte *)from + pField->offset );
+			flValue = *(float*)((byte*)from + pField->offset);
 		}
-		*(float *)((byte *)to + pField->offset ) = flValue;
+		*(float*)((byte*)to + pField->offset) = flValue;
 	}
-	else if( pField->flags & DT_ANGLE )
+	else if (pField->flags & DT_ANGLE)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			flAngle = MSG_ReadBitAngle( msg, pField->bits );
+			flAngle = MSG_ReadBitAngle(msg, pField->bits);
 		}
 		else
 		{
-			flAngle = *(float *)((byte *)from + pField->offset );
+			flAngle = *(float*)((byte*)from + pField->offset);
 		}
-		*(float *)((byte *)to + pField->offset ) = flAngle;
+		*(float*)((byte*)to + pField->offset) = flAngle;
 	}
-	else if( pField->flags & DT_TIMEWINDOW_8 )
+	else if (pField->flags & DT_TIMEWINDOW_8)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			iValue = MSG_ReadBitLong( msg, pField->bits, bSigned );
-			flValue = (float)((int)(iValue * 0.01f ));
+			bSigned = true; // timewindow is always signed
+			iValue = MSG_ReadBitLong(msg, pField->bits, bSigned);
+			flValue = (float)((int)(iValue * 0.01f));
 			flTime = timebase + flValue;
 		}
 		else
 		{
-			flTime = *(float *)((byte *)from + pField->offset );
+			flTime = *(float*)((byte*)from + pField->offset);
 		}
-		*(float *)((byte *)to + pField->offset ) = flTime;
+		*(float*)((byte*)to + pField->offset) = flTime;
 	}
-	else if( pField->flags & DT_TIMEWINDOW_BIG )
+	else if (pField->flags & DT_TIMEWINDOW_BIG)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			iValue = MSG_ReadBitLong( msg, pField->bits, bSigned );
-			flValue = (float)((int)iValue) * ( 1.0f / pField->multiplier );
+			bSigned = true; // timewindow is always signed
+			iValue = MSG_ReadBitLong(msg, pField->bits, bSigned);
+			flValue = (float)((int)iValue) * (1.0f / pField->multiplier);
 			flTime = timebase + flValue;
 		}
 		else
 		{
-			flTime = *(float *)((byte *)from + pField->offset );
+			flTime = *(float*)((byte*)from + pField->offset);
 		}
-		*(float *)((byte *)to + pField->offset ) = flTime;
+		*(float*)((byte*)to + pField->offset) = flTime;
 	}
-	else if( pField->flags & DT_STRING )
+	else if (pField->flags & DT_STRING)
 	{
-		if( bChanged )
+		if (bChanged)
 		{
-			pStr = MSG_ReadString( msg );
+			pStr = MSG_ReadString(msg);
 		}
 		else
 		{
-			pStr = (char *)((byte *)from + pField->offset );
+			pStr = (char*)((byte*)from + pField->offset);
 		}
 
-		pOut = (char *)((byte *)to + pField->offset );
-		Q_strncpy( pOut, pStr, pField->size );
+		pOut = (char*)((byte*)to + pField->offset);
+		Q_strncpy(pOut, pStr, pField->size);
 	}
 	return bChanged;
 }
