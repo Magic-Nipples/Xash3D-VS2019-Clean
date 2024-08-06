@@ -1142,6 +1142,13 @@ void CGlow::Spawn( void )
 	pev->effects		= 0;
 	pev->frame			= 0;
 
+	if (pev->spawnflags & SF_SPRITE_GLOW)
+		pev->iuser1 = 1;
+
+	pev->iuser2 = (int)pev->frags;
+	pev->iuser3 = (int)pev->health;
+	pev->iuser4 = (int)pev->friction;
+
 	PRECACHE_MODEL( (char *)STRING(pev->model) );
 	SET_MODEL( ENT(pev), STRING(pev->model) );
 
@@ -1194,6 +1201,13 @@ void CSprite::Spawn( void )
 		TurnOff();
 	else
 		TurnOn();
+
+	if (pev->spawnflags & SF_SPRITE_GLOW)
+		pev->iuser1 = 1;
+
+	pev->iuser2 = (int)pev->frags;
+	pev->iuser3 = (int)pev->health;
+	pev->iuser4 = (int)pev->friction;
 	
 	// Worldcraft only sets y rotation, copy to Z
 	if ( pev->angles.y != 0 && pev->angles.z == 0 )

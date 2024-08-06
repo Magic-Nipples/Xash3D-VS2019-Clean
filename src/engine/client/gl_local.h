@@ -734,7 +734,7 @@ extern convar_t* r_overbright; //magic nipples - overbright
 extern convar_t* r_lighting_lambert;
 extern convar_t* gammaboost;
 extern convar_t* r_chrometexture;
-
+extern convar_t* r_glowspeed;
 
 //software water
 void R_InitRipples(void);

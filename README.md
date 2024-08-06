@@ -14,6 +14,7 @@
 ***
 **Credits:**\
 [Uncle Mike](https://hlfx.ru/forum/index.php) - Original creator of Xash3D\
+[a1batross](https://github.com/a1batross) - Xash3D FWGS Fork maintainer\
 id Software\
 Valve LLC\
 XaeroX - for hosting, technical advice and moral support\

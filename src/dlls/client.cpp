@@ -1176,6 +1176,11 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		state->health		= ent->v.health;
 	}
 
+	state->iuser1 = ent->v.iuser1;
+	state->iuser2 = ent->v.iuser2;
+	state->iuser3 = ent->v.iuser3;
+	state->iuser4 = ent->v.iuser4;
+
 	return 1;
 }
 
@@ -1234,6 +1239,11 @@ void CreateBaseline( int player, int eindex, struct entity_state_s *baseline, st
 		baseline->framerate		= entity->v.framerate;
 		baseline->gravity		= entity->v.gravity;
 	}
+
+	baseline->iuser1 = entity->v.iuser1;
+	baseline->iuser2 = entity->v.iuser2;
+	baseline->iuser3 = entity->v.iuser3;
+	baseline->iuser4 = entity->v.iuser4;
 }
 
 typedef struct

@@ -26,9 +26,12 @@
 #define SF_BEAM_SHADEOUT		0x0100
 #define SF_BEAM_TEMPORARY		0x8000
 
-#define SF_SPRITE_STARTON		0x0001
-#define SF_SPRITE_ONCE			0x0002
+#define SF_SPRITE_STARTON		(1 << 0)
+#define SF_SPRITE_ONCE			(1 << 1)
+#define SF_SPRITE_GLOW			(1 << 2)
+
 #define SF_SPRITE_TEMPORARY		0x8000
+
 
 class CSprite : public CPointEntity
 {

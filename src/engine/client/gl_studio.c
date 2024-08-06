@@ -169,30 +169,7 @@ void R_StudioInit( void )
 	m_fDoRemap = false;
 }
 
-float SmoothValues(float startValue, float endValue, float speed)
-{
-	float absd, d, finalValue;
 
-	d = endValue - startValue;
-	absd = fabs(d);
-
-	if (absd > 0.01f)
-	{
-		if (d > 0)
-			finalValue = startValue + (absd * speed);
-		else
-			finalValue = startValue - (absd * speed);
-	}
-	else
-	{
-		finalValue = endValue;
-	}
-	startValue = finalValue;
-
-	return startValue;
-
-	//Con_Printf("%f\n", startValue);
-}
 
 /*
 ================

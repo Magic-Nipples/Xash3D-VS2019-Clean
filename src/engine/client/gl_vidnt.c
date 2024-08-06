@@ -83,14 +83,12 @@ convar_t* vid_fullscreen;
 convar_t* vid_brightness;
 convar_t* vid_gamma;
 convar_t* vid_mode;
-
 convar_t* r_downsample; //magic nipples - down sampling
-
 convar_t* r_ripple;
 convar_t* r_ripple_updatetime;
 convar_t* r_ripple_spawntime;
-
 convar_t* r_chrometexture;
+convar_t* r_glowspeed;
 
 byte* r_temppool;
 
@@ -1662,12 +1660,11 @@ void GL_InitCommands( void )
 	//gl_round_down = Cvar_Get( "gl_round_down", "2", FCVAR_RENDERINFO, "round texture sizes to nearest POT value" );
 	gl_round_down = Cvar_Get("gl_texdivide", "0", FCVAR_ARCHIVE, "divide world/model textures by this value");
 	gl_msaa = Cvar_Get( "gl_msaa", "1", FCVAR_ARCHIVE, "enable multi sample anti-aliasing" );
-
 	r_ripple = Cvar_Get("r_ripple", "1", FCVAR_ARCHIVE, "enable software - like water texture ripple simulation");
 	r_ripple_updatetime = Cvar_Get("r_ripple_updatetime", "0.05", FCVAR_ARCHIVE, "how fast ripple simulation is");
 	r_ripple_spawntime = Cvar_Get("r_ripple_spawntime", "0.1", FCVAR_ARCHIVE, "how fast new ripples spawn");
-
 	r_chrometexture = Cvar_Get("r_chromes", "1", FCVAR_ARCHIVE, "draw chrome on surfaces");
+	r_glowspeed = Cvar_Get("r_glow_speed", "0.2", FCVAR_ARCHIVE, "speed of flare fade in/out");
 
 	// these cvar not used by engine but some mods requires this
 	gl_polyoffset = Cvar_Get( "gl_polyoffset", "2.0", FCVAR_ARCHIVE, "polygon offset for decals" );

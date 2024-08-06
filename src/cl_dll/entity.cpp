@@ -92,16 +92,6 @@ void DLLEXPORT HUD_TxferLocalOverrides( struct entity_state_s *state, const stru
 	VectorCopy( client->origin, state->origin );
 
 	g_iLaserDot = (client->flags & FL_LASERDOT) ? 1 : 0;
-
-	// Spectator
-	state->iuser1 = client->iuser1;
-	state->iuser2 = client->iuser2;
-
-	// Duck prevention
-	state->iuser3 = client->iuser3;
-
-	// Fire prevention
-	state->iuser4 = client->iuser4;
 }
 
 /*
@@ -155,17 +145,10 @@ void DLLEXPORT HUD_ProcessPlayerState( struct entity_state_s *dst, const struct 
 	dst->team					= src->team;
 	dst->colormap				= src->colormap;
 
-	// Save off some data so other areas of the Client DLL can get to it
-	cl_entity_t *player = gEngfuncs.GetLocalPlayer();	// Get the local player's index
-	if ( dst->number == player->index )
-	{
-		g_iPlayerClass = dst->playerclass;
-		g_iTeamNumber = dst->team;
-
-		g_iUser1 = src->iuser1;
-		g_iUser2 = src->iuser2;
-		g_iUser3 = src->iuser3;
-	}
+	dst->iuser1 = src->iuser1;
+	dst->iuser2 = src->iuser2;
+	dst->iuser3 = src->iuser3;
+	dst->iuser4 = src->iuser4;
 }
 
 /*
@@ -205,22 +188,8 @@ void DLLEXPORT HUD_TxferPredictionData ( struct entity_state_s *ps, const struct
 	// Spectator
 	pcd->iuser1					= ppcd->iuser1;
 	pcd->iuser2					= ppcd->iuser2;
-
-	// Duck prevention
-	pcd->iuser3 = ppcd->iuser3;
-
-	if ( gEngfuncs.IsSpectateOnly() )
-	{
-		// in specator mode we tell the engine who we want to spectate and how
-		// iuser3 is not used for duck prevention (since the spectator can't duck at all)
-		pcd->iuser1 = g_iUser1;	// observer mode
-		pcd->iuser2 = g_iUser2; // first target
-		pcd->iuser3 = g_iUser3; // second target
-
-	}
-
-	// Fire prevention
-	pcd->iuser4 = ppcd->iuser4;
+	pcd->iuser3					= ppcd->iuser3;
+	pcd->iuser4					= ppcd->iuser4;
 
 	pcd->fuser2					= ppcd->fuser2;
 	pcd->fuser3					= ppcd->fuser3;

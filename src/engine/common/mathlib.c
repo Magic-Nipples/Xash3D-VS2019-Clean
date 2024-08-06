@@ -756,3 +756,28 @@ void QuaternionSlerp( const vec4_t p, const vec4_t q, float t, vec4_t qt )
 
 	QuaternionSlerpNoAlign( p, q2, t, qt );
 }
+
+float SmoothValues(float startValue, float endValue, float speed)
+{
+	float absd, d, finalValue;
+
+	d = endValue - startValue;
+	absd = fabs(d);
+
+	if (absd > 0.01f)
+	{
+		if (d > 0)
+			finalValue = startValue + (absd * speed);
+		else
+			finalValue = startValue - (absd * speed);
+	}
+	else
+	{
+		finalValue = endValue;
+	}
+	startValue = finalValue;
+
+	return startValue;
+
+	//Con_Printf("%f\n", startValue);
+}

@@ -737,31 +737,67 @@ R_GlowSightDistance
 Set sprite brightness factor
 ================
 */
-static float R_SpriteGlowBlend( vec3_t origin, int rendermode, int renderfx, float *pscale )
+static float R_SpriteGlowBlend( vec3_t origin, int rendermode, int renderfx, float *pscale, cl_entity_t* e)
 {
 	float	dist, brightness;
-	vec3_t	glowDist;
+	vec3_t	glowDist, v;
 	pmtrace_t	*tr;
 
 	VectorSubtract( origin, RI.vieworg, glowDist );
 	dist = VectorLength( glowDist );
 
-	if( RP_NORMALPASS( ))
+	if (r_glowspeed->value && e->curstate.iuser1 == 1)
 	{
-		tr = CL_VisTraceLine( RI.vieworg, origin, r_traceglow->value ? PM_GLASS_IGNORE : (PM_GLASS_IGNORE|PM_STUDIO_IGNORE));
+		float glowmin = 0.01f;
+		float glowmax = 5.0f;
+		float minbright = 0.05f;
 
-		if(( 1.0f - tr->fraction ) * dist > 8.0f )
-			return 0.0f;
+		if (e->curstate.iuser2 > 0)glowmin = e->curstate.iuser2 * 0.01f;
+		if (e->curstate.iuser3 > 0)glowmax = e->curstate.iuser3 * 0.01f;
+		if (e->curstate.iuser4 > 0)minbright = e->curstate.iuser4 * 0.01f;
+
+		if (RP_NORMALPASS())
+		{
+			tr = CL_VisTraceLine(RI.vieworg, origin, r_traceglow->value ? PM_GLASS_IGNORE : (PM_GLASS_IGNORE | PM_STUDIO_IGNORE));
+
+			TriWorldToScreen(origin, v);
+
+			if (v[0] < RI.viewport[0] || v[0] > RI.viewport[0] + RI.viewport[2]) //if flare is outside of screen edge
+				e->flShadeLightStart = SmoothValues(e->flShadeLightStart, 0.0f, cl.timedelta + (1.0 * r_glowspeed->value));
+			else if (v[1] < RI.viewport[1] || v[1] > RI.viewport[1] + RI.viewport[3]) //if flare is outside of screen edge
+				e->flShadeLightStart = SmoothValues(e->flShadeLightStart, 0.0f, cl.timedelta + (1.0 * r_glowspeed->value));
+			else if ((1.0f - tr->fraction) * dist > 8.0f)
+				e->flShadeLightStart = SmoothValues(e->flShadeLightStart, 0.0f, cl.timedelta + (1.0 * r_glowspeed->value));
+			else
+			{
+				brightness = GLARE_FALLOFF / (dist * dist);
+				brightness = bound(minbright, brightness, 1.0f);
+				e->flShadeLightStart = SmoothValues(e->flShadeLightStart, brightness, cl.timedelta + (1.0 * r_glowspeed->value));
+			}
+		}
+		*pscale *= bound(glowmin, (dist * (1.0f / 200.0f)), glowmax); //TEST!!!
+
+		return e->flShadeLightStart;
 	}
+	else
+	{
+		if (RP_NORMALPASS())
+		{
+			tr = CL_VisTraceLine(RI.vieworg, origin, r_traceglow->value ? PM_GLASS_IGNORE : (PM_GLASS_IGNORE | PM_STUDIO_IGNORE));
 
-	if( renderfx == kRenderFxNoDissipation )
-		return 1.0f;
+			if ((1.0f - tr->fraction) * dist > 8.0f)
+				return 0.0f;
+		}
 
-	brightness = GLARE_FALLOFF / ( dist * dist );
-	brightness = bound( 0.05f, brightness, 1.0f );
-	*pscale *= dist * ( 1.0f / 200.0f );
+		if (renderfx == kRenderFxNoDissipation)
+			return 1.0f;
 
-	return brightness;
+		brightness = GLARE_FALLOFF / (dist * dist);
+		brightness = bound(0.05f, brightness, 1.0f);
+		*pscale *= dist * (1.0f / 200.0f);
+
+		return brightness;
+	}
 }
 
 /*
@@ -786,14 +822,17 @@ qboolean R_SpriteOccluded( cl_entity_t *e, vec3_t origin, float *pscale )
 		if (e->curstate.effects & EF_REFLECTONLY && !(RI.params & RP_MIRRORVIEW)) //Magic Nipples - readding mirrors
 			return true;
 
-		TriWorldToScreen( origin, v );
+		if (r_glowspeed->value <= 0 || e->curstate.iuser1 <= 0)
+		{
+			TriWorldToScreen(origin, v);
 
-		if( v[0] < RI.viewport[0] || v[0] > RI.viewport[0] + RI.viewport[2] )
-			return true; // do scissor
-		if( v[1] < RI.viewport[1] || v[1] > RI.viewport[1] + RI.viewport[3] )
-			return true; // do scissor
+			if (v[0] < RI.viewport[0] || v[0] > RI.viewport[0] + RI.viewport[2])
+				return true; // do scissor
+			if (v[1] < RI.viewport[1] || v[1] > RI.viewport[1] + RI.viewport[3])
+				return true; // do scissor
+		}
 
-		blend = R_SpriteGlowBlend( origin, e->curstate.rendermode, e->curstate.renderfx, pscale );
+		blend = R_SpriteGlowBlend( origin, e->curstate.rendermode, e->curstate.renderfx, pscale, e);
 		tr.blend *= blend;
 
 		if( blend <= 0.01f )

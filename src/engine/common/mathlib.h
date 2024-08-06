@@ -152,6 +152,7 @@ void QuaternionAngle( const vec4_t q, vec3_t angles );
 void QuaternionSlerp( const vec4_t p, const vec4_t q, float t, vec4_t qt );
 float RemapVal( float val, float A, float B, float C, float D );
 float ApproachVal( float target, float value, float speed );
+float SmoothValues(float startValue, float endValue, float speed);
 
 //
 // matrixlib.c
