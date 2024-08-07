@@ -770,12 +770,19 @@ static float R_SpriteGlowBlend( vec3_t origin, int rendermode, int renderfx, flo
 				e->flShadeLightStart = SmoothValues(e->flShadeLightStart, 0.0f, cl.timedelta + (1.0 * r_glowspeed->value));
 			else
 			{
-				brightness = GLARE_FALLOFF / (dist * dist);
-				brightness = bound(minbright, brightness, 1.0f);
+				if (renderfx == kRenderFxNoDissipation)
+					brightness = 1.0f;
+				else
+				{
+					brightness = GLARE_FALLOFF / (dist * dist);
+					brightness = bound(minbright, brightness, 1.0f);
+				}
 				e->flShadeLightStart = SmoothValues(e->flShadeLightStart, brightness, cl.timedelta + (1.0 * r_glowspeed->value));
 			}
 		}
-		*pscale *= bound(glowmin, (dist * (1.0f / 200.0f)), glowmax); //TEST!!!
+
+		if (renderfx != kRenderFxNoDissipation)
+			*pscale *= bound(glowmin, (dist * (1.0f / 200.0f)), glowmax); //TEST!!!
 
 		return e->flShadeLightStart;
 	}

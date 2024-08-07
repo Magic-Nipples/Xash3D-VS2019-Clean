@@ -165,7 +165,8 @@ static void UI_Audio_Callback( void *self, int event )
 
 static void UI_Audio_Ownerdraw(void* self)
 {
-	UI_DrawPic(((menuBitmap_s*)self)->generic.x, ((menuBitmap_s*)self)->generic.y, ((menuBitmap_s*)self)->generic.width, ((menuBitmap_s*)self)->generic.height, uiColorWhite, ((menuBitmap_s*)self)->pic);
+	if (CVAR_GET_FLOAT("cl_background") != 1)
+		UI_DrawPic(((menuBitmap_s*)self)->generic.x, ((menuBitmap_s*)self)->generic.y, ((menuBitmap_s*)self)->generic.width, ((menuBitmap_s*)self)->generic.height, uiColorWhite, ((menuBitmap_s*)self)->pic);
 
 	DrawBoldString(320 * uiStatic.scaleX, 440 * uiStatic.scaleY,
 		"Sound interpolation:");
@@ -251,7 +252,7 @@ static void UI_Audio_Init( void )
 	uiAudio.lerping.generic.id = ID_INTERP;
 	uiAudio.lerping.generic.type = QMTYPE_SPINCONTROL;
 	uiAudio.lerping.generic.flags = QMF_CENTER_JUSTIFY | QMF_HIGHLIGHTIFFOCUS | QMF_DROPSHADOW;
-	uiAudio.lerping.generic.x = 356;
+	uiAudio.lerping.generic.x = 348;
 	uiAudio.lerping.generic.y = 470;
 	uiAudio.lerping.generic.width = 168;
 	uiAudio.lerping.generic.height = 26;
@@ -265,7 +266,7 @@ static void UI_Audio_Init( void )
 	uiAudio.noDSP.generic.type = QMTYPE_CHECKBOX;
 	uiAudio.noDSP.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_ACT_ONRELEASE|QMF_MOUSEONLY|QMF_DROPSHADOW;
 	uiAudio.noDSP.generic.name = "Disable DSP effects";
-	uiAudio.noDSP.generic.x = 320;
+	uiAudio.noDSP.generic.x = 312;
 	uiAudio.noDSP.generic.y = 520;
 	uiAudio.noDSP.generic.callback = UI_Audio_Callback;
 	uiAudio.noDSP.generic.statusText = "this disables sound processing (like echo, flanger etc)";

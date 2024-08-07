@@ -73,12 +73,16 @@ void SCR_CreateStartupVids( void )
 {
 	file_t	*f;
 
-	f = FS_Open( DEFAULT_VIDEOLIST_PATH, "w", false );
+	if (glState.wideScreen)
+		f = FS_Open( DEFAULT_VIDEOLISTWIDE_PATH, "w", false );
+	else
+		f = FS_Open(DEFAULT_VIDEOLIST_PATH, "w", false);
+
 	if( !f ) return;
 
 	// make standard video playlist: sierra, valve
-	FS_Print( f, "media/sierra.avi\n" );
-	FS_Print( f, "media/valve.avi\n" );
+	FS_Print( f, "media/sierra_wide.avi\n" );
+	FS_Print( f, "media/valve_wide.avi\n" );
 	FS_Close( f );
 }
 
@@ -96,10 +100,20 @@ void SCR_CheckStartupVids( void )
 		return;
 	}
 
-	if( !FS_FileExists( DEFAULT_VIDEOLIST_PATH, false ))
-		SCR_CreateStartupVids();
+	if (glState.wideScreen)
+	{
+		if (!FS_FileExists(DEFAULT_VIDEOLISTWIDE_PATH, false))
+			SCR_CreateStartupVids();
 
-	afile = FS_LoadFile( DEFAULT_VIDEOLIST_PATH, NULL, false );
+		afile = FS_LoadFile(DEFAULT_VIDEOLISTWIDE_PATH, NULL, false);
+	}
+	else
+	{
+		if (!FS_FileExists(DEFAULT_VIDEOLIST_PATH, false))
+			SCR_CreateStartupVids();
+
+		afile = FS_LoadFile(DEFAULT_VIDEOLIST_PATH, NULL, false);
+	}
 	if( !afile ) return; // something bad happens
 
 	pfile = afile;
@@ -110,7 +124,10 @@ void SCR_CheckStartupVids( void )
 
 		if( ++c > MAX_MOVIES - 1 )
 		{
-			Con_Printf( S_WARN "too many movies (%d) specified in %s\n", MAX_MOVIES, DEFAULT_VIDEOLIST_PATH );
+			if (glState.wideScreen)
+				Con_Printf( S_WARN "too many movies (%d) specified in %s\n", MAX_MOVIES, DEFAULT_VIDEOLISTWIDE_PATH );
+			else
+				Con_Printf(S_WARN "too many movies (%d) specified in %s\n", MAX_MOVIES, DEFAULT_VIDEOLIST_PATH);
 			break;
 		}
 	}

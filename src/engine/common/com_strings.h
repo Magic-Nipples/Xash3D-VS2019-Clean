@@ -55,7 +55,8 @@ GNU General Public License for more details.
 #define DEFAULT_SKYBOX_PATH		"gfx/env/desert"
 
 // playlist for startup videos
-#define DEFAULT_VIDEOLIST_PATH	"media/StartupVids.txt"
+#define DEFAULT_VIDEOLIST_PATH		"media/StartupVids.txt"
+#define DEFAULT_VIDEOLISTWIDE_PATH	"media/StartupVidsWide.txt"
 
 #define CVAR_GLCONFIG_DESCRIPTION	"enable or disable %s"
 
