@@ -795,17 +795,10 @@ void S_MixBufferUpsample2x( int count, portable_samplepair_t *pbuffer, portable_
 	if( !s_lerping->value ) return;
 	
 	// pass forward through buffer, interpolate all even slots
-	switch( filtertype )
-	{
-	case FILTERTYPE_LINEAR:
-		S_Interpolate2xLinear( pbuffer, pfiltermem, cfltmem, count );
-		break;
-	case FILTERTYPE_CUBIC:
-		S_Interpolate2xCubic( pbuffer, pfiltermem, cfltmem, count );
-		break;
-	default:	// no filter
-		break;
-	}
+	if (s_lerping->value == 1)
+		S_Interpolate2xLinear(pbuffer, pfiltermem, cfltmem, count);
+	else
+		S_Interpolate2xCubic(pbuffer, pfiltermem, cfltmem, count);
 }
 
 // zero out all paintbuffers

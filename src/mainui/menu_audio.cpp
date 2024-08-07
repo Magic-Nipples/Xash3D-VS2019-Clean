@@ -56,7 +56,8 @@ typedef struct
 	menuSlider_s	soundVolume;
 	menuSlider_s	musicVolume;
 	menuSlider_s	suitVolume;
-	menuCheckBox_s	lerping;
+	//menuCheckBox_s	lerping;
+	menuSpinControl_s	lerping;
 	menuCheckBox_s	noDSP;
 } uiAudio_t;
 
@@ -72,9 +73,7 @@ static void UI_Audio_GetConfig( void )
 	uiAudio.soundVolume.curValue = CVAR_GET_FLOAT( "volume" );
 	uiAudio.musicVolume.curValue = CVAR_GET_FLOAT( "MP3Volume" );
 	uiAudio.suitVolume.curValue = CVAR_GET_FLOAT( "suitvolume" );
-
-	if( CVAR_GET_FLOAT( "s_lerping" ))
-		uiAudio.lerping.enabled = 1;
+	uiAudio.lerping.curValue = CVAR_GET_FLOAT("s_lerping");
 
 	if( CVAR_GET_FLOAT( "dsp_off" ))
 		uiAudio.noDSP.enabled = 1;
@@ -83,6 +82,7 @@ static void UI_Audio_GetConfig( void )
 	uiAudioInitial.soundVolume = uiAudio.soundVolume.curValue;
 	uiAudioInitial.musicVolume = uiAudio.musicVolume.curValue;
 	uiAudioInitial.suitVolume = uiAudio.suitVolume.curValue;
+	
 }
 
 /*
@@ -92,11 +92,11 @@ UI_Audio_SetConfig
 */
 static void UI_Audio_SetConfig( void )
 {
-	CVAR_SET_FLOAT( "volume", uiAudio.soundVolume.curValue );
-	CVAR_SET_FLOAT( "MP3Volume", uiAudio.musicVolume.curValue );
-	CVAR_SET_FLOAT( "suitvolume", uiAudio.suitVolume.curValue );
-	CVAR_SET_FLOAT( "s_lerping", uiAudio.lerping.enabled );
-	CVAR_SET_FLOAT( "dsp_off", uiAudio.noDSP.enabled );
+	CVAR_SET_FLOAT("volume", uiAudio.soundVolume.curValue);
+	CVAR_SET_FLOAT("MP3Volume", uiAudio.musicVolume.curValue);
+	CVAR_SET_FLOAT("suitvolume", uiAudio.suitVolume.curValue);
+	CVAR_SET_FLOAT("s_lerping", uiAudio.lerping.curValue);
+	CVAR_SET_FLOAT("dsp_off", uiAudio.noDSP.enabled);
 }
 
 /*
@@ -104,13 +104,27 @@ static void UI_Audio_SetConfig( void )
 UI_Audio_UpdateConfig
 =================
 */
-static void UI_Audio_UpdateConfig( void )
+static void UI_Audio_UpdateConfig(void)
 {
-	CVAR_SET_FLOAT( "volume", uiAudio.soundVolume.curValue );
-	CVAR_SET_FLOAT( "MP3Volume", uiAudio.musicVolume.curValue );
-	CVAR_SET_FLOAT( "suitvolume", uiAudio.suitVolume.curValue );
-	CVAR_SET_FLOAT( "s_lerping", uiAudio.lerping.enabled );
-	CVAR_SET_FLOAT( "dsp_off", uiAudio.noDSP.enabled );
+	static char	interpText[8];
+
+	CVAR_SET_FLOAT("volume", uiAudio.soundVolume.curValue);
+	CVAR_SET_FLOAT("MP3Volume", uiAudio.musicVolume.curValue);
+	CVAR_SET_FLOAT("suitvolume", uiAudio.suitVolume.curValue);
+	CVAR_SET_FLOAT("dsp_off", uiAudio.noDSP.enabled);
+
+	if (uiAudio.lerping.curValue <= 0)
+		sprintf(interpText, "Off");
+	else if (uiAudio.lerping.curValue == 1)
+		sprintf(interpText, "Linear");
+	else if (uiAudio.lerping.curValue == 2)
+		sprintf(interpText, "Cubic");
+	else
+		sprintf(interpText, "ERROR");
+
+	uiAudio.lerping.generic.name = interpText;
+
+	CVAR_SET_FLOAT("s_lerping", uiAudio.lerping.curValue);
 }
 
 /*
@@ -124,7 +138,7 @@ static void UI_Audio_Callback( void *self, int event )
 
 	switch( item->id )
 	{
-	case ID_INTERP:
+	//case ID_INTERP:
 	case ID_NODSP:
 		if( event == QM_PRESSED )
 			((menuCheckBox_s *)self)->focusPic = UI_CHECKBOX_PRESSED;
@@ -149,6 +163,14 @@ static void UI_Audio_Callback( void *self, int event )
 	}
 }
 
+static void UI_Audio_Ownerdraw(void* self)
+{
+	UI_DrawPic(((menuBitmap_s*)self)->generic.x, ((menuBitmap_s*)self)->generic.y, ((menuBitmap_s*)self)->generic.width, ((menuBitmap_s*)self)->generic.height, uiColorWhite, ((menuBitmap_s*)self)->pic);
+
+	DrawBoldString(320 * uiStatic.scaleX, 440 * uiStatic.scaleY,
+		"Sound interpolation:");
+}
+
 /*
 =================
 UI_Audio_Init
@@ -168,6 +190,7 @@ static void UI_Audio_Init( void )
 	uiAudio.background.generic.width = 1024;
 	uiAudio.background.generic.height = 768;
 	uiAudio.background.pic = ART_BACKGROUND;
+	uiAudio.background.generic.ownerdraw = UI_Audio_Ownerdraw;
 
 	uiAudio.banner.generic.id = ID_BANNER;
 	uiAudio.banner.generic.type = QMTYPE_BITMAP;
@@ -226,13 +249,17 @@ static void UI_Audio_Init( void )
 	uiAudio.suitVolume.range = 0.05f;
 
 	uiAudio.lerping.generic.id = ID_INTERP;
-	uiAudio.lerping.generic.type = QMTYPE_CHECKBOX;
-	uiAudio.lerping.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_ACT_ONRELEASE|QMF_MOUSEONLY|QMF_DROPSHADOW;
-	uiAudio.lerping.generic.name = "Enable sound interpolation";
-	uiAudio.lerping.generic.x = 320;
+	uiAudio.lerping.generic.type = QMTYPE_SPINCONTROL;
+	uiAudio.lerping.generic.flags = QMF_CENTER_JUSTIFY | QMF_HIGHLIGHTIFFOCUS | QMF_DROPSHADOW;
+	uiAudio.lerping.generic.x = 356;
 	uiAudio.lerping.generic.y = 470;
+	uiAudio.lerping.generic.width = 168;
+	uiAudio.lerping.generic.height = 26;
 	uiAudio.lerping.generic.callback = UI_Audio_Callback;
-	uiAudio.lerping.generic.statusText = "enable/disable interpolation on sound output";
+	uiAudio.lerping.generic.statusText = "change interpolation on sound output";
+	uiAudio.lerping.minValue = 0;
+	uiAudio.lerping.maxValue = 2;
+	uiAudio.lerping.range = 1;
 
 	uiAudio.noDSP.generic.id = ID_NODSP;
 	uiAudio.noDSP.generic.type = QMTYPE_CHECKBOX;
