@@ -307,11 +307,14 @@ qboolean Image_LoadFNT( const char *name, const byte *buffer, size_t filesize );
 qboolean Image_LoadLMP( const char *name, const byte *buffer, size_t filesize );
 qboolean Image_LoadPAL( const char *name, const byte *buffer, size_t filesize );
 
+qboolean Image_LoadPNG(const char* name, const byte* buffer, size_t filesize);
+
 //
 // formats save
 //
 qboolean Image_SaveTGA( const char *name, rgbdata_t *pix );
 qboolean Image_SaveBMP( const char *name, rgbdata_t *pix );
+qboolean Image_SavePNG(const char* name, rgbdata_t* pix);
 
 //
 // img_quant.c

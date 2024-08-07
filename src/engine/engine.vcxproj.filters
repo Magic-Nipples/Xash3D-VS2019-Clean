@@ -356,6 +356,9 @@
     <ClCompile Include="client\gl_mirror.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="common\imagelib\img_png.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client\cl_tent.h">
@@ -425,6 +428,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="common\world.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\imagelib\img_png.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

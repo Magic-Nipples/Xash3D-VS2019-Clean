@@ -221,6 +221,7 @@
     <ClCompile Include="common\imagelib\img_bmp.c" />
     <ClCompile Include="common\imagelib\img_dds.c" />
     <ClCompile Include="common\imagelib\img_main.c" />
+    <ClCompile Include="common\imagelib\img_png.c" />
     <ClCompile Include="common\imagelib\img_quant.c" />
     <ClCompile Include="common\imagelib\img_tga.c" />
     <ClCompile Include="common\imagelib\img_utils.c" />
@@ -280,6 +281,7 @@
     <ClInclude Include="common\crtlib.h" />
     <ClInclude Include="common\filesystem.h" />
     <ClInclude Include="common\imagelib\imagelib.h" />
+    <ClInclude Include="common\imagelib\img_png.h" />
     <ClInclude Include="common\library.h" />
     <ClInclude Include="common\mathlib.h" />
     <ClInclude Include="common\mod_local.h" />

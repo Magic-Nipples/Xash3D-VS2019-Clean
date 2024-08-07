@@ -87,7 +87,7 @@ void SCR_CheckStartupVids( void )
 	int	c = 0;
 	char	*afile, *pfile;
 	string	token;
-		
+
 	if( Sys_CheckParm( "-nointro" ) || host_developer.value || cls.demonum != -1 || GameState->nextstate != STATE_RUNFRAME )
 	{
 		// don't run movies where we in developer-mode
