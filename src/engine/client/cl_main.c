@@ -613,67 +613,84 @@ CL_CreateCmd
 */
 void CL_CreateCmd( void )
 {
-	usercmd_t		cmd;
-	runcmd_t		*pcmd;
+	usercmd_t	cmd;
+	runcmd_t* pcmd;
+	qboolean	active;
+	double		accurate_ms;
 	vec3_t		angles;
-	qboolean		active;
-	int		input_override;
-	int		i, ms;
+	int			input_override;
+	int			i, ms;
 
-	if( cls.state < ca_connected || cls.state == ca_cinematic )
+	if (cls.state < ca_connected || cls.state == ca_cinematic)
 		return;
 
 	// store viewangles in case it's will be freeze
-	VectorCopy( cl.viewangles, angles );
-	ms = bound( 1, host.frametime * 1000, 255 );
-	memset( &cmd, 0, sizeof( cmd ));
+	VectorCopy(cl.viewangles, angles);
+	memset(&cmd, 0, sizeof(cmd));
 	input_override = 0;
+
+	// fix rounding error and framerate depending player move
+	accurate_ms = host.frametime * 1000;
+	ms = (int)accurate_ms;
+	cl.frametime_remainder += accurate_ms - ms; // accumulate rounding error each frame
+
+	// add a ms if error accumulates enough
+	if (cl.frametime_remainder >= 1.0)
+	{
+		int ms2 = (int)cl.frametime_remainder;
+
+		ms += ms2;
+		cl.frametime_remainder -= ms2;
+	}
+
+	// ms can't be negative, rely on error accumulation only if FPS > 1000
+	ms = Q_min(ms, 255);
 
 	CL_SetSolidEntities();
 	CL_PushPMStates();
-	CL_SetSolidPlayers( cl.playernum );
+	CL_SetSolidPlayers(cl.playernum);
 
 	// message we are constructing.
-	i = cls.netchan.outgoing_sequence & CL_UPDATE_MASK;   
+	i = cls.netchan.outgoing_sequence & CL_UPDATE_MASK;
 	pcmd = &cl.commands[i];
 	pcmd->processedfuncs = false;
 
-	if( !cls.demoplayback )
+	if (!cls.demoplayback)
 	{
-		pcmd->senttime = host.realtime;      
-		memset( &pcmd->cmd, 0, sizeof( pcmd->cmd ));
+		pcmd->senttime = host.realtime;
+		memset(&pcmd->cmd, 0, sizeof(pcmd->cmd));
 		pcmd->receivedtime = -1.0;
 		pcmd->heldback = false;
 		pcmd->sendsize = 0;
 	}
 
-	active = (( cls.signon == SIGNONS ) && !cl.paused && !cls.demoplayback );
-	clgame.dllFuncs.CL_CreateMove( host.frametime, &pcmd->cmd, active );
+	active = ((cls.signon == SIGNONS) && !cl.paused && !cls.demoplayback);
+	clgame.dllFuncs.CL_CreateMove(host.frametime, &pcmd->cmd, active);
 
 	CL_PopPMStates();
 
-	if( !cls.demoplayback )
+	if (!cls.demoplayback)
 	{
-		CL_ComputeClientInterpolationAmount( &pcmd->cmd );
+		CL_ComputeClientInterpolationAmount(&pcmd->cmd);
 		pcmd->cmd.lightlevel = cl.local.light_level;
 		pcmd->cmd.msec = ms;
 	}
 
-	input_override |= CL_ProcessOverviewCmds( &pcmd->cmd );
-	input_override |= CL_ProcessShowTexturesCmds( &pcmd->cmd );
+	input_override |= CL_ProcessOverviewCmds(&pcmd->cmd);
+	input_override |= CL_ProcessShowTexturesCmds(&pcmd->cmd);
 
-	if(( cl.background && !cls.demoplayback ) || input_override || cls.changelevel )
+	if ((cl.background && !cls.demoplayback) || input_override || cls.changelevel)
 	{
-		VectorCopy( angles, pcmd->cmd.viewangles );
-		VectorCopy( angles, cl.viewangles );
-		if( !cl.background ) pcmd->cmd.msec = 0;
+		VectorCopy(angles, pcmd->cmd.viewangles);
+		VectorCopy(angles, cl.viewangles);
+		if (!cl.background) pcmd->cmd.msec = 0;
 	}
 
 	// demo always have commands so don't overwrite them
-	if( !cls.demoplayback ) cl.cmd = &pcmd->cmd;
+	if (!cls.demoplayback) cl.cmd = &pcmd->cmd;
 
 	// predict all unacknowledged movements
-	CL_PredictMovement( false );
+	CL_PredictMovement(false);
 }
 
 void CL_WriteUsercmd( sizebuf_t *msg, int from, int to )
