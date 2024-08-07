@@ -501,7 +501,7 @@ static void SPR_DrawGeneric( int frame, float x, float y, float width, float hei
 		if( rc.bottom <= 0 || rc.bottom > height ) rc.bottom = height;
 
 		// calc user-defined rectangle
-		if (Cvar_VariableInteger("hud_scale")) //magic nipples - slightly clip the boundaries on the rects so you don't see clipping from scaling.
+		if (Cvar_VariableInteger("hud_scale") && (glState.width >= 640)) //magic nipples - slightly clip the boundaries on the rects so you don't see clipping from scaling.
 		{
 			s1 = ((float)rc.left + 0.33) / width;
 			t1 = ((float)rc.top + 0.33) / height;
@@ -913,16 +913,11 @@ void CL_DrawCrosshair( void )
 	height = clgame.ds.rcCrosshair.bottom - clgame.ds.rcCrosshair.top;
 
 	float scale;
-	if (Cvar_VariableInteger("hud_scale"))
-	{
-		if (glState.height < 700)
-			scale = 1;
-		else if (glState.height < 1000)
-			scale = 0.75;
-		else
-			scale = 0.5;
-	}
-	else { scale = 1; }
+	if (Cvar_VariableInteger("hud_scale") && (glState.width >= 640))
+		scale = fabs(6400000 / glState.height) * 0.0001;
+	else
+		scale = 1;
+
 
 	x = clgame.viewport[0] + ( clgame.viewport[2] >> 1 ) * scale;
 	y = clgame.viewport[1] + ( clgame.viewport[3] >> 1 ) * scale;
@@ -1643,26 +1638,9 @@ static int pfnGetScreenInfo( SCREENINFO *pscrinfo )
 	clgame.scrInfo.iSize = sizeof( clgame.scrInfo );
 	clgame.scrInfo.iFlags = SCRINFO_SCREENFLASH;
 
-	if( Cvar_VariableInteger( "hud_scale" ))
+	if( Cvar_VariableInteger( "hud_scale" ) && (glState.width >= 640))
 	{
-		/*if( glState.width < 640 )
-w			// virtual screen space 320x200
-			clgame.scrInfo.iWidth = 320;
-			clgame.scrInfo.iHeight = 200;
-		}
-		else
-		{
-			// virtual screen space 640x480
-			clgame.scrInfo.iWidth = 640;
-			clgame.scrInfo.iHeight = 480;
-		}*/
-		float xscale;
-		if (glState.height < 700)
-			xscale = 1;
-		else if (glState.height < 1000)
-			xscale = 0.75;
-		else
-			xscale = 0.5;
+		float xscale = fabs(6400000 / glState.height) * 0.0001;
 
 		clgame.scrInfo.iWidth = glState.width * xscale;
 		clgame.scrInfo.iHeight = glState.height * xscale;
