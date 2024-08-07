@@ -24,6 +24,9 @@ GNU General Public License for more details.
 #include "gl_local.h"
 #include "cl_tent.h"
 
+#pragma warning( disable:4047 ) //fixes texas
+#pragma warning( disable:4024 )
+
 #define EVENT_CLIENT	5000	// less than this value it's a server-side studio events
 #define MAX_LOCALLIGHTS	32//4
 
@@ -117,6 +120,7 @@ convar_t* r_shadow_y;
 convar_t* r_shadow_alpha;
 
 convar_t* r_viewmodelfov; //magic nipples - weapon fov
+convar_t* r_aliaslerp; //magic nipples - shadows
 convar_t* r_warp; //magic nipples - vertex warp
 convar_t* r_elightsys;
 convar_t* r_elight_speed;
@@ -155,6 +159,7 @@ void R_StudioInit( void )
 	r_shadow_alpha = Cvar_Get("r_old_shadow_alpha", "0.5", 0, "shadow opacity");
 
 	r_viewmodelfov = Cvar_Get("r_viewmodel_fov", "90", FCVAR_ARCHIVE, "fov of view models"); //magic nipples - weapon fov
+	r_aliaslerp = Cvar_Get("r_lerpmodels", "0", FCVAR_ARCHIVE, "interpolate quake model animations");
 
 	r_warp = Cvar_Get("r_studiowarp", "0", FCVAR_ARCHIVE, "ps1 vertex jiggle"); //magic nipples - weapon fov
 	r_elightsys = Cvar_Get("r_elights", "0", FCVAR_ARCHIVE, "lighting system based on elights");

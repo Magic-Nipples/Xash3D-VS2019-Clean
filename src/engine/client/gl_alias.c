@@ -24,7 +24,8 @@ GNU General Public License for more details.
 #include "gl_local.h"
 #include "cl_tent.h"
 
-extern cvar_t r_shadows;
+extern convar_t* r_shadows;
+extern convar_t* r_aliaslerp;
 
 typedef struct
 {
@@ -86,7 +87,7 @@ R_StudioInit
 */
 void R_AliasInit( void )
 {
-	g_alias.interpolate = true;
+	g_alias.interpolate = false;
 	m_fDoRemap = false;
 }
 
@@ -567,13 +568,9 @@ void *Mod_LoadAllSkins( int numskins, daliasskintype_t *pskintype )
 	for( i = 0; i < numskins; i++ )
 	{
 		if( pskintype->type == ALIAS_SKIN_SINGLE )
-		{
 			pskintype = (daliasskintype_t *)Mod_LoadSingleSkin( pskintype, i, size );
-		}
 		else
-		{
 			pskintype = (daliasskintype_t *)Mod_LoadGroupSkin( pskintype, i, size );
-		}
 	}
 
 	return (void *)pskintype;
@@ -989,7 +986,7 @@ void R_AliasLighting( float *lv, const vec3_t normal )
 	if ((r_overbright->value > 0))
 		r = r_studio_lambert->value + 0.4;
 	else
-		r = r_studio_lambert->value; //r = SHADE_LAMBERT;
+		r = r_studio_lambert->value;
 
 	// do modified hemispherical lighting
 	if( r <= 1.0f )
@@ -1177,6 +1174,11 @@ void R_AliasLerpMovement( cl_entity_t *e )
 {
 	float	f = 1.0f;
 
+	if (r_aliaslerp->value)
+		g_alias.interpolate = true;
+	else
+		g_alias.interpolate = false;
+
 	// don't do it if the goalstarttime hasn't updated in a while.
 	// NOTE: Because we need to interpolate multiplayer characters, the interpolation time limit
 	// was increased to 1.0 s., which is 2x the max lag we are accounting for.
@@ -1257,6 +1259,9 @@ void R_SetupAliasFrame( cl_entity_t *e, aliashdr_t *paliashdr )
 		oldpose = paliashdr->frames[oldframe].firstpose;
 		newpose = paliashdr->frames[newframe].firstpose;
 	}
+
+	if (r_aliaslerp->value <= 0) //turns off interpolation on flame.mdl & flame2.mdl
+		g_alias.lerpfrac = 0;
 
 	g_alias.oldpose = oldpose;
 	g_alias.newpose = newpose;
@@ -1350,15 +1355,9 @@ init current time for a given model
 static void R_AliasSetupTimings( void )
 {
 	if( RI.drawWorld )
-	{
-		// synchronize with server time
-		g_alias.time = cl.time;
-	}
+		g_alias.time = cl.time; // synchronize with server time
 	else
-	{
-		// menu stuff
-		g_alias.time = host.realtime;
-	}
+		g_alias.time = host.realtime; // menu stuff
 
 	m_fDoRemap = false;
 }
@@ -1494,7 +1493,7 @@ void R_DrawAliasModel( cl_entity_t *e )
 	pglAlphaFunc( GL_GREATER, DEFAULT_ALPHATEST );
 	pglDisable( GL_ALPHA_TEST );
 
-	if( r_shadows.value )
+	if( r_shadows->value )
 	{
 		// need to compute transformation matrix
 		Matrix4x4_CreateFromEntity( RI.objectMatrix, e->angles, e->origin, 1.0f );
