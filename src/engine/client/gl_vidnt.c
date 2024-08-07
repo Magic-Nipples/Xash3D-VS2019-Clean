@@ -1039,7 +1039,18 @@ void R_SaveVideoMode( int vid_mode )
 		glState.width = vidmode[mode].width;
 		glState.height = vidmode[mode].height;
 	}
-	glState.wideScreen = vidmode[mode].wideScreen;
+
+	if (vidmode[mode].width == -1) //small crap fix for custom resolutions being widescreen or not
+	{
+		if (glState.width / glState.height <= 1.4)
+			glState.wideScreen = false;
+		else
+			glState.wideScreen = true;
+	}
+	else
+	{
+		glState.wideScreen = vidmode[mode].wideScreen;
+	}
 	Cvar_FullSet("width", va("%i", glState.width), FCVAR_READ_ONLY);
 	Cvar_FullSet("height", va("%i", glState.height), FCVAR_READ_ONLY);
 	Cvar_SetValue( "vid_mode", mode ); // merge if it out of bounds
