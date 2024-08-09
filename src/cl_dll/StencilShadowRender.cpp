@@ -54,6 +54,9 @@ SetupBuffer
 */
 void SetupBuffer(void)
 {
+	if(CVAR_GET_FLOAT("r_shadows") >= 2)
+		return;
+
 	glClear(GL_STENCIL_BUFFER_BIT); // Might be using hacky DLL
 }
 
@@ -129,6 +132,9 @@ void RecursiveDrawWorld(mnode_t* node)
 
 void RenderShadow(void)
 {
+	if (g_StudioRenderer.m_pCvarDrawStencilShadows->value < 1)
+		return;
+
 	if (IEngineStudio.IsHardware() != 1)
 		return;
 	
