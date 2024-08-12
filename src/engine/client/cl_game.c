@@ -3223,12 +3223,13 @@ Heavy legacy of Quake...
 */
 void TriColor4fRendermode( float r, float g, float b, float a, int rendermode )
 {
-	if( clgame.ds.renderMode == kRenderTransAlpha )
+	if (rendermode == kRenderTransAlpha)
 	{
 		clgame.ds.triRGBA[3] = a / 255.0f;
-		pglColor4f( r, g, b, a );
+		pglColor4f(r, g, b, a);
 	}
-	else pglColor4f( r * a, g * a, b * a, 1.0f );
+	else
+		pglColor4f(r * a, g * a, b * a, 1.0f);
 }
 
 /*

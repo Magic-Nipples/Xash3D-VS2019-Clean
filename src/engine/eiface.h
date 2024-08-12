@@ -349,7 +349,6 @@ typedef enum _fieldtypes
 	FIELD_EDICT,		// edict_t *, or edict_t *  (same thing)
 	FIELD_VECTOR,		// Any vector
 	FIELD_POSITION_VECTOR,	// A world coordinate (these are fixed up across level transitions automagically)
-	FIELD_POINTER,		// Arbitrary data pointer... to be removed, use an array of FIELD_CHARACTER
 	FIELD_INTEGER,		// Any integer or enum
 	FIELD_FUNCTION,		// A class function pointer (Think, Use, etc)
 	FIELD_BOOLEAN,		// boolean, implemented as an int, I may use this as a hint for compression

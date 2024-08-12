@@ -123,6 +123,19 @@ void CSatchelCharge::SatchelSlide( CBaseEntity *pOther )
 
 void CSatchelCharge :: SatchelThink( void )
 {
+	// Bounce movement code gets this think stuck occasionally so check if I've 
+	// succeeded in moving, otherwise kill my motions.
+	if ((pev->origin - pev->oldorigin).Length() < 1)
+	{
+		pev->velocity = g_vecZero;
+		pev->avelocity.y = 0;
+
+		// Clear think function
+		SetThink(NULL);
+		return;
+	}
+	pev->oldorigin = pev->origin;
+
 	StudioFrameAdvance( );
 	pev->nextthink = gpGlobals->time + 0.1;
 

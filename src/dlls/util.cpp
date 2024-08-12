@@ -1653,7 +1653,6 @@ static int gSizes[FIELD_TYPECOUNT] =
 	sizeof(int),		// FIELD_EDICT
 	sizeof(float)*3,	// FIELD_VECTOR
 	sizeof(float)*3,	// FIELD_POSITION_VECTOR
-	sizeof(int *),		// FIELD_POINTER
 	sizeof(int),		// FIELD_INTEGER
 	sizeof(int *),		// FIELD_FUNCTION
 	sizeof(int),		// FIELD_BOOLEAN
@@ -2015,7 +2014,6 @@ void EntvarsKeyvalue( entvars_t *pev, KeyValueData *pkvd )
 			case FIELD_CLASSPTR:
 			case FIELD_EDICT:
 			case FIELD_ENTITY:
-			case FIELD_POINTER:
 				ALERT( at_error, "Bad field in entity!!\n" );
 				break;
 			}
@@ -2125,11 +2123,6 @@ int CSave :: WriteFields( const char *pname, void *pBaseData, TYPEDESCRIPTION *p
 
 		case FIELD_CHARACTER:
 			WriteData( pTest->fieldName, pTest->fieldSize, ((char *)pOutputData) );
-		break;
-
-		// For now, just write the address out, we're not going to change memory while doing this yet!
-		case FIELD_POINTER:
-			WriteInt( pTest->fieldName, (int *)(char *)pOutputData, pTest->fieldSize );
 		break;
 
 		case FIELD_FUNCTION:
@@ -2343,9 +2336,6 @@ int CRestore::ReadField( void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCou
 						*((char *)pOutputData) = *( char *)pInputData;
 					break;
 
-					case FIELD_POINTER:
-						*((int *)pOutputData) = *( int *)pInputData;
-					break;
 					case FIELD_FUNCTION:
 						if ( strlen( (char *)pInputData ) == 0 )
 							*((int *)pOutputData) = 0;
