@@ -322,9 +322,7 @@ void CCrossbow::Holster( )
 	m_fInReload = FALSE;// cancel any reload in progress.
 
 	if ( m_fInZoom )
-	{
 		SecondaryAttack( );
-	}
 
 	m_pPlayer->m_flNextAttack = gpGlobals->time + 0.5;
 	if (m_iClip)
@@ -410,19 +408,12 @@ void CCrossbow::FireSniperBolt()
 		EMIT_SOUND( pBolt->edict(), CHAN_WEAPON, "weapons/xbow_hit1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM );
 
 		if (UTIL_PointContents(tr.vecEndPos) != CONTENTS_WATER)
-		{
 			UTIL_Sparks( tr.vecEndPos );
-		}
 
 		if ( FClassnameIs( tr.pHit, "worldspawn" ) )
-		{
-			// let the bolt sit around for a while if it hit static architecture
-			pBolt->pev->nextthink = gpGlobals->time + 5.0;
-		}
+			pBolt->pev->nextthink = gpGlobals->time + 5.0; // let the bolt sit around for a while if it hit static architecture
 		else
-		{
 			pBolt->pev->nextthink = gpGlobals->time;
-		}
 	}
 }
 
@@ -503,11 +494,13 @@ void CCrossbow::SecondaryAttack()
 {
 	if (m_fInZoom)
 	{
+		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_crossbow.mdl");
 		m_pPlayer->m_iFOV = 0; // 0 means reset to default fov
 		m_fInZoom = 0;
 	}
 	else
 	{
+		m_pPlayer->pev->viewmodel = 0;
 		m_pPlayer->m_iFOV = 20;
 		m_fInZoom = 1;
 	}
@@ -520,19 +513,26 @@ void CCrossbow::SecondaryAttack()
 void CCrossbow::Reload( void )
 {
 	if ( m_fInZoom )
-	{
 		SecondaryAttack();
-	}
 
 	if (DefaultReload( 5, CROSSBOW_RELOAD, 4.5 ))
-	{
 		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/xbow_reload1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM, 0, 93 + RANDOM_LONG(0,0xF));
-	}
 }
 
 
 void CCrossbow::WeaponIdle( void )
 {
+	if (!m_fInZoom)
+	{
+		m_pPlayer->m_iFOV = 0;
+		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_crossbow.mdl");
+	}
+	else
+	{
+		m_pPlayer->m_iFOV = 20;
+		m_pPlayer->pev->viewmodel = 0;
+	}
+
 	m_pPlayer->GetAutoaimVector( AUTOAIM_2DEGREES );  // get the autoaim vector but ignore it;  used for autoaim crosshair in DM
 
 	ResetEmptySound( );
@@ -543,13 +543,10 @@ void CCrossbow::WeaponIdle( void )
 		if (flRand <= 0.75)
 		{
 			if (m_iClip)
-			{
 				SendWeaponAnim( CROSSBOW_IDLE1 );
-			}
 			else
-			{
 				SendWeaponAnim( CROSSBOW_IDLE2 );
-			}
+
 			m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT ( 10, 15 );
 		}
 		else

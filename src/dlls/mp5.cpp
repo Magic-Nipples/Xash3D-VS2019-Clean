@@ -196,15 +196,9 @@ void CMP5::PrimaryAttack()
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 	
 	if ( g_pGameRules->IsDeathmatch() )
-	{
-		// optimized multiplayer. Widened to make it easier to hit a moving player
-		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_6DEGREES, 8192, BULLET_PLAYER_MP5, 2 );
-	}
-	else
-	{
-		// single player spread
-		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_3DEGREES, 8192, BULLET_PLAYER_MP5, 2 );
-	}
+		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_6DEGREES, 8192, BULLET_PLAYER_MP5, 1 ); // optimized multiplayer. Widened to make it easier to hit a moving player
+	else	
+		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_3DEGREES, 8192, BULLET_PLAYER_MP5, 1 ); // single player spread
 
 	if (!m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		// HEV suit - indicate out of ammo condition
@@ -251,15 +245,9 @@ void CMP5::SecondaryAttack( void )
 	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
 	if ( RANDOM_LONG(0,1) )
-	{
-		// play this sound through BODY channel so we can hear it if player didn't stop firing MP3
-		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/glauncher.wav", 0.8, ATTN_NORM);
-	}
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/glauncher.wav", 0.8, ATTN_NORM); // play this sound through BODY channel so we can hear it if player didn't stop firing MP3
 	else
-	{
-		// play this sound through BODY channel so we can hear it if player didn't stop firing MP3
-		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/glauncher2.wav", 0.8, ATTN_NORM);
-	}
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/glauncher2.wav", 0.8, ATTN_NORM); // play this sound through BODY channel so we can hear it if player didn't stop firing MP3
  
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
 
@@ -332,9 +320,8 @@ class CMP5AmmoClip : public CBasePlayerAmmo
 	{ 
 		int bResult = (pOther->GiveAmmo( AMMO_MP5CLIP_GIVE, "9mm", _9MM_MAX_CARRY) != -1);
 		if (bResult)
-		{
 			EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/9mmclip1.wav", 1, ATTN_NORM);
-		}
+
 		return bResult;
 	}
 };
@@ -360,9 +347,8 @@ class CMP5Chainammo : public CBasePlayerAmmo
 	{ 
 		int bResult = (pOther->GiveAmmo( AMMO_CHAINBOX_GIVE, "9mm", _9MM_MAX_CARRY) != -1);
 		if (bResult)
-		{
 			EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/9mmclip1.wav", 1, ATTN_NORM);
-		}
+
 		return bResult;
 	}
 };
@@ -387,9 +373,8 @@ class CMP5AmmoGrenade : public CBasePlayerAmmo
 		int bResult = (pOther->GiveAmmo( AMMO_M203BOX_GIVE, "ARgrenades", M203_GRENADE_MAX_CARRY ) != -1);
 
 		if (bResult)
-		{
 			EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/9mmclip1.wav", 1, ATTN_NORM);
-		}
+
 		return bResult;
 	}
 };
