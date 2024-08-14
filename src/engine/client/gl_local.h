@@ -446,6 +446,7 @@ void GL_RebuildLightmaps( void );
 void GL_InitRandomTable( void );
 void GL_BuildLightmaps( void );
 void GL_ResetFogColor( void );
+void GL_AdjustFogColor(float amount); //magic nipples - crappy fix for fog color brightness inconsistency
 
 //
 // gl_sprite.c

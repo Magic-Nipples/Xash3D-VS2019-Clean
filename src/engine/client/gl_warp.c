@@ -398,6 +398,8 @@ void R_DrawSkyBox( void )
 	if( RI.fogEnabled )
 		pglFogf( GL_FOG_DENSITY, RI.fogDensity * 0.5f );
 
+	GL_AdjustFogColor(0.5);
+
 	pglDisable( GL_BLEND );
 	pglDisable( GL_ALPHA_TEST );
 	pglTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
@@ -425,6 +427,7 @@ void R_DrawSkyBox( void )
 	if( RI.fogEnabled )
 		pglFogf( GL_FOG_DENSITY, RI.fogDensity );
 
+	GL_ResetFogColor();
 	R_LoadIdentity();
 }
 
@@ -803,6 +806,7 @@ void EmitWaterPolys( msurface_t *warp, qboolean reverse )
 
 	// reset fog color for nonlightmapped water
 	GL_ResetFogColor();
+	GL_AdjustFogColor(0.5);
 
 	if( FBitSet( warp->flags, SURF_DRAWTURB_QUADS ))
 		pglBegin( GL_QUADS );

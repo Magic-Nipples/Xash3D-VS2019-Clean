@@ -22,9 +22,6 @@
 #include "com_model.h"
 #include "studio_util.h"
 
-//magic nipples - fog fix
-#include <windows.h>
-#include <gl/gl.h>
 
 #include "StencilShadowRender.h" // STENCIL SHADOWS
 
@@ -79,8 +76,6 @@ void DrawRain(void)
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)pTexture, 0);
 	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
-
-	glDisable(GL_FOG); //magic nipples - fog fix
 
 	// go through drips list
 	cl_drip* Drip = FirstChainDrip.p_Next;
@@ -393,7 +388,7 @@ void DLLEXPORT HUD_DrawTransparentTriangles( void )
 	ProcessRain();
 	DrawRain();
 
-	if (gHUD.RainSplash->value != 0)
+	if (gHUD.RainSplash->value != 0 && Rain.weatherMode < 2)
 	{
 		ProcessFXObjects();
 		DrawFXObjects();

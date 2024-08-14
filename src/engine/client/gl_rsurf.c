@@ -209,12 +209,6 @@ void GL_SetupFogColorForSurfaces( void )
 	if( !glState.isFogEnabled )
 		return;
 
-	if( RI.currententity && RI.currententity->curstate.rendermode == kRenderTransTexture )
-	{
-		pglFogfv( GL_FOG_COLOR, RI.fogColor );
-		return;
-	}
-
 	//div = (r_detailtextures->value) ? 2.0f : 1.0f;
 	div = (r_overbright->value) ? 4.0f : 2.0f; //magic nipples - adjusting values because fog for textures was too bright
 
@@ -222,7 +216,16 @@ void GL_SetupFogColorForSurfaces( void )
 	fogColor[0] = pow( RI.fogColor[0] / div, ( 1.0f / factor ));
 	fogColor[1] = pow( RI.fogColor[1] / div, ( 1.0f / factor ));
 	fogColor[2] = pow( RI.fogColor[2] / div, ( 1.0f / factor ));
-	pglFogfv( GL_FOG_COLOR, fogColor );
+	
+	if ((RI.currententity && RI.currententity->curstate.rendermode == kRenderTransTexture) ||
+		(RI.currententity && RI.currententity->curstate.rendermode == kRenderTransColor))
+	{
+		GL_AdjustFogColor(0.5);
+	}
+	else
+	{
+		pglFogfv(GL_FOG_COLOR, fogColor);
+	}
 }
 
 void GL_ResetFogColor( void )
@@ -230,6 +233,16 @@ void GL_ResetFogColor( void )
 	// restore fog here
 	if( glState.isFogEnabled )
 		pglFogfv( GL_FOG_COLOR, RI.fogColor );
+}
+
+void GL_AdjustFogColor(float amount)
+{
+	if (RI.fogCustom || RI.fogEnabled)
+	{
+		vec3_t fogColor;
+		fogColor[0] = RI.fogColor[0] * amount; fogColor[1] = RI.fogColor[1] * amount; fogColor[2] = RI.fogColor[2] * amount;
+		pglFogfv(GL_FOG_COLOR, fogColor);
+	}
 }
 
 /*
@@ -1282,8 +1295,9 @@ void R_RenderBrushPoly( msurface_t *fa, int cull_type )
 	//Magic Nipples - readding mirrors
 	if (RP_NORMALPASS() && fa->flags & SURF_REFLECT)
 	{
+		GL_AdjustFogColor(0.5);
 		if (fa->info->mirrortexturenum)
-		{
+		{		
 			GL_Bind(GL_TEXTURE0, fa->info->mirrortexturenum);
 			is_mirror = true;
 
@@ -1379,7 +1393,10 @@ void R_RenderBrushPoly( msurface_t *fa, int cull_type )
 
 	// NOTE: draw mirror through in mirror show dummy lightmapped texture
 	if (fa->flags & SURF_REFLECT && RP_NORMALPASS()) //Magic Nipples - readding mirrors
+	{
+		GL_ResetFogColor();
 		return; // no lightmaps for mirror
+	}
 
 	if( FBitSet( fa->flags, SURF_DRAWTILED ))
 		return; // no lightmaps anyway

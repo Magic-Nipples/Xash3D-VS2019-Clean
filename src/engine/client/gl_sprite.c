@@ -983,8 +983,16 @@ void R_DrawSpriteModel( cl_entity_t *e )
 
 	r_stats.c_sprite_models_drawn++;
 
-	if( e->curstate.rendermode == kRenderGlow || e->curstate.rendermode == kRenderTransAdd )
-		R_AllowFog( false );
+	if (e->curstate.rendermode == kRenderGlow || e->curstate.rendermode == kRenderTransAdd)
+	{
+		//	R_AllowFog( false );
+		GL_AdjustFogColor(0.0);
+		pglFogf(GL_FOG_END, RI.fogEnd * 2);
+	}
+	else
+	{
+		GL_AdjustFogColor(0.5);
+	}
 
 	// select properly rendermode
 	switch( e->curstate.rendermode )
@@ -1139,8 +1147,12 @@ void R_DrawSpriteModel( cl_entity_t *e )
 	pglDisable( GL_ALPHA_TEST );
 	pglDepthMask( GL_TRUE );
 
-	if( e->curstate.rendermode == kRenderGlow || e->curstate.rendermode == kRenderTransAdd )
-		R_AllowFog( true );
+	if (e->curstate.rendermode == kRenderGlow || e->curstate.rendermode == kRenderTransAdd)
+	{
+		//	R_AllowFog( true );
+		pglFogf(GL_FOG_END, RI.fogEnd);
+	}
+	GL_ResetFogColor();
 
 	if( e->curstate.rendermode != kRenderNormal )
 	{

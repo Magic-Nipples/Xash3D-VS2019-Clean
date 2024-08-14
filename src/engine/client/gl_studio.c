@@ -2662,6 +2662,8 @@ static void R_StudioDrawPoints( void )
 		s = 1.0f / (float)ptexture[pskinref[pmesh->skinref]].width;
 		t = 1.0f / (float)ptexture[pskinref[pmesh->skinref]].height;
 
+		GL_AdjustFogColor(0.5);
+
 		if( FBitSet( g_nFaceFlags, STUDIO_NF_MASKED ))
 		{
 			pglEnable( GL_ALPHA_TEST );
@@ -2721,6 +2723,8 @@ static void R_StudioDrawPoints( void )
 
 		r_stats.c_studio_polys += pmesh->numtris;
 		tr.blend = oldblend;
+
+		GL_ResetFogColor();
 	}
 }
 
