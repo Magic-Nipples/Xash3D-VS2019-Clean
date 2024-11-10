@@ -2080,7 +2080,7 @@ void R_StudioSetupLighting( alight_t *plight )
 		if( scale > 1.0f ) VectorNormalize( g_studio.blightvec[i] ); // in case model may be scaled
 	}
 
-	VectorCopy( plight->color, g_studio.lightcolor );
+	VectorCopy(plight->color, g_studio.lightcolor);
 }
 
 /*
@@ -2095,10 +2095,6 @@ void R_StudioLighting( float *lv, int bone, int flags, vec3_t normal )
 
 	if (FBitSet(flags, STUDIO_NF_FULLBRIGHT))
 	{
-		g_studio.lightcolor[0] = 1.0;
-		g_studio.lightcolor[1] = 1.0;
-		g_studio.lightcolor[2] = 1.0;
-
 		if ((r_overbright->value > 0))
 			* lv = 0.5f;
 		else
@@ -2513,6 +2509,7 @@ static void R_StudioDrawPoints( void )
 	mstudiomesh_t	*pmesh;
 	short		*pskinref;
 	float		lv_tmp;
+	vec3_t		fullbright;
 
 	if( !m_pStudioHeader ) return;
 
@@ -2634,7 +2631,16 @@ static void R_StudioDrawPoints( void )
 					if (FBitSet(g_nFaceFlags, STUDIO_NF_CHROME))
 						R_StudioSetupChrome(g_studio.chrome[k], *pnormbone, (float*)pstudionorms);
 				}
-				VectorScale( g_studio.lightcolor, lv_tmp, g_studio.lightvalues[k] );
+
+				if (FBitSet(g_nFaceFlags, STUDIO_NF_FULLBRIGHT))
+				{
+					VectorSet(fullbright, 1.0f, 1.0f, 1.0f);
+					VectorScale(fullbright, lv_tmp, g_studio.lightvalues[k]);
+				}
+				else
+				{
+					VectorScale(g_studio.lightcolor, lv_tmp, g_studio.lightvalues[k]);
+				}			
 			}
 		}
 	}
